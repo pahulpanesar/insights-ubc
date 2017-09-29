@@ -9,4 +9,4 @@ mochawesome-reports/
 node_modules/
 .idea/
 .yarnclean
-coverage/
+coverage/.zip/

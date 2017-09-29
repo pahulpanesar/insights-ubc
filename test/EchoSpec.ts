@@ -6,6 +6,9 @@ import Server from "../src/rest/Server";
 import {expect} from 'chai';
 import Log from "../src/Util";
 import {InsightResponse} from "../src/controller/IInsightFacade";
+import InsightFacade from "../src/controller/InsightFacade";
+import * as fs from "fs";
+import * as JSZIP from "jszip";
 
 describe("EchoSpec", function () {
 
@@ -20,8 +23,20 @@ describe("EchoSpec", function () {
         Log.test('Before: ' + (<any>this).test.parent.title);
     });
 
+    var insightFace: InsightFacade = null;
+    var zip = null;
+    let dataString: string = null;
+    const DATA_PATH = './310-master.zip';
     beforeEach(function () {
         Log.test('BeforeTest: ' + (<any>this).currentTest.title);
+        insightFace = new InsightFacade();
+        zip = new JSZIP();
+        fs.readFile(DATA_PATH,  function(err, data) {
+            if(err) {
+                console.log(err);
+            }
+            dataString = new Buffer(data).toString('base64');
+        });
     });
 
     after(function () {
@@ -65,4 +80,24 @@ describe("EchoSpec", function () {
         expect(out.body).to.deep.equal({error: 'Message not provided'});
     });
 
+    it("Should reject when given no dataset", function () {
+        return insightFace.addDataset(null, "").then(function (value: InsightResponse) {
+            Log.test('Value: ' + value);
+            expect.fail();
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect(err).to.equal("Error: Not base64");
+        })
+    });
+
+    it("Should fulfill when given proper dataset", function () {
+        Log.test('beg');
+        return insightFace.addDataset(null, dataString).then(function (value: InsightResponse) {
+                Log.test('Value: ' + value);
+                expect(value).to.deep.equal(null);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        });
 });

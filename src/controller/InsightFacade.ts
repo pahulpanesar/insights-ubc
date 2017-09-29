@@ -2,8 +2,8 @@
  * This is the main programmatic entry point for the project.
  */
 import {IInsightFacade, InsightResponse} from "./IInsightFacade";
-
 import Log from "../Util";
+import * as JSZIP from "jszip";
 
 export default class InsightFacade implements IInsightFacade {
 
@@ -12,7 +12,15 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
-        return null;
+        return new Promise(function (fulfill, reject) {
+            var zip = new JSZIP();
+            zip.loadAsync(content, {base64: true}).then(function (zip) {
+                console.log(zip.files);
+                fulfill(null);
+            }).catch(function (zip) {
+                reject("Error: Not base64");
+            });
+        });
     }
 
     removeDataset(id: string): Promise<InsightResponse> {
