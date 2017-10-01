@@ -10,6 +10,6 @@ class _NumNode extends _Node{
     }
 
     evaluate(){
-        
+            
     }
 }
