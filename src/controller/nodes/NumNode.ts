@@ -8,4 +8,8 @@ class _NumNode extends _Node{
     parse(){
 
     }
+
+    evaluate(){
+        
+    }
 }

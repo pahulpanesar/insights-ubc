@@ -12,6 +12,13 @@ class _GTNode extends _Node{
         this.number.parse();
     }
 
+    evalaute(){
+        //TODO
+        //evaluate m_key
+        //evaluate number
+        //compare
+    }
+
 
 
 
