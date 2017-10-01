@@ -1,0 +1,48 @@
+yarn run v1.1.0
+$ mocha --timeout 10000 -R list
+
+<X> 2017-10-1 15:12:07: Before: EchoSpec
+    EchoSpec Should be able to echo: <X> 2017-10-1 15:12:07: BeforeTest: Should be able to echo
+<T> 2017-10-1 15:12:07: InsightFacadeImpl::init()
+<X> 2017-10-1 15:12:07: {"code":200,"body":{"message":"echo...echo"}}
+  √ EchoSpec Should be able to echo: 2ms
+<X> 2017-10-1 15:12:07: AfterTest: Should be able to echo
+    EchoSpec Should be able to echo silence: <X> 2017-10-1 15:12:07: BeforeTest: Should be able to echo silence
+<T> 2017-10-1 15:12:07: InsightFacadeImpl::init()
+<X> 2017-10-1 15:12:07: {"code":200,"body":{"message":"..."}}
+  √ EchoSpec Should be able to echo silence: 0ms
+<X> 2017-10-1 15:12:07: AfterTest: Should be able to echo silence
+    EchoSpec Should be able to handle a missing echo message sensibly: <X> 2017-10-1 15:12:07: BeforeTest: Should be able to handle a missing echo message sensibly
+<T> 2017-10-1 15:12:07: InsightFacadeImpl::init()
+<X> 2017-10-1 15:12:07: {"code":400,"body":{"error":"Message not provided"}}
+  √ EchoSpec Should be able to handle a missing echo message sensibly: 0ms
+<X> 2017-10-1 15:12:07: AfterTest: Should be able to handle a missing echo message sensibly
+    EchoSpec Should be able to handle a null echo message sensibly: <X> 2017-10-1 15:12:07: BeforeTest: Should be able to handle a null echo message sensibly
+<T> 2017-10-1 15:12:07: InsightFacadeImpl::init()
+<X> 2017-10-1 15:12:07: {"code":400,"body":{"error":"Message not provided"}}
+  √ EchoSpec Should be able to handle a null echo message sensibly: 0ms
+<X> 2017-10-1 15:12:07: AfterTest: Should be able to handle a null echo message sensibly
+    EchoSpec Should reject when given no dataset: <X> 2017-10-1 15:12:07: BeforeTest: Should reject when given no dataset
+<T> 2017-10-1 15:12:07: InsightFacadeImpl::init()
+<X> 2017-10-1 15:12:07: Error: Error: Not base64
+  √ EchoSpec Should reject when given no dataset: 2ms
+<X> 2017-10-1 15:12:07: AfterTest: Should reject when given no dataset
+    EchoSpec Should fulfill when given proper dataset: <X> 2017-10-1 15:12:07: BeforeTest: Should fulfill when given proper dataset
+<T> 2017-10-1 15:12:07: InsightFacadeImpl::init()
+<X> 2017-10-1 15:12:07: Error: Error: Not base64
+  1) EchoSpec Should fulfill when given proper dataset
+<X> 2017-10-1 15:12:07: AfterTest: Should fulfill when given proper dataset
+<X> 2017-10-1 15:12:07: After: EchoSpec
+
+  5 passing (67ms)
+  1 failing
+
+  1) EchoSpec Should fulfill when given proper dataset:
+     AssertionError: expect.fail()
+      at test\EchoSpec.js:82:27
+      at <anonymous>
+      at process._tickCallback (internal/process/next_tick.js:188:7)
+
+
+
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
