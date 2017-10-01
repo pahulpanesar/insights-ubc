@@ -26,7 +26,7 @@ describe("EchoSpec", function () {
     var insightFace: InsightFacade = null;
     var zip = null;
     let dataString: string = null;
-    const DATA_PATH = './310-master.zip';
+    const DATA_PATH = './courses.zip';
     beforeEach(function () {
         Log.test('BeforeTest: ' + (<any>this).currentTest.title);
         insightFace = new InsightFacade();
@@ -91,7 +91,6 @@ describe("EchoSpec", function () {
     });
 
     it("Should fulfill when given proper dataset", function () {
-        Log.test('beg');
         return insightFace.addDataset(null, dataString).then(function (value: InsightResponse) {
                 Log.test('Value: ' + value);
                 expect(value).to.deep.equal(null);
