@@ -1,6 +1,7 @@
-class GTNode extends _Node{
+class LTNode extends _Node{
     number: NumNode = new NumNode(this.tokenizer);
     m_key: MKeyNode = new MKeyNode(this.tokenizer);
+
 
     constructor(t: Tokenizer){
         super(t);

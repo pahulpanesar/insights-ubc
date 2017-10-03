@@ -1,11 +1,15 @@
 
-class _MKeyNode extends _Node{
+class MKeyNode extends _Node{
     m_key: string;
 
-    constructor(t: any){
+    constructor(t: Tokenizer){
         super(t);
     }
     parse(){
         //TODO
+    }
+
+    evaluate(){
+
     }
 }

@@ -1,7 +1,7 @@
-class _Node{
-    tokenizer : _Tokenizer;
+class _Node{ //underscore is to distinguish from native TS class
+    tokenizer : Tokenizer;
 
-    constructor (t: any){
+    constructor (t: Tokenizer){
         this.tokenizer = t;
     }
 
@@ -12,7 +12,5 @@ class _Node{
         //pass regex for specific node
         //TODO
     }
-
-
-
+    
 }

@@ -1,5 +1,5 @@
 
-class _Tokenizer{
+class Tokenizer{
 
     getNext(): string{
         //TODO

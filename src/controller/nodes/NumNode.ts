@@ -1,4 +1,4 @@
-class _NumNode extends _Node{
+class NumNode extends _Node{
     number: number;
 
     constructor(t: any){
@@ -10,6 +10,6 @@ class _NumNode extends _Node{
     }
 
     evaluate(){
-            
+
     }
 }
