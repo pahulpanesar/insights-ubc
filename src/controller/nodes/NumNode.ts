@@ -6,10 +6,12 @@ class NumNode extends _Node{
     }
 
     parse(){
-
+        var s = this.getAndCheckToken("[0-9]+");
+        this.number = parseInt(s);
     }
 
     evaluate(){
-
+        console.log("returning... " + this.number);
+        return this.number
     }
 }
