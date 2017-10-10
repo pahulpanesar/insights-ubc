@@ -1,5 +1,5 @@
 
-class Tokenizer{
+export default class Tokenizer{
 
     queryJSON: any;
     currentToken: number;
@@ -8,17 +8,24 @@ class Tokenizer{
     testJSON = '{ "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
 
 
+
     addKeys(json: any){
-        Object.keys(json).forEach(function (elem) {
+        Object.keys(json).forEach((elem) => {
+            console.log(elem);
+            //console.log(Object.keys(elem));
             this.tokens.push(elem);
-            this.addKeys(elem)
-        })
-        /*(key in Object.keys(json)){
-            if(Object.keys(key).length > 0){
-                this.addKeys(keys[Object.keys[key]])
+            var temp = elem;
+            //console.log(typeof json[elem]);
+            if(Array.isArray(json[elem])){
+                json[elem].forEach((e:any) =>{
+                    this.tokens.push(e);
+                    console.log(e);
+                });
             }
-            this.tokens.push(key);
-        }*/
+            else if(typeof json[elem] === "object"){
+                this.addKeys(json[temp]);
+            }
+        });
         return this.tokens;
     }
 
