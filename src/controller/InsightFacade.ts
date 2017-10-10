@@ -8,7 +8,7 @@ import Course from "../dataStructs/Course";
 
 export default class InsightFacade implements IInsightFacade {
 
-    private courses: any = {};
+    private courses: Array<Course> = [];
     constructor() {
         Log.trace('InsightFacadeImpl::init()');
     }
@@ -46,10 +46,10 @@ export default class InsightFacade implements IInsightFacade {
                         let countPrev: number = 0;
                         dataObjectArray.forEach((dataArray) => {
                             dataArray.forEach((dataObject: any) => {
-                                this.addCourse(dataObject, prev, countPrev);
+                                this.addCourse(dataObject);
                             })
                         });
-                        console.log(this.courses);
+                        console.log(this.filterCourses());
                         fulfill(null);
                     }).catch((err) => {
                         reject(err);
@@ -61,33 +61,27 @@ export default class InsightFacade implements IInsightFacade {
         });
     }
 
-    addCourse(dataObject: any, prev: any, countPrev: any): void {
+    addCourse(dataObject: any): void {
         let course: Course = new Course();
         let courses: any = this.courses;
-        if(courses[dataObject.Title] == null){
-            course.courses_title = dataObject.Title;
-            course.courses_uuid = dataObject["id"];
-            course.courses_id = dataObject.Course;
-            course.courses_dept = dataObject.Subject;
-            course.courses_instructor = dataObject.Professor;
-            course.courses_pass = dataObject.Pass;
-            course.courses_fail = dataObject.Fail;
-            course.courses_audit = dataObject.Audit;
-            course.courses_avg = dataObject.Avg;
-            courses[course.courses_title] = course;
-            if(prev != null) {
-                courses[prev.Title].courses_avg = +((courses[prev.Title].courses_avg / countPrev).toFixed(2));
-            }
-            prev = dataObject;
-            countPrev = 1;
-        }
-        else if(prev != null && prev.Title === dataObject.Title && dataObject.Section != "overall") {
-            countPrev++;
-            courses[dataObject.Title].courses_pass += dataObject.Pass;
-            courses[dataObject.Title].courses_fail += dataObject.Fail;
-            courses[dataObject.Title].courses_avg += dataObject.Avg;
-            courses[dataObject.Title].courses_audit += dataObject.Audit;
-        }
+        course.courses_title = dataObject.Title;
+        course.courses_uuid = dataObject["id"];
+        course.courses_id = dataObject.Course;
+        course.courses_dept = dataObject.Subject;
+        course.courses_instructor = dataObject.Professor;
+        course.courses_pass = dataObject.Pass;
+        course.courses_fail = dataObject.Fail;
+        course.courses_audit = dataObject.Audit;
+        course.courses_avg = dataObject.Avg;
+        courses.push(course);
+    }
+
+    filterCourses(): Array<any> {
+        let filteredCourses: Array<any> = [];
+        let course: Course;
+        filteredCourses = this.courses.filter(
+           course => course.courses_avg >= 97);
+        return filteredCourses.map(course => course.courses_dept + " " + course.courses_avg)
     }
 
     removeDataset(id: string): Promise<InsightResponse> {
