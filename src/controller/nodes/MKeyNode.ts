@@ -12,6 +12,7 @@ class MKeyNode extends _Node{
 
     evaluate(){
         console.log("returning... " + this.m_key);
+        courseObj.m_key;
         return 0 //TODO return value found in entry (i.e. the average)
     }
 }

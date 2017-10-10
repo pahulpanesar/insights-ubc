@@ -19,7 +19,7 @@ class MComparisonNode extends _Node{
         var key = this.m_key.evaluate();
         var num = this.number.evaluate();
         if(this.comparator == "GT"){
-            return key > num;
+            this.filterObj.comparator = '>'
         }
         else if(this.comparator == "LT"){
             return key < num;

@@ -7,6 +7,9 @@ class NegationNode extends _Node{
 
     parse(){
         var s = this.getAndCheckToken("NOT :{");
+        console.log(s);
+        this.filter.parse();
+
 
     }
     evaluate(){

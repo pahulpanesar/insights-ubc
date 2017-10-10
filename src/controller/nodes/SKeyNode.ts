@@ -11,7 +11,7 @@ class SKeyNode extends _Node{
     }
 
     evaluate(){
-        console.log("returning... " + this.s_key);
+        console.log("returning... " + this.s_key); //TODO return string from data (i.e. dept)
         return this.s_key;
     }
 }

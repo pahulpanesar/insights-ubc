@@ -11,6 +11,7 @@ class InputStringNode extends _Node{
     }
 
     evaluate(){
+        console.log("returning... " + this.inputString);
         return this.inputString;
     }
 }
