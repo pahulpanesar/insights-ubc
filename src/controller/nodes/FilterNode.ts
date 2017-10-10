@@ -1,3 +1,5 @@
+import _Node from "./Node";
+
 class FilterNode extends _Node{
     filter = new _Node(this.tokenizer);
 
@@ -6,7 +8,7 @@ class FilterNode extends _Node{
     }
 
     parse(){
-        var s = this.getAndCheckToken("WHERE:{");
+        var s = this.getAndCheckToken("WHERE");
         console.log(s);
     }
 

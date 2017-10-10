@@ -1,9 +1,11 @@
+import _Node from "./Node";
+
 class LogicNode extends _Node{
     filter1: FilterNode = new FilterNode(this.tokenizer);
     filter2: FilterNode = new FilterNode(this.tokenizer);
     logic: string;
     constructor(t: Tokenizer){
-        super(t);
+        super(t,null);
     }
 
     parse(){
