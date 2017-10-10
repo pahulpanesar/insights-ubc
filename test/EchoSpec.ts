@@ -81,22 +81,36 @@ describe("EchoSpec", function () {
     });
 
     it("Should reject when given no dataset", function () {
-        return insightFace.addDataset(null, "").then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", "").then(function (value: InsightResponse) {
             Log.test('Value: ' + value);
             expect.fail();
         }).catch(function (err) {
             Log.test('Error: ' + err);
-            expect(err).to.equal("Error: Not base64");
+            expect(err.code).to.equal(400);
         })
     });
 
     it("Should fulfill when given proper dataset", function () {
-        return insightFace.addDataset(null, dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
                 Log.test('Value: ' + value);
-                expect(value).to.deep.equal(null);
+                expect(value.code).to.deep.equal(200);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();
             })
         });
+
+    it("Should remove when given proper dataset", function () {
+        insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            return insightFace.removeDataset("courses").then(function (value: InsightResponse) {
+                Log.test('Value: ' + value);
+                expect(value.code).to.deep.equal(200);
+            }).catch(function (err) {
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
 });
