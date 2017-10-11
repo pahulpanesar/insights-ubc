@@ -93,7 +93,7 @@ describe("EchoSpec", function () {
     it("Should fulfill when given proper dataset", function () {
         return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
                 Log.test('Value: ' + value);
-                expect(value.code).to.deep.equal(200);
+                expect(value.code).to.deep.equal(201);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();
@@ -104,7 +104,7 @@ describe("EchoSpec", function () {
         insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
             return insightFace.removeDataset("courses").then(function (value: InsightResponse) {
                 Log.test('Value: ' + value);
-                expect(value.code).to.deep.equal(200);
+                expect(value.code).to.deep.equal(204);
             }).catch(function (err) {
                 expect.fail();
             })
