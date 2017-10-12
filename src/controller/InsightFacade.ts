@@ -3,69 +3,79 @@
  */
 import {IInsightFacade, InsightResponse} from "./IInsightFacade";
 import Log from "../Util";
-import * as JSZIP from "jszip";
+let JSZIP = require('jszip');
 import Course from "../dataStructs/Course";
 import Tokenizer from "./Tokenizer";
 import Query from "./Query";
 
 export default class InsightFacade implements IInsightFacade {
 
-    private courses: Array<Course> = [];
+    private dataSets: any = {};
     constructor() {
         Log.trace('InsightFacadeImpl::init()');
     }
     addDataset(id: string, content: string): Promise<InsightResponse> {
         return new Promise((fulfill, reject) => {
-            var files: any;
-            var zip = new JSZIP();
-            var pArr: Array<Promise<any>> = [];
-            let dataObjectArray: Array<any> = [];
-            zip.loadAsync(content, {base64: true}).then((zip) => {
-                files = zip.files;
-                Object.keys(files).forEach((filename) => {
-                    let file: JSZipObject = files[filename];
-                    pArr.push(
-                    file.async('string').then((fileData) => {
-                        try {
-                            if(fileData != '') {
-                                let dataOb: any = new Object(JSON.parse((fileData)));
-                                if (dataOb.result.length > 0) {
-                                    dataObjectArray.push(dataOb.result);
-                                }
-                            }
-                        }
-                        catch (e) {
-                            console.log(e);
-                        }
-                    }).catch((e) =>{
-                        reject(e);
-                    }));
-                });
-            })
-                .then(() => {
-                    Promise.all(pArr).then(() => {
-                        let prev: any;
-                        let countPrev: number = 0;
-                        dataObjectArray.forEach((dataArray) => {
-                            dataArray.forEach((dataObject: any) => {
-                                this.addCourse(dataObject);
-                            })
+            try {
+                if (this.dataSets[id] != undefined) {
+                    fulfill({code: 204, body: {}})
+                }
+                else {
+                    var files: any;
+                    var zip = new JSZIP();
+                    var pArr: Array<Promise<any>> = [];
+                    this.dataSets[id] = new Array<Course>();
+                    let dataObjectArray: Array<any> = [];
+                    zip.loadAsync(content, {base64: true}).then((zip: any) => {
+                        files = zip.files;
+                        Object.keys(files).forEach((filename) => {
+                            let file: JSZipObject = files[filename];
+                            pArr.push(
+                                file.async('string').then((fileData) => {
+                                    try {
+                                        if (fileData != '') {
+                                            let dataOb: any = new Object(JSON.parse((fileData)));
+                                            if (dataOb.result.length > 0) {
+                                                dataObjectArray.push(dataOb.result);
+                                            }
+                                        }
+                                    }
+                                    catch (err) {
+                                        reject({code: 400, error: err});
+                                    }
+                                }).catch((err) => {
+                                    reject({code: 400, error: err});
+                                }));
                         });
-                        console.log(this.filterCourses());
-                        fulfill(null);
-                    }).catch((err) => {
-                        reject(err);
                     })
-                })
-            .catch((err) => {
-                reject("Error: Not base64");
-            })
+                        .then(() => {
+                            Promise.all(pArr).then(() => {
+                                dataObjectArray.forEach((dataArray) => {
+                                    dataArray.forEach((dataObject: any) => {
+                                        if (id === "courses") {
+                                            this.addCourse(dataObject, id);
+                                        }
+                                    })
+                                });
+                                fulfill({code: 201, body: {}});
+                            }).catch((err) => {
+                                reject({code: 400, error: err});
+                            })
+                        })
+                        .catch((err: any) => {
+                            reject({code: 400, error: err});
+                        })
+                }
+            }
+            catch (err) {
+                reject({code: 400, error: err});
+            }
         });
     }
 
-    addCourse(dataObject: any): void {
+    addCourse(dataObject: any, id: string): void {
         let course: Course = new Course();
-        let courses: any = this.courses;
+        let courses: any = this.dataSets[id];
         course.courses_title = dataObject.Title;
         course.courses_uuid = dataObject["id"];
         course.courses_id = dataObject.Course;
@@ -78,16 +88,25 @@ export default class InsightFacade implements IInsightFacade {
         courses.push(course);
     }
 
-    filterCourses(): Array<any> {
-        let filteredCourses: Array<any> = [];
-        let course: Course;
-        filteredCourses = this.courses.filter(
-           course => course.courses_avg >= 97);
-        return filteredCourses.map(course => course.courses_dept + " " + course.courses_avg)
-    }
+    // filterCourses(id: string): Array<any> {
+    //     let filteredCourses: Array<any> = [];
+    //     let course: Course;
+    //     let courses: Array<Course> = this.dataSets[id];
+    //     filteredCourses = courses.filter(
+    //        course => course.courses_avg >= 97);
+    //     return filteredCourses.map(course => course.courses_dept + " " + course.courses_avg)
+    // }
 
     removeDataset(id: string): Promise<InsightResponse> {
-        return null;
+        return new Promise(function(fulfill, reject) {
+            try {
+                this.dataSets[id] = null;
+                fulfill({code:204, body: {}});
+            }
+            catch (err) {
+                reject({code: 400, error: err});
+            }
+        })
     }
 
     performQuery(query: any): Promise <InsightResponse> {
@@ -95,18 +114,17 @@ export default class InsightFacade implements IInsightFacade {
         let filteredArray:Course[] = [];
         let t: Tokenizer = new Tokenizer();
         t.addKeys(query);
-
-        for(var i = 0; i<this.courses.length; i++){
-            let c: Course = this.courses[i];
-            let q: Query = new Query(t,c);
-            q.parse();
-            if(q.evaluate()){ //If AST (Query Object) returns true add it to the filtered Array
-                filteredArray.push(c)
+        this.dataSets.forEach((dataSet: Array<any>) => {
+            for(var i = 0; i< dataSet.length; i++){
+                let c: Course = dataSet[i];
+                let q: Query = new Query(t,c);
+                q.parse();
+                if(q.evaluate()){ //If AST (Query Object) returns true add it to the filtered Array
+                    filteredArray.push(c)
+                }
             }
-        }
-
+        })
         return null;
         //return response;
-
     }
 }
