@@ -110,21 +110,34 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     performQuery(query: any): Promise <InsightResponse> {
-        let response:InsightResponse;
-        let filteredArray:Course[] = [];
-        let t: Tokenizer = new Tokenizer();
-        t.addKeys(query);
-        this.dataSets.forEach((dataSet: Array<any>) => {
-            for(var i = 0; i< dataSet.length; i++){
-                let c: Course = dataSet[i];
-                let q: Query = new Query(t,c);
-                q.parse();
-                if(q.evaluate()){ //If AST (Query Object) returns true add it to the filtered Array
-                    filteredArray.push(c)
-                }
+        return new Promise(function(fulfill, reject) {
+            if(this.dataSets.length < 1) {
+                reject({code: 424, error: "No dataset"});
             }
-        })
-        return null;
-        //return response;
+            try{
+                let filteredArray:Course[] = [];
+                let t: Tokenizer = new Tokenizer();
+                t.addKeys(query);
+                this.dataSets.forEach((dataSet: Array<any>) => {
+                    for(var i = 0; i< dataSet.length; i++){
+                        let c: Course = dataSet[i];
+                        let q: Query = new Query(t,c);
+                        q.parse();
+                        if(q.evaluate()){ //If AST (Query Object) returns true add it to the filtered Array
+                            filteredArray.push(c)
+                        }
+                    }
+                }).then(() => {
+                        fulfill({code: 200, body: {}});
+                    }
+                ).catch((err: any) => {
+                    console.log(err);
+                    reject({code: 400, error: err});
+                })
+            }
+            catch (err){
+                reject({code: 400, error: err});
+            }
+        });
     }
 }
