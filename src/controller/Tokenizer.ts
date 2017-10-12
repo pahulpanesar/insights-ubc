@@ -1,13 +1,8 @@
 
 export default class Tokenizer{
 
-    queryJSON: any;
-    currentToken: number;
     tokens: any[] = [];
-
-    testJSON = '{ "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
-
-
+    index:number = 0;
 
     addKeys(json: any){
         Object.keys(json).forEach((elem) => {
@@ -30,18 +25,17 @@ export default class Tokenizer{
     }
 
     getNext(): string{
-       /*index++;
-        return queryJson[index];
 
-        return token;
-        */
-       return "";
+       let temp:string = this.tokens[this.index];
+       this.index++;
+       return temp;
+
     }
     checkNext(): string{
 
         var token:string ="";
-        if (this.currentToken<this.tokens.length){
-            token = this.tokens[this.currentToken];
+        if (this.index<this.tokens.length){
+            token = this.tokens[this.index];
         }
         else
             token="NO_MORE_TOKENS";

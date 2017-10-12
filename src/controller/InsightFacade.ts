@@ -5,6 +5,8 @@ import {IInsightFacade, InsightResponse} from "./IInsightFacade";
 import Log from "../Util";
 import * as JSZIP from "jszip";
 import Course from "../dataStructs/Course";
+import Tokenizer from "./Tokenizer";
+import Query from "./Query";
 
 export default class InsightFacade implements IInsightFacade {
 
@@ -89,6 +91,14 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     performQuery(query: any): Promise <InsightResponse> {
+        let response:InsightResponse;
+        let t: Tokenizer = new Tokenizer();
+        t.addKeys(query);
+        let q: Query = new Query(t);
+        q.parse();
+        q.evaluate();
         return null;
+        //return response;
+
     }
 }

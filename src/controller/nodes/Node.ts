@@ -1,12 +1,12 @@
 import Course from "../../dataStructs/Course";
+import Tokenizer from "../Tokenizer";
 
 export default class _Node{ //underscore is to distinguish from native TS class
     tokenizer : Tokenizer;
-    courseObj : Course = new Course();
+    //courseObj : Course = new Course();
 
-    constructor (t: Tokenizer, courseObj: Course){
+    constructor (t: Tokenizer){
         this.tokenizer = t;
-        this.courseObj = courseObj;
     }
 
 

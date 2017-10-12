@@ -1,11 +1,12 @@
 
 import _Node from "./Node";
+import Tokenizer from "../Tokenizer";
 
 class MKeyNode extends _Node{
     m_key: string;
 
     constructor(t: Tokenizer){
-        super(t,null);
+        super(t);
     }
     parse(){
         var s = this.getAndCheckToken("courses_\((avg|pass|fail|audit)\)"); //check if it's a valid m_key
@@ -14,7 +15,6 @@ class MKeyNode extends _Node{
 
     evaluate(){
         console.log("returning... " + this.m_key);
-        courseObj.this.m_key
         return 0 //TODO return value found in entry (i.e. the average)
     }
 }
