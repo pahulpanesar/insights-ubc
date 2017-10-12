@@ -1,6 +1,7 @@
 import Log from "../Util";
 
 export default class Course {
+    [key: string]: any;
     courses_dept: string;// - The department that offered the course.
     courses_id: string;// - The course number (will be treated as a string, e.g., 499b).
     courses_avg: number;// - The average of the course offering.

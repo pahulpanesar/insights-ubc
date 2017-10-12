@@ -15,7 +15,8 @@ export default class MKeyNode extends _Node{
     }
 
     evaluate(){
-        console.log("returning... " + this.m_key);
-        return 0 //TODO return value found in entry (i.e. the average)
+        var temp:number = this.course[this.m_key];
+        console.log("returning... " + temp);
+        return temp;
     }
 }

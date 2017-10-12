@@ -15,7 +15,9 @@ export default class SKeyNode extends _Node{
     }
 
     evaluate(){
-        console.log("returning... " + this.s_key); //TODO return string from data (i.e. dept)
-        return this.s_key;
+        var temp:string = this.course[this.s_key];
+        console.log("returning... " + temp); //TODO return string from data (i.e. dept)
+        return temp;
     }
+    
 }
