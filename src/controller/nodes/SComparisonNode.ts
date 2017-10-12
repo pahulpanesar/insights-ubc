@@ -2,22 +2,21 @@ import _Node from "./Node";
 import Tokenizer from "../Tokenizer";
 import InputStringNode from "./InputStringNode";
 import SKeyNode from "./SKeyNode";
+import Course from "../../dataStructs/Course";
 
 export default class SComparisonNode extends _Node{
-    inputString: InputStringNode = new InputStringNode(this.tokenizer);
-    s_key: SKeyNode = new SKeyNode(this.tokenizer);
+    inputString: InputStringNode = new InputStringNode(this.tokenizer,this.course);
+    s_key: SKeyNode = new SKeyNode(this.tokenizer,this.course);
 
 
-    constructor(t: Tokenizer){
-        super(t);
+    constructor(t: Tokenizer,c:Course){
+        super(t,c);
     }
 
     parse(){
-        console.log(this.getAndCheckToken("IS:{")); //IS:{' s_key ':' [*]? inputstring [*]? '}'
-        this.s_key.parse();
-        console.log(this.getAndCheckToken(":"));
-        this.inputString.parse();
-        console.log(this.getAndCheckToken("}"))
+        console.log(this.getAndCheckToken("IS")); //IS:{' s_key ':' [*]? inputstring [*]? '}'
+        this.s_key.parse(); //parse s_key first
+        this.inputString.parse(); //parse input_string second
 
     }
 

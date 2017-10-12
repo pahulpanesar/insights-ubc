@@ -2,14 +2,15 @@ import _Node from "./Node";
 import Tokenizer from "../Tokenizer";
 import NumNode from "./NumNode";
 import MKeyNode from "./MKeyNode";
+import Course from "../../dataStructs/Course";
 
 export default class MComparisonNode extends _Node{
-    number: NumNode = new NumNode(this.tokenizer);
-    m_key: MKeyNode = new MKeyNode(this.tokenizer);
+    number: NumNode = new NumNode(this.tokenizer,this.course);
+    m_key: MKeyNode = new MKeyNode(this.tokenizer,this.course);
     comparator: string;
 
-    constructor(t: Tokenizer){
-        super(t);
+    constructor(t: Tokenizer,c: Course){
+        super(t,c);
     }
 
     parse(){

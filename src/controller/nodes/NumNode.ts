@@ -1,10 +1,11 @@
 import _Node from "./Node";
+import Course from "../../dataStructs/Course";
 
 export default class NumNode extends _Node{
     number: number;
 
-    constructor(t: any){
-        super(t);
+    constructor(t: any,c:Course){
+        super(t,c);
     }
 
     parse(){

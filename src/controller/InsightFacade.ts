@@ -92,11 +92,19 @@ export default class InsightFacade implements IInsightFacade {
 
     performQuery(query: any): Promise <InsightResponse> {
         let response:InsightResponse;
+        let filteredArray:Course[] = [];
         let t: Tokenizer = new Tokenizer();
         t.addKeys(query);
-        let q: Query = new Query(t);
-        q.parse();
-        q.evaluate();
+
+        for(var i = 0; i<this.courses.length; i++){
+            let c: Course = this.courses[i];
+            let q: Query = new Query(t,c);
+            q.parse();
+            if(q.evaluate()){ //If AST (Query Object) returns true add it to the filtered Array
+                filteredArray.push(c)
+            }
+        }
+
         return null;
         //return response;
 

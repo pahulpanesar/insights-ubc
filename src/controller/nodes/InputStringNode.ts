@@ -1,10 +1,11 @@
 import _Node from "./Node";
 import Tokenizer from "../Tokenizer";
+import Course from "../../dataStructs/Course";
 
 export default class InputStringNode extends _Node{
     inputString: string;
-    constructor(t: Tokenizer){
-        super(t);
+    constructor(t: Tokenizer,c:Course){
+        super(t,c);
     }
 
     parse(){

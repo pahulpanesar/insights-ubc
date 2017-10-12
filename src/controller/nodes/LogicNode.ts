@@ -1,17 +1,18 @@
 import _Node from "./Node";
 import Tokenizer from "../Tokenizer";
 import FilterNode from "./FilterNode";
+import Course from "../../dataStructs/Course";
 
 export class LogicNode extends _Node{
-    filter1: FilterNode = new FilterNode(this.tokenizer);
-    filter2: FilterNode = new FilterNode(this.tokenizer);
+    filter1: FilterNode = new FilterNode(this.tokenizer, this.course);
+    filter2: FilterNode = new FilterNode(this.tokenizer, this.course);
     logic: string = "";
-    constructor(t: Tokenizer){
-        super(t);
+    constructor(t: Tokenizer,c: Course){
+        super(t,c);
     }
 
     parse(){
-        var s = this.getAndCheckToken("AND|OR")
+        var s = this.getAndCheckToken("AND|OR"); //may be double checking the regex
         s == null ? console.log("parser got null") : this.logic = s; //storing logic for evaulate()
     }
 
