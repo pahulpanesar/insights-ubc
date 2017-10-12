@@ -1,4 +1,9 @@
-class MComparisonNode extends _Node{
+import _Node from "./Node";
+import Tokenizer from "../Tokenizer";
+import NumNode from "./NumNode";
+import MKeyNode from "./MKeyNode";
+
+export default class MComparisonNode extends _Node{
     number: NumNode = new NumNode(this.tokenizer);
     m_key: MKeyNode = new MKeyNode(this.tokenizer);
     comparator: string;
@@ -19,7 +24,7 @@ class MComparisonNode extends _Node{
         var key = this.m_key.evaluate();
         var num = this.number.evaluate();
         if(this.comparator == "GT"){
-            this.filterObj.comparator = '>'
+            return key > num;
         }
         else if(this.comparator == "LT"){
             return key < num;

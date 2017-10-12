@@ -1,8 +1,11 @@
 import _Node from "./Node";
 import Tokenizer from "../Tokenizer";
 import {LogicNode} from "./LogicNode";
+import MComparisonNode from "./MComparisonNode";
+import SComparisonNode from "./SComparisonNode";
+import NegationNode from "./NegationNode";
 
-export class FilterNode extends _Node{
+export default class FilterNode extends _Node{
     filter: any;
 
     constructor(t: Tokenizer){
@@ -35,6 +38,6 @@ export class FilterNode extends _Node{
     }
 
     evaluate(){
-        return this.filter.evaluate();
+        return this.filter.evalaute();
     }
 }

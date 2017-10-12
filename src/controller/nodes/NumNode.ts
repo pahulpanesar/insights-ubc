@@ -1,4 +1,6 @@
-class NumNode extends _Node{
+import _Node from "./Node";
+
+export default class NumNode extends _Node{
     number: number;
 
     constructor(t: any){

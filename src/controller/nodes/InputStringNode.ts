@@ -1,4 +1,7 @@
-class InputStringNode extends _Node{
+import _Node from "./Node";
+import Tokenizer from "../Tokenizer";
+
+export default class InputStringNode extends _Node{
     inputString: string;
     constructor(t: Tokenizer){
         super(t);

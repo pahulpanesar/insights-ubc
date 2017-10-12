@@ -1,6 +1,6 @@
 import _Node from "./Node";
 import Tokenizer from "../Tokenizer";
-import {FilterNode} from "./FilterNode";
+import FilterNode from "./FilterNode";
 
 export class LogicNode extends _Node{
     filter1: FilterNode = new FilterNode(this.tokenizer);

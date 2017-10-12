@@ -1,4 +1,9 @@
-class SComparisonNode extends _Node{
+import _Node from "./Node";
+import Tokenizer from "../Tokenizer";
+import InputStringNode from "./InputStringNode";
+import SKeyNode from "./SKeyNode";
+
+export default class SComparisonNode extends _Node{
     inputString: InputStringNode = new InputStringNode(this.tokenizer);
     s_key: SKeyNode = new SKeyNode(this.tokenizer);
 
@@ -17,12 +22,7 @@ class SComparisonNode extends _Node{
     }
 
     evalaute(){
-        this.filterObj.comparator = this.equals;
         return (this.inputString.evaluate() === this.s_key.evaluate());
-    }
-
-    equals(obj1: any,  obj2: any){
-        return obj1 === obj2
     }
 
 

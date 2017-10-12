@@ -1,5 +1,9 @@
 
-class NegationNode extends _Node{
+import Tokenizer from "../Tokenizer";
+import FilterNode from "./FilterNode";
+import _Node from "./Node";
+
+export default class NegationNode extends _Node{
     filter = new FilterNode(this.tokenizer);
     constructor(t: Tokenizer){
         super(t);

@@ -31,15 +31,9 @@ export default class Tokenizer{
        return temp;
 
     }
-    checkNext(): string{
+    checkNext(): boolean{
 
-        var token:string ="";
-        if (this.index<this.tokens.length){
-            token = this.tokens[this.index];
-        }
-        else
-            token="NO_MORE_TOKENS";
-        return token;
+        return this.index < this.tokens.length;
 
     }
 }

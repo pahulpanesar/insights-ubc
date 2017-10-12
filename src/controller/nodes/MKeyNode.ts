@@ -2,14 +2,14 @@
 import _Node from "./Node";
 import Tokenizer from "../Tokenizer";
 
-class MKeyNode extends _Node{
+export default class MKeyNode extends _Node{
     m_key: string;
 
     constructor(t: Tokenizer){
         super(t);
     }
     parse(){
-        var s = this.getAndCheckToken("courses_\((avg|pass|fail|audit)\)"); //check if it's a valid m_key
+        var s = this.getAndCheckToken("courses_(avg|pass|fail|audit)"); //check if it's a valid m_key
         this.m_key = s;
     }
 
