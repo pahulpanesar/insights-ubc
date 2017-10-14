@@ -42,7 +42,7 @@ describe("EchoSpec", function () {
         Log.test('BeforeTest: ' + (<any>this).currentTest.title);
         insightFace = new InsightFacade();
         zip = new JSZip();
-        insightFace.removeDataset("courses");
+        // insightFace.removeDataset("courses");
         dataString = fs.readFileSync(DATA_PATH,'base64');
         nonZipString = fs.readdirSync(NON_ZIP_PATH,'base64');
     });
@@ -173,7 +173,7 @@ describe("EchoSpec", function () {
             Log.test('Value: ' + value.code);
             expect.fail();
         }).catch(function (err) {
-            Log.test('Error: ' + err.code);
+            Log.test('Error: ' + err.body.error);
             expect(err.code).to.equal(404);
         })
     });
@@ -221,7 +221,7 @@ describe("EchoSpec", function () {
             expect(value.code).to.deep.equal(204);
         }).catch(function (err) {
             Log.test('Error: ' + err.code);
-            expect.fail();
+            expect.fail();e
         })
     });
 

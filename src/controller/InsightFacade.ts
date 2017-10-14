@@ -36,7 +36,7 @@ export default class InsightFacade implements IInsightFacade {
                         Object.keys(files).forEach((filename) => {
                             let file: JSZipObject = files[filename];
                             if (file.name.indexOf("course") == -1) {
-                                throw Error;
+                                reject({code: 400, body: {"error": "No valid course"}});
                             }
                             pArr.push(
                                 file.async('string').then((fileData) => {
@@ -56,7 +56,7 @@ export default class InsightFacade implements IInsightFacade {
                                 }));
                         });
                     }).catch((err:any) => {
-                        throw err;
+                        reject({code: 400, body: {"error": err}});
                     })
                         .then(() => {
                             Promise.all(pArr).then(() => {
@@ -137,7 +137,7 @@ export default class InsightFacade implements IInsightFacade {
                 fulfill({code:204, body: {}});
             }
             else {
-                reject({code: 404, error: "No dataset to remove"});
+                reject({code: 404, body: {"error": "No dataset to remove"}});
             }
         })
     }
