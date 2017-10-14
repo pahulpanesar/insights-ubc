@@ -31,6 +31,8 @@ describe("EchoSpec", function () {
     var zip = null;
     let dataString: string = null;
     let nonZipString: string = null;
+    let badZipString: string = null;
+    const BAD_ZIP_BATH ='./badcourses.zip';
     const DATA_PATH = './courses.zip';
     const NON_ZIP_PATH = './courses';
 
@@ -45,6 +47,7 @@ describe("EchoSpec", function () {
         // insightFace.removeDataset("courses");
         dataString = fs.readFileSync(DATA_PATH,'base64');
         nonZipString = fs.readdirSync(NON_ZIP_PATH,'base64');
+        badZipString = fs.readFileSync(BAD_ZIP_BATH, 'base64');
     });
 
     after(function () {
@@ -53,6 +56,7 @@ describe("EchoSpec", function () {
 
     afterEach(function () {
         Log.test('AfterTest: ' + (<any>this).currentTest.title);
+        insightFace.removeDataset("courses");
     });
 
     it("Should be able to echo", function () {
@@ -157,18 +161,7 @@ describe("EchoSpec", function () {
         return true;
     });
 
-    it("Should fulfill 201 when given new proper dataset", function () {
-        this.timeout(5000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
-            Log.test('Value: ' + value.code);
-            expect(value.code).to.deep.equal(204);
-        }).catch(function (err) {
-            Log.test('Error: ' + err.code);
-            expect.fail();
-        })
-    });
-
-    it("Should return 400 when trying to remove empty dataset", function () {
+    it("REMOVEDATASET 404 - remove empty dataset", function () {
         return insightFace.removeDataset("courses").then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             expect.fail();
@@ -178,7 +171,7 @@ describe("EchoSpec", function () {
         })
     });
 
-    it("Should fulfill 201 when given old proper dataset", function () {
+    it("ADDDATASET 201 - old proper dataset", function () {
         this.timeout(5000);
         return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
             return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
@@ -193,7 +186,7 @@ describe("EchoSpec", function () {
         })
     });
 
-    it("Should remove and return 204 when given proper dataset", function () {
+    it("REMOVEDATASET 204 - given proper dataset", function () {
         this.timeout(5000);
         return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
@@ -214,7 +207,7 @@ describe("EchoSpec", function () {
         })
     });
 
-    it("Should fulfill 204 when given new proper dataset", function () {
+    it("ADDDATASET 204 - new proper dataset", function () {
         this.timeout(5000);
         return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
@@ -228,6 +221,17 @@ describe("EchoSpec", function () {
     it("ADDDATASET 400- not zip file", function () {
         this.timeout(5000);
         return insightFace.addDataset("courses", nonZipString).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            expect.fail();
+        }).catch(function (err) {
+            Log.test('Error: ' + err.body.error);
+            expect(err.code).to.deep.equal(400);
+        })
+    });
+
+    it("ADDDATASET 400- no courses in zip file", function () {
+        this.timeout(5000);
+        return insightFace.addDataset("courses", badZipString).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             expect.fail();
         }).catch(function (err) {

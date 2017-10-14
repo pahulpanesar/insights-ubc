@@ -20,6 +20,7 @@ export default class InsightFacade implements IInsightFacade {
 
             try {
                 var files: any;
+                var validCourse: boolean = false;
                 var zip = new JSZIP();
                 var pArr: Array<Promise<any>> = [];
                 let dataObjectArray: Array<any> = [];
@@ -36,14 +37,18 @@ export default class InsightFacade implements IInsightFacade {
                         files = zip.files;
                         Object.keys(files).forEach((filename) => {
                             let file: JSZipObject = files[filename];
-                            if (file.name.indexOf("course") == -1) {
-                                reject({code: 400, body: {"error": "No valid course"}});
-                            }
                             pArr.push(
                                 file.async('string').then((fileData) => {
                                     try {
                                         if (fileData != '') {
                                             let dataOb: any = new Object(JSON.parse((fileData)));
+                                            if (dataOb.result != null) {
+                                                dataOb.result.forEach((x: any) => {
+                                                    if(x["Course"] != null){
+                                                        validCourse = true;
+                                                    }
+                                                })
+                                            }
                                             if (dataOb.result.length > 0) {
                                                 dataObjectArray.push(dataOb.result);
                                             }
@@ -62,6 +67,9 @@ export default class InsightFacade implements IInsightFacade {
                 })
                     .then(() => {
                         Promise.all(pArr).then(() => {
+                            if(!validCourse) {
+                                reject({code: 400, body: {"error": "No valid courses"}});
+                            }
                             dataObjectArray.forEach((dataArray) => {
                                 dataArray.forEach((dataObject: any) => {
                                     if (id === "courses") {
