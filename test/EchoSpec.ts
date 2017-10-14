@@ -199,7 +199,7 @@ describe("EchoSpec", function () {
             expect.fail();
         }).catch(function (err) {
             Log.test('Error: ' + err.code);
-            expect(err.code).to.equal(400);
+            expect(err.code).to.equal(404);
         })
     });
 });
