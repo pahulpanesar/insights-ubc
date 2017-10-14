@@ -1,5 +1,5 @@
 import Course from "../../dataStructs/Course";
-import Tokenizer from "../Tokenizer";
+import Tokenizer from "../../dataStructs/Tokenizer";
 
 export default class _Node{ //underscore is to distinguish from native TS class
     tokenizer : Tokenizer;

@@ -7,7 +7,7 @@ import {expect} from 'chai';
 import Log from "../src/Util";
 import {InsightResponse} from "../src/controller/IInsightFacade";
 import InsightFacade from "../src/controller/InsightFacade";
-import Tokenizer from "../src/controller/Tokenizer";
+import Tokenizer from "../src/dataStructs/Tokenizer";
 let fs = require('fs');
 let JSZip = require('jszip');
 import chai = require('chai');
@@ -32,9 +32,64 @@ describe("EchoSpec", function () {
     let dataString: string = null;
     let nonZipString: string = null;
     let badZipString: string = null;
-    const BAD_ZIP_BATH ='./badcourses.zip';
+    let badJsonString: string = null;
+    const BAD_ZIP_PATH ='./badcourses.zip';
     const DATA_PATH = './courses.zip';
     const NON_ZIP_PATH = './courses';
+    const BAD_JSON_PATH = './badjson.zip';
+    const SIMPLE_QUERY = '{ "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
+    const COMPLEX_QUERY = '{ "WHERE":{ "OR":[ { "AND":[ { "GT":{ "courses_avg":90 } }, { "IS":{ "courses_dept":"adhe" } } ] }, { "EQ":{ "courses_avg":95 } } ] }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_avg" ], "ORDER":"courses_avg" } }';
+    const SIMPLE_QUERY_RESPONSE = {
+        result:
+            [ { courses_dept: 'epse', courses_avg: 97.09 },
+                { courses_dept: 'math', courses_avg: 97.09 },
+                { courses_dept: 'math', courses_avg: 97.09 },
+                { courses_dept: 'epse', courses_avg: 97.09 },
+                { courses_dept: 'math', courses_avg: 97.25 },
+                { courses_dept: 'math', courses_avg: 97.25 },
+                { courses_dept: 'epse', courses_avg: 97.29 },
+                { courses_dept: 'epse', courses_avg: 97.29 },
+                { courses_dept: 'nurs', courses_avg: 97.33 },
+                { courses_dept: 'nurs', courses_avg: 97.33 },
+                { courses_dept: 'epse', courses_avg: 97.41 },
+                { courses_dept: 'epse', courses_avg: 97.41 },
+                { courses_dept: 'cnps', courses_avg: 97.47 },
+                { courses_dept: 'cnps', courses_avg: 97.47 },
+                { courses_dept: 'math', courses_avg: 97.48 },
+                { courses_dept: 'math', courses_avg: 97.48 },
+                { courses_dept: 'educ', courses_avg: 97.5 },
+                { courses_dept: 'nurs', courses_avg: 97.53 },
+                { courses_dept: 'nurs', courses_avg: 97.53 },
+                { courses_dept: 'epse', courses_avg: 97.67 },
+                { courses_dept: 'epse', courses_avg: 97.69 },
+                { courses_dept: 'epse', courses_avg: 97.78 },
+                { courses_dept: 'crwr', courses_avg: 98 },
+                { courses_dept: 'crwr', courses_avg: 98 },
+                { courses_dept: 'epse', courses_avg: 98.08 },
+                { courses_dept: 'nurs', courses_avg: 98.21 },
+                { courses_dept: 'nurs', courses_avg: 98.21 },
+                { courses_dept: 'epse', courses_avg: 98.36 },
+                { courses_dept: 'epse', courses_avg: 98.45 },
+                { courses_dept: 'epse', courses_avg: 98.45 },
+                { courses_dept: 'nurs', courses_avg: 98.5 },
+                { courses_dept: 'nurs', courses_avg: 98.5 },
+                { courses_dept: 'epse', courses_avg: 98.58 },
+                { courses_dept: 'nurs', courses_avg: 98.58 },
+                { courses_dept: 'nurs', courses_avg: 98.58 },
+                { courses_dept: 'epse', courses_avg: 98.58 },
+                { courses_dept: 'epse', courses_avg: 98.7 },
+                { courses_dept: 'nurs', courses_avg: 98.71 },
+                { courses_dept: 'nurs', courses_avg: 98.71 },
+                { courses_dept: 'eece', courses_avg: 98.75 },
+                { courses_dept: 'eece', courses_avg: 98.75 },
+                { courses_dept: 'epse', courses_avg: 98.76 },
+                { courses_dept: 'epse', courses_avg: 98.76 },
+                { courses_dept: 'epse', courses_avg: 98.8 },
+                { courses_dept: 'spph', courses_avg: 98.98 },
+                { courses_dept: 'spph', courses_avg: 98.98 },
+                { courses_dept: 'cnps', courses_avg: 99.19 },
+                { courses_dept: 'math', courses_avg: 99.78 },
+                { courses_dept: 'math', courses_avg: 99.78 } ] };
 
     before(function () {
         Log.test('Before: ' + (<any>this).test.parent.title);
@@ -47,7 +102,8 @@ describe("EchoSpec", function () {
         // insightFace.removeDataset("courses");
         dataString = fs.readFileSync(DATA_PATH,'base64');
         nonZipString = fs.readdirSync(NON_ZIP_PATH,'base64');
-        badZipString = fs.readFileSync(BAD_ZIP_BATH, 'base64');
+        badZipString = fs.readFileSync(BAD_ZIP_PATH, 'base64');
+        badJsonString = fs.readFileSync(BAD_JSON_PATH, 'base64');
     });
 
     after(function () {
@@ -237,6 +293,35 @@ describe("EchoSpec", function () {
         }).catch(function (err) {
             Log.test('Error: ' + err.body.error);
             expect(err.code).to.deep.equal(400);
+        })
+    });
+
+    it("ADDDATASET 400- bad json in zip file", function () {
+        this.timeout(5000);
+        return insightFace.addDataset("courses", badJsonString).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            expect.fail();
+        }).catch(function (err) {
+            Log.test('Error: ' + err.body.error);
+            expect(err.code).to.deep.equal(400);
+        })
+    });
+
+    it("PERFORMQUERY 200 - new proper dataset", function () {
+        this.timeout(15000);
+        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return insightFace.performQuery(SIMPLE_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(SIMPLE_QUERY_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
         })
     });
 });

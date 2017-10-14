@@ -1,5 +1,5 @@
 import _Node from "./Node";
-import Tokenizer from "../Tokenizer";
+import Tokenizer from "../../dataStructs/Tokenizer";
 import Course from "../../dataStructs/Course";
 
 export default class InputStringNode extends _Node{

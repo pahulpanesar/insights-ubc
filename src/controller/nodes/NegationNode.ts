@@ -1,5 +1,5 @@
 
-import Tokenizer from "../Tokenizer";
+import Tokenizer from "../../dataStructs/Tokenizer";
 import FilterNode from "./FilterNode";
 import _Node from "./Node";
 import Course from "../../dataStructs/Course";

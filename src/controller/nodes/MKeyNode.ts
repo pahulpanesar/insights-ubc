@@ -1,6 +1,6 @@
 
 import _Node from "./Node";
-import Tokenizer from "../Tokenizer";
+import Tokenizer from "../../dataStructs/Tokenizer";
 import Course from "../../dataStructs/Course";
 
 export default class MKeyNode extends _Node{

@@ -5,8 +5,8 @@ import {IInsightFacade, InsightResponse} from "./IInsightFacade";
 import Log from "../Util";
 let JSZIP = require('jszip');
 import Course from "../dataStructs/Course";
-import Tokenizer from "./Tokenizer";
-import Query from "./Query";
+import Tokenizer from "../dataStructs/Tokenizer";
+import Query from "../dataStructs/Query";
 let fs = require('fs');
 
 export default class InsightFacade implements IInsightFacade {
@@ -39,23 +39,18 @@ export default class InsightFacade implements IInsightFacade {
                             let file: JSZipObject = files[filename];
                             pArr.push(
                                 file.async('string').then((fileData) => {
-                                    try {
-                                        if (fileData != '') {
-                                            let dataOb: any = new Object(JSON.parse((fileData)));
-                                            if (dataOb.result != null) {
-                                                dataOb.result.forEach((x: any) => {
-                                                    if(x["Course"] != null){
-                                                        validCourse = true;
-                                                    }
-                                                })
-                                            }
-                                            if (dataOb.result.length > 0) {
-                                                dataObjectArray.push(dataOb.result);
-                                            }
+                                    if (fileData != '') {
+                                        let dataOb: any = new Object(JSON.parse((fileData)));
+                                        if (dataOb.result != null) {
+                                            dataOb.result.forEach((x: any) => {
+                                                if (x["Course"] != null) {
+                                                    validCourse = true;
+                                                }
+                                            })
                                         }
-                                    }
-                                    catch (err) {
-                                        reject({code: 400, body: {"error": err.message}});
+                                        if (dataOb.result.length > 0) {
+                                            dataObjectArray.push(dataOb.result);
+                                        }
                                     }
                                 }).catch((err) => {
                                     reject({code: 400, body: {"error": err.message}});
@@ -79,16 +74,9 @@ export default class InsightFacade implements IInsightFacade {
                             });
                             this.saveToDisk(id).then(() => {
                                 fulfill({code: 204, body: {}});
-                            }).catch((err) => {
-                                reject({code: 400, body: {"error": err.message}});
                             })
-                        }).catch((err) => {
-                            reject({code: 400, body: {"error": err.message}});
-                        });
+                        })
                     })
-                    .catch((err: any) => {
-                        reject({code: 400, body: {"error": err.message}});
-                    });
             }
             catch (err) {
                 reject({code: 400, body: {"error": err.message}});
@@ -101,14 +89,9 @@ export default class InsightFacade implements IInsightFacade {
             if (!fs.existsSync('./disk')){
                 fs.mkdirSync('./disk');
             }
-            try {
                 let filename: string = './disk/' + id + '.json'
                 fs.writeFileSync(filename, JSON.stringify(this.dataSets[id]));
                 fulfill();
-            }
-            catch (err) {
-                reject(err);
-            }
         })
     }
 
@@ -152,30 +135,25 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     performQuery(query: any): Promise <InsightResponse> {
-        return new Promise(function(fulfill, reject) {
-            if(this.dataSets.length < 1) {
-                reject({code: 424, error: "No dataset"});
+        return new Promise((fulfill, reject) => {
+            if(Object.keys(this.dataSets).length < 1) {
+                reject({code: 424, body: {"error": "No dataset"}});
             }
             try{
-                let filteredArray:Course[] = [];
+                let filteredArray: Array<Course> = [];
                 let t: Tokenizer = new Tokenizer();
                 t.addKeys(query);
-                this.dataSets.forEach((dataSet: Array<any>) => {
-                    for(var i = 0; i< dataSet.length; i++){
+                this.dataSets["courses"].forEach((dataSet: Array<any>) => {
+                    for (var i = 0; i < dataSet.length; i++) {
                         let c: Course = dataSet[i];
-                        let q: Query = new Query(t,c);
+                        let q: Query = new Query(t, c);
                         q.parse();
-                        if(q.evaluate()){ //If AST (Query Object) returns true add it to the filtered Array
+                        if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
                             filteredArray.push(c)
                         }
                     }
-                }).then(() => {
-                        fulfill({code: 200, body: {}});
-                    }
-                ).catch((err: any) => {
-                    console.log(err);
-                    reject({code: 400, body: {"error": err}});
-                })
+                });
+                fulfill({code: 200, body: {"res": filteredArray}});
             }
             catch (err){
                 reject({code: 400, body: {"error": err}});

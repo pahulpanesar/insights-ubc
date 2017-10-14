@@ -1,5 +1,5 @@
 import _Node from "./Node";
-import Tokenizer from "../Tokenizer";
+import Tokenizer from "../../dataStructs/Tokenizer";
 import InputStringNode from "./InputStringNode";
 import SKeyNode from "./SKeyNode";
 import Course from "../../dataStructs/Course";

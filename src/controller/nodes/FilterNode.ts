@@ -1,5 +1,5 @@
 import _Node from "./Node";
-import Tokenizer from "../Tokenizer";
+import Tokenizer from "../../dataStructs/Tokenizer";
 import {LogicNode} from "./LogicNode";
 import MComparisonNode from "./MComparisonNode";
 import SComparisonNode from "./SComparisonNode";
