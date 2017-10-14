@@ -316,7 +316,7 @@ describe("EchoSpec", function () {
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(SIMPLE_QUERY_RESPONSE);
             }).catch(function (err) {
-                Log.test('Error: ' + err);
+                Log.test('Error: ' + err.body.error);
                 expect.fail();
             })
         }).catch(function (err) {

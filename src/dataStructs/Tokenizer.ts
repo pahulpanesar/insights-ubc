@@ -7,19 +7,19 @@ export default class Tokenizer{
     constructor() {
     }
 
-    addKeys(json: any){
-        Object.keys(JSON.parse(json)).forEach((elem) => {
+    addKeys(parsed: any){
+        Object.keys(parsed).forEach((elem) => {
             //console.log(Object.keys(elem));
-            this.tokens.push(elem);
+            this.tokens.push(parsed[elem]);
             var temp = elem;
             //console.log(typeof json[elem]);
-            if(Array.isArray(json[elem])){
-                json[elem].forEach((e:any) =>{
+            if(Array.isArray(parsed[elem])){
+                parsed[elem].forEach((e:any) =>{
                     this.tokens.push(e);
                 });
             }
-            else if(typeof json[elem] === "object"){
-                this.addKeys(json[temp]);
+            else if(typeof parsed[elem] === "object"){
+                this.addKeys(parsed[temp]);
             }
         });
         return this.tokens;
