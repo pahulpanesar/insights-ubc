@@ -143,7 +143,8 @@ export default class InsightFacade implements IInsightFacade {
                 let filteredArray: Array<Course> = [];
                 let t: Tokenizer = new Tokenizer();
                 t.addKeys(query);
-                this.dataSets["courses"].forEach((dataSet: Array<any>) => {
+                Object.keys(this.dataSets).forEach((setName) => {
+                    let dataSet: Array<any> = this.dataSets[setName];
                     for (var i = 0; i < dataSet.length; i++) {
                         let c: Course = dataSet[i];
                         let q: Query = new Query(t, c);

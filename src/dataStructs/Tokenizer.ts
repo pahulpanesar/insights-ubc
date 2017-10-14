@@ -8,7 +8,7 @@ export default class Tokenizer{
     }
 
     addKeys(json: any){
-        Object.keys(json).forEach((elem) => {
+        Object.keys(JSON.parse(json)).forEach((elem) => {
             //console.log(Object.keys(elem));
             this.tokens.push(elem);
             var temp = elem;
