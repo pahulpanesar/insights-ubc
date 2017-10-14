@@ -17,72 +17,73 @@ export default class InsightFacade implements IInsightFacade {
     }
     addDataset(id: string, content: string): Promise<InsightResponse> {
         return new Promise((fulfill, reject) => {
-            if (this.dataSets[id] != undefined && this.dataSets[id] != null) {
-                fulfill({code: 201, body: {}});
-            }
-            else if (fs.existsSync('./disk/' + id + '.json')) {
-                this.dataSets[id] = JSON.parse(fs.readFileSync("./disk/" + id + ".json", "utf8"));
-                fulfill({code: 201, body: {}})
-            }
-            else {
-                try {
-                    var files: any;
-                    var zip = new JSZIP();
-                    var pArr: Array<Promise<any>> = [];
-                    this.dataSets[id] = new Array<Course>();
-                    let dataObjectArray: Array<any> = [];
-                    zip.loadAsync(content, {base64: true}).then((zip: any) => {
-                        files = zip.files;
-                        Object.keys(files).forEach((filename) => {
-                            let file: JSZipObject = files[filename];
-                            if (file.name.indexOf("course") == -1) {
-                                reject({code: 400, body: {"error": "No valid course"}});
-                            }
-                            pArr.push(
-                                file.async('string').then((fileData) => {
-                                    try {
-                                        if (fileData != '') {
-                                            let dataOb: any = new Object(JSON.parse((fileData)));
-                                            if (dataOb.result.length > 0) {
-                                                dataObjectArray.push(dataOb.result);
-                                            }
+
+            try {
+                var files: any;
+                var zip = new JSZIP();
+                var pArr: Array<Promise<any>> = [];
+                this.dataSets[id] = new Array<Course>();
+                let dataObjectArray: Array<any> = [];
+                zip.loadAsync(content).then((zip: any) => {
+                    if (this.dataSets[id] != undefined && this.dataSets[id] != null) {
+                        fulfill({code: 201, body: {}});
+                    }
+                    else if (fs.existsSync('./disk/' + id + '.json')) {
+                        this.dataSets[id] = JSON.parse(fs.readFileSync("./disk/" + id + ".json", "utf8"));
+                        fulfill({code: 201, body: {}})
+                    }
+                    else {
+                    files = zip.files;
+                    Object.keys(files).forEach((filename) => {
+                        let file: JSZipObject = files[filename];
+                        if (file.name.indexOf("course") == -1) {
+                            reject({code: 400, body: {"error": "No valid course"}});
+                        }
+                        pArr.push(
+                            file.async('string').then((fileData) => {
+                                try {
+                                    if (fileData != '') {
+                                        let dataOb: any = new Object(JSON.parse((fileData)));
+                                        if (dataOb.result.length > 0) {
+                                            dataObjectArray.push(dataOb.result);
                                         }
                                     }
-                                    catch (err) {
-                                        reject({code: 400, body: {"error": err}});
-                                    }
-                                }).catch((err) => {
-                                    reject({code: 400, body: {"error": err}});
-                                }));
-                        });
-                    }).catch((err:any) => {
-                        reject({code: 400, body: {"error": err}});
-                    })
-                        .then(() => {
-                            Promise.all(pArr).then(() => {
-                                dataObjectArray.forEach((dataArray) => {
-                                    dataArray.forEach((dataObject: any) => {
-                                        if (id === "courses") {
-                                            this.addCourse(dataObject, id);
-                                        }
-                                    })
-                                });
-                                this.saveToDisk(id).then(() => {
-                                    fulfill({code: 204, body: {}});
-                                }).catch((err) => {
-                                    throw err;
-                                })
+                                }
+                                catch (err) {
+                                    reject({code: 400, body: {"error": err.message}});
+                                }
                             }).catch((err) => {
                                 reject({code: 400, body: {"error": err.message}});
+                            }));
+                    });
+                    }
+                }).catch((err:any) => {
+                    reject({code: 400, body: {"error": err.message}});
+                })
+                    .then(() => {
+                        Promise.all(pArr).then(() => {
+                            dataObjectArray.forEach((dataArray) => {
+                                dataArray.forEach((dataObject: any) => {
+                                    if (id === "courses") {
+                                        this.addCourse(dataObject, id);
+                                    }
+                                })
                             });
-                        })
-                        .catch((err: any) => {
+                            this.saveToDisk(id).then(() => {
+                                fulfill({code: 204, body: {}});
+                            }).catch((err) => {
+                                reject({code: 400, body: {"error": err.message}});
+                            })
+                        }).catch((err) => {
                             reject({code: 400, body: {"error": err.message}});
                         });
-                }
-                catch (err) {
-                    reject({code: 400, body: {"error": err.message}});
-                }
+                    })
+                    .catch((err: any) => {
+                        reject({code: 400, body: {"error": err.message}});
+                    });
+            }
+            catch (err) {
+                reject({code: 400, body: {"error": err.message}});
             }
         });
     }
