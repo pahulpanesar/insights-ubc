@@ -55,6 +55,8 @@ export default class InsightFacade implements IInsightFacade {
                                     reject({code: 400, body: {"error": err}});
                                 }));
                         });
+                    }).catch((err:any) => {
+                        throw err;
                     })
                         .then(() => {
                             Promise.all(pArr).then(() => {
@@ -71,15 +73,15 @@ export default class InsightFacade implements IInsightFacade {
                                     throw err;
                                 })
                             }).catch((err) => {
-                                reject({code: 400, body: {"error": err}});
+                                reject({code: 400, body: {"error": err.message}});
                             });
                         })
                         .catch((err: any) => {
-                            reject({code: 400, body: {"error": err}});
+                            reject({code: 400, body: {"error": err.message}});
                         });
                 }
                 catch (err) {
-                    reject({code: 400, body: {"error": err}});
+                    reject({code: 400, body: {"error": err.message}});
                 }
             }
         });
@@ -90,15 +92,14 @@ export default class InsightFacade implements IInsightFacade {
             if (!fs.existsSync('./disk')){
                 fs.mkdirSync('./disk');
             }
-            fs.writeFile('./disk/' + id + '.json', JSON.stringify(this.dataSets[id]), (err:any) => {
-                    if(err) {
-                        reject();
-                    }
-                    else {
-                        fulfill();
-                    }
-                }
-            )
+            try {
+                let filename: string = './disk/' + id + '.json'
+                fs.writeFileSync(filename, JSON.stringify(this.dataSets[id]));
+                fulfill();
+            }
+            catch (err) {
+                reject(err);
+            }
         })
     }
 

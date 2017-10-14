@@ -24,26 +24,27 @@ describe("EchoSpec", function () {
         expect(response.code).to.be.a('number');
     }
 
-    before(function () {
-        Log.test('Before: ' + (<any>this).test.parent.title);
-    });
     var testJSONComplex = '{ "WHERE":{ "OR":[ { "AND":[ { "GT":{ "courses_avg":90 } }, { "IS":{ "courses_dept":"adhe" } } ] }, { "EQ":{ "courses_avg":95 } } ] }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_avg" ], "ORDER":"courses_avg" } }';
     var testJSONSimple = '{ "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
     var t = new Tokenizer();
     var insightFace: InsightFacade = null;
     var zip = null;
     let dataString: string = null;
+    let nonZipString: string = null;
     const DATA_PATH = './courses.zip';
+    const NON_ZIP_PATH = './courses';
+
+    before(function () {
+        Log.test('Before: ' + (<any>this).test.parent.title);
+    });
+
     beforeEach(function () {
         Log.test('BeforeTest: ' + (<any>this).currentTest.title);
         insightFace = new InsightFacade();
         zip = new JSZip();
-        fs.readFile(DATA_PATH,  function(err: any, data: any) {
-            if(err) {
-                console.log(err);
-            }
-            dataString = new Buffer(data).toString('base64');
-        });
+        insightFace.removeDataset("courses");
+        dataString = fs.readFileSync(DATA_PATH,'base64');
+        nonZipString = fs.readdirSync(NON_ZIP_PATH,'base64');
     });
 
     after(function () {
@@ -129,10 +130,20 @@ describe("EchoSpec", function () {
 
     it("Should reject when given no dataset", function () {
         return insightFace.addDataset("courses", "").then(function (value: InsightResponse) {
-            Log.test('Value: ' + value);
+            Log.test('Value: ' + value.code);
             expect.fail();
         }).catch(function (err) {
             Log.test('Error: ' + err);
+            expect(err.code).to.equal(400);
+        })
+    });
+
+    it("Should reject when adding an invalid zip file", function () {
+        return insightFace.addDataset("courses", "fsdfagiuyqweb").then(function (value: InsightResponse) {
+            Log.test('Value: ' + value);
+            expect.fail();
+        }).catch(function (err) {
+            Log.test('Error: ' + err.body);
             expect(err.code).to.equal(400);
         })
     });
@@ -149,18 +160,28 @@ describe("EchoSpec", function () {
     it("Should fulfill 201 when given new proper dataset", function () {
         this.timeout(5000);
         return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
-                Log.test('Value: ' + value.code);
-                expect(value.code).to.deep.equal(204);
-            }).catch(function (err) {
-                Log.test('Error: ' + err);
-                expect.fail();
-            })
-        });
+            Log.test('Value: ' + value.code);
+            expect(value.code).to.deep.equal(204);
+        }).catch(function (err) {
+            Log.test('Error: ' + err.code);
+            expect.fail();
+        })
+    });
 
-    it("Should fulfill 204 when given old proper dataset", function () {
+    it("Should return 400 when trying to remove empty dataset", function () {
+        return insightFace.removeDataset("courses").then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            expect.fail();
+        }).catch(function (err) {
+            Log.test('Error: ' + err.code);
+            expect(err.code).to.equal(404);
+        })
+    });
+
+    it("Should fulfill 201 when given old proper dataset", function () {
         this.timeout(5000);
         return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
-            insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
                 Log.test('Value: ' + value.code);
                 expect(value.code).to.deep.equal(201);
             }).catch(function (err) {
@@ -193,13 +214,25 @@ describe("EchoSpec", function () {
         })
     });
 
-    it("Should return 400 when given empty dataset", function () {
-        return insightFace.removeDataset("courses").then(function (value: InsightResponse) {
+    it("Should fulfill 204 when given new proper dataset", function () {
+        this.timeout(5000);
+        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            expect(value.code).to.deep.equal(204);
+        }).catch(function (err) {
+            Log.test('Error: ' + err.code);
+            expect.fail();
+        })
+    });
+
+    it("ADDDATASET 400- not zip file", function () {
+        this.timeout(5000);
+        return insightFace.addDataset("courses", nonZipString).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             expect.fail();
         }).catch(function (err) {
-            Log.test('Error: ' + err.code);
-            expect(err.code).to.equal(404);
+            Log.test('Error: ' + err.body.error);
+            expect(err.code).to.deep.equal(400);
         })
     });
 });
