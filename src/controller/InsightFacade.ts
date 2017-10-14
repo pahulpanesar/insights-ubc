@@ -18,11 +18,11 @@ export default class InsightFacade implements IInsightFacade {
     addDataset(id: string, content: string): Promise<InsightResponse> {
         return new Promise((fulfill, reject) => {
             if (this.dataSets[id] != undefined && this.dataSets[id] != null) {
-                fulfill({code: 204, body: {}});
+                fulfill({code: 201, body: {}});
             }
             else if (fs.existsSync('./disk/' + id + '.json')) {
                 this.dataSets[id] = JSON.parse(fs.readFileSync("./disk/" + id + ".json", "utf8"));
-                fulfill({code: 204, body: {}})
+                fulfill({code: 201, body: {}})
             }
             else {
                 try {
@@ -66,7 +66,7 @@ export default class InsightFacade implements IInsightFacade {
                                     })
                                 });
                                 this.saveToDisk(id).then(() => {
-                                    fulfill({code: 201, body: {}});
+                                    fulfill({code: 204, body: {}});
                                 }).catch((err) => {
                                     throw err;
                                 })

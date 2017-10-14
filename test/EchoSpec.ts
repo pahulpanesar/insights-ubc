@@ -150,7 +150,7 @@ describe("EchoSpec", function () {
         this.timeout(5000);
         return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
                 Log.test('Value: ' + value.code);
-                expect(value.code).to.deep.equal(201);
+                expect(value.code).to.deep.equal(204);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();
@@ -162,7 +162,7 @@ describe("EchoSpec", function () {
         return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
             insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
                 Log.test('Value: ' + value.code);
-                expect(value.code).to.deep.equal(204);
+                expect(value.code).to.deep.equal(201);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail()})
