@@ -146,6 +146,11 @@ describe("EchoSpec", function () {
         return true;
     });
 
+    it("Simple Query", function() {
+        var i:InsightFacade = new InsightFacade();
+        console.log(i.performQuery(testJSONSimple));
+        return true;
+    });
     it("Should fulfill 201 when given new proper dataset", function () {
         this.timeout(5000);
         return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {

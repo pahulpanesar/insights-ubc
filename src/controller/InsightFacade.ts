@@ -126,6 +126,9 @@ export default class InsightFacade implements IInsightFacade {
                         if(q.evaluate()){ //If AST (Query Object) returns true add it to the filtered Array
                             filteredArray.push(c)
                         }
+                        else{
+                            console.log("Rejected");
+                        }
                     }
                 }).then(() => {
                         fulfill({code: 200, body: {}});

@@ -4,6 +4,9 @@ export default class Tokenizer{
     tokens: any[] = [];
     index:number = 0;
 
+    getTokens(){
+
+    }
     addKeys(json: any){
         Object.keys(json).forEach((elem) => {
             console.log(elem);
@@ -13,12 +16,22 @@ export default class Tokenizer{
             //console.log(typeof json[elem]);
             if(Array.isArray(json[elem])){
                 json[elem].forEach((e:any) =>{
-                    this.tokens.push(e);
-                    console.log(e);
+                    if(typeof e === "object"){
+                        this.addKeys(e);
+                    }
+                    else {
+                        this.tokens.push(e);
+                        console.log(e);
+                    }
+
                 });
             }
             else if(typeof json[elem] === "object"){
                 this.addKeys(json[temp]);
+            }
+            else{
+                this.tokens.push(json[elem]);
+                console.log(json[elem]);
             }
         });
         return this.tokens;

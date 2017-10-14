@@ -14,6 +14,7 @@ export default class Query extends _Node {
 
 
     parse(){
+        this.getAndCheckToken("WHERE");
         this.filter = new FilterNode(this.tokenizer,this.course);
         this.filter.parse();
 
