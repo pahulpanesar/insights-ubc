@@ -98,13 +98,13 @@ export default class InsightFacade implements IInsightFacade {
     // }
 
     removeDataset(id: string): Promise<InsightResponse> {
-        return new Promise(function(fulfill, reject) {
-            try {
+        return new Promise((fulfill, reject) => {
+            if(this.dataSets[id]) {
                 this.dataSets[id] = null;
                 fulfill({code:204, body: {}});
             }
-            catch (err) {
-                reject({code: 400, error: err});
+            else {
+                reject({code: 400, error: "No dataset to remove"});
             }
         })
     }

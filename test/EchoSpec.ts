@@ -159,8 +159,8 @@ describe("EchoSpec", function () {
 
     it("Should fulfill 204 when given old proper dataset", function () {
         this.timeout(5000);
-        insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
-            return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
                 Log.test('Value: ' + value.code);
                 expect(value.code).to.deep.equal(204);
             }).catch(function (err) {
@@ -173,11 +173,18 @@ describe("EchoSpec", function () {
     });
 
     it("Should remove and return 204 when given proper dataset", function () {
-        insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        this.timeout(5000);
+        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+        }).catch((err) => {
+            Log.test('Errorboo: ' + err);
+            expect.fail();
+        }).then(() => {
             return insightFace.removeDataset("courses").then(function (value: InsightResponse) {
                 Log.test('Value: ' + value.code);
                 expect(value.code).to.deep.equal(204);
             }).catch(function (err) {
+                Log.test('ErrorOOOO: ' + err.code);
                 expect.fail();
             })
         }).catch(function (err) {
