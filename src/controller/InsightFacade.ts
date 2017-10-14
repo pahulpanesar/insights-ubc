@@ -22,40 +22,40 @@ export default class InsightFacade implements IInsightFacade {
                 var files: any;
                 var zip = new JSZIP();
                 var pArr: Array<Promise<any>> = [];
-                this.dataSets[id] = new Array<Course>();
                 let dataObjectArray: Array<any> = [];
-                zip.loadAsync(content).then((zip: any) => {
+                zip.loadAsync(content, {base64: true}).then((zip: any) => {
                     if (this.dataSets[id] != undefined && this.dataSets[id] != null) {
                         fulfill({code: 201, body: {}});
                     }
                     else if (fs.existsSync('./disk/' + id + '.json')) {
                         this.dataSets[id] = JSON.parse(fs.readFileSync("./disk/" + id + ".json", "utf8"));
-                        fulfill({code: 201, body: {}})
+                        fulfill({code: 201, body: {}});
                     }
                     else {
-                    files = zip.files;
-                    Object.keys(files).forEach((filename) => {
-                        let file: JSZipObject = files[filename];
-                        if (file.name.indexOf("course") == -1) {
-                            reject({code: 400, body: {"error": "No valid course"}});
-                        }
-                        pArr.push(
-                            file.async('string').then((fileData) => {
-                                try {
-                                    if (fileData != '') {
-                                        let dataOb: any = new Object(JSON.parse((fileData)));
-                                        if (dataOb.result.length > 0) {
-                                            dataObjectArray.push(dataOb.result);
+                        this.dataSets[id] = new Array<Course>();
+                        files = zip.files;
+                        Object.keys(files).forEach((filename) => {
+                            let file: JSZipObject = files[filename];
+                            if (file.name.indexOf("course") == -1) {
+                                reject({code: 400, body: {"error": "No valid course"}});
+                            }
+                            pArr.push(
+                                file.async('string').then((fileData) => {
+                                    try {
+                                        if (fileData != '') {
+                                            let dataOb: any = new Object(JSON.parse((fileData)));
+                                            if (dataOb.result.length > 0) {
+                                                dataObjectArray.push(dataOb.result);
+                                            }
                                         }
                                     }
-                                }
-                                catch (err) {
+                                    catch (err) {
+                                        reject({code: 400, body: {"error": err.message}});
+                                    }
+                                }).catch((err) => {
                                     reject({code: 400, body: {"error": err.message}});
-                                }
-                            }).catch((err) => {
-                                reject({code: 400, body: {"error": err.message}});
-                            }));
-                    });
+                                }));
+                        });
                     }
                 }).catch((err:any) => {
                     reject({code: 400, body: {"error": err.message}});

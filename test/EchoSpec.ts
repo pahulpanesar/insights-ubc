@@ -220,7 +220,7 @@ describe("EchoSpec", function () {
             Log.test('Value: ' + value.code);
             expect(value.code).to.deep.equal(204);
         }).catch(function (err) {
-            Log.test('Error: ' + err.code);
+            Log.test('Error: ' + err.body.error);
             expect.fail();
         })
     });
