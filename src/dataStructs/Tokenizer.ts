@@ -10,7 +10,9 @@ export default class Tokenizer{
     addKeys(parsed: any){
         Object.keys(parsed).forEach((elem) => {
             //console.log(Object.keys(elem));
-            this.tokens.push(elem);
+            if(elem !== "OPTIONS" && elem !== "WHERE"){
+                this.tokens.push(elem);
+            }
             var temp = elem;
             //console.log(typeof json[elem]);
             if(Array.isArray(parsed[elem])){
@@ -25,7 +27,9 @@ export default class Tokenizer{
                 });
             }
             else if(typeof parsed[elem] === "object"){
-                this.addKeys(parsed[temp]);
+                if(elem !== "OPTIONS"){
+                    this.addKeys(parsed[temp]);
+                }
             }
             else{
                 this.tokens.push(parsed[elem]);
