@@ -7,6 +7,7 @@ let JSZIP = require('jszip');
 import Course from "../dataStructs/Course";
 import Tokenizer from "./Tokenizer";
 import Query from "./Query";
+let fs = require('fs');
 
 export default class InsightFacade implements IInsightFacade {
 
@@ -30,6 +31,9 @@ export default class InsightFacade implements IInsightFacade {
                         files = zip.files;
                         Object.keys(files).forEach((filename) => {
                             let file: JSZipObject = files[filename];
+                            if(file.name.indexOf("course") == -1) {
+                                throw Error;
+                            }
                             pArr.push(
                                 file.async('string').then((fileData) => {
                                     try {
@@ -41,10 +45,10 @@ export default class InsightFacade implements IInsightFacade {
                                         }
                                     }
                                     catch (err) {
-                                        reject({code: 400, error: err});
+                                        reject({code: 400, body: {"error": err}});
                                     }
                                 }).catch((err) => {
-                                    reject({code: 400, error: err});
+                                    reject({code: 400, body: {"error": err}});
                                 }));
                         });
                     })
@@ -57,20 +61,41 @@ export default class InsightFacade implements IInsightFacade {
                                         }
                                     })
                                 });
-                                fulfill({code: 201, body: {}});
+                                this.saveToDisk(id).then(() => {
+                                    fulfill({code: 201, body: {}});
+                                }).catch((err) => {
+                                    throw err;
+                                })
                             }).catch((err) => {
-                                reject({code: 400, error: err});
-                            })
+                                reject({code: 400, body: {"error": err}});
+                            });
                         })
                         .catch((err: any) => {
-                            reject({code: 400, error: err});
-                        })
+                            reject({code: 400, body: {"error": err}});
+                        });
                 }
             }
             catch (err) {
-                reject({code: 400, error: err});
+                reject({code: 400, body: {"error": err}});
             }
         });
+    }
+
+    saveToDisk(id: string): Promise<any> {
+        return new Promise((fulfill, reject) => {
+            if (!fs.existsSync('./disk')){
+                fs.mkdirSync('./disk');
+            }
+            fs.writeFile('./disk/' + id + '.json', JSON.stringify(this.dataSets[id]), (err:any) => {
+                    if(err) {
+                        reject();
+                    }
+                    else {
+                        fulfill();
+                    }
+                }
+            )
+        })
     }
 
     addCourse(dataObject: any, id: string): void {
@@ -132,11 +157,11 @@ export default class InsightFacade implements IInsightFacade {
                     }
                 ).catch((err: any) => {
                     console.log(err);
-                    reject({code: 400, error: err});
+                    reject({code: 400, body: {"error": err}});
                 })
             }
             catch (err){
-                reject({code: 400, error: err});
+                reject({code: 400, body: {"error": err}});
             }
         });
     }
