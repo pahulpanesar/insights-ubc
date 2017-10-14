@@ -17,11 +17,15 @@ export default class InsightFacade implements IInsightFacade {
     }
     addDataset(id: string, content: string): Promise<InsightResponse> {
         return new Promise((fulfill, reject) => {
-            try {
-                if (this.dataSets[id] != undefined) {
-                    fulfill({code: 204, body: {}})
-                }
-                else {
+            if (this.dataSets[id] != undefined && this.dataSets[id] != null) {
+                fulfill({code: 204, body: {}});
+            }
+            else if (fs.existsSync('./disk/' + id + '.json')) {
+                this.dataSets[id] = JSON.parse(fs.readFileSync("./disk/" + id + ".json", "utf8"));
+                fulfill({code: 204, body: {}})
+            }
+            else {
+                try {
                     var files: any;
                     var zip = new JSZIP();
                     var pArr: Array<Promise<any>> = [];
@@ -31,7 +35,7 @@ export default class InsightFacade implements IInsightFacade {
                         files = zip.files;
                         Object.keys(files).forEach((filename) => {
                             let file: JSZipObject = files[filename];
-                            if(file.name.indexOf("course") == -1) {
+                            if (file.name.indexOf("course") == -1) {
                                 throw Error;
                             }
                             pArr.push(
@@ -74,9 +78,9 @@ export default class InsightFacade implements IInsightFacade {
                             reject({code: 400, body: {"error": err}});
                         });
                 }
-            }
-            catch (err) {
-                reject({code: 400, body: {"error": err}});
+                catch (err) {
+                    reject({code: 400, body: {"error": err}});
+                }
             }
         });
     }
