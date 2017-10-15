@@ -142,7 +142,8 @@ export default class InsightFacade implements IInsightFacade {
             }
             try{
                 var filteredArray: Array<Course> = [];
-                var t: Tokenizer = new Tokenizer();
+                let resArray: Array<any> = [];
+                    var t: Tokenizer = new Tokenizer();
                 t.addKeys(parsedQuery);
                 Object.keys(this.dataSets).forEach((setName) => {
                     let dataSet: Array<any> = this.dataSets[setName];
@@ -155,8 +156,18 @@ export default class InsightFacade implements IInsightFacade {
                             filteredArray.push(c)
                         }
                     }
+
+                    });
+                filteredArray.sort(function(a, b) {
+                    return a.courses_avg - b.courses_avg;
                 });
-                fulfill({code: 200, body: {"res": filteredArray}});
+                resArray = filteredArray.map((course) => {
+                    let contain: any = {};
+                    contain["courses_dept"] = course["courses_dept"];
+                    contain["courses_avg"] = course["courses_avg"];
+                    return contain;
+                });
+                fulfill({code: 200, body: {"result": resArray}});
             }
             catch (err){
                 reject({code: 400, body: {"error": err}});

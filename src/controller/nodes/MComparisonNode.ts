@@ -16,12 +16,12 @@ export default class MComparisonNode extends _Node{
     parse(){
         var s = this.getAndCheckToken("GT|LT|EQ", false);
         s == null ? console.log("parser got null") : this.comparator = s;
-        console.log(s);
+        //console.log(s);
         this.m_key.parse();
         this.number.parse();
     }
 
-    evalaute(){
+    evaluate(){
         var key = this.m_key.evaluate();
         var num = this.number.evaluate();
         if(this.comparator == "GT"){
@@ -34,7 +34,7 @@ export default class MComparisonNode extends _Node{
             return key === num;
         }
         else{
-            console.log("evaluate got an unexpected comparator");
+            //console.log("evaluate got an unexpected comparator");
             return false;
         }
 

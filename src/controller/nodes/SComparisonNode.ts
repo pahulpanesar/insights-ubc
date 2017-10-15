@@ -14,13 +14,13 @@ export default class SComparisonNode extends _Node{
     }
 
     parse(){
-        console.log(this.getAndCheckToken("IS")); //IS:{' s_key ':' [*]? inputstring [*]? '}'
+        console.log(this.getAndCheckToken("IS", false)); //IS:{' s_key ':' [*]? inputstring [*]? '}'
         this.s_key.parse(); //parse s_key first
         this.inputString.parse(); //parse input_string second
 
     }
 
-    evalaute(){
+    evaluate(){
         return (this.inputString.evaluate() === this.s_key.evaluate());
     }
 

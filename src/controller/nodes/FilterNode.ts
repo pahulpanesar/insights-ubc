@@ -38,7 +38,7 @@ export default class FilterNode extends _Node{
                 break;
                 //create negation node
             default:
-                console.log("parser got unexpected value");
+                //console.log("parser got unexpected value");
                 break;
                 //exit?
         }
@@ -47,6 +47,6 @@ export default class FilterNode extends _Node{
     }
 
     evaluate(){
-        return this.filter.evalaute();
+        return this.filter.evaluate();
     }
 }

@@ -14,7 +14,7 @@ export default class NumNode extends _Node{
     }
 
     evaluate(){
-        console.log("returning... " + this.number);
+        //console.log("returning... " + this.number);
         return this.number
     }
 }

@@ -22,7 +22,7 @@ export default class Tokenizer{
                     }
                     else {
                         this.tokens.push(e);
-                        console.log(e);
+                        //console.log(e);
                     }
                 });
             }
@@ -43,8 +43,9 @@ export default class Tokenizer{
        if(index) this.index++;
        let temp:string = this.tokens[this.index];
        return temp;
-
     }
+
+
     checkNext(): boolean{
 
         return this.index < this.tokens.length;

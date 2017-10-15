@@ -11,7 +11,7 @@ export default class NegationNode extends _Node{
     }
 
     parse(){
-        var s = this.getAndCheckToken("NOT");
+        var s = this.getAndCheckToken("NOT", false);
         console.log(s);
         this.filter.parse();
 

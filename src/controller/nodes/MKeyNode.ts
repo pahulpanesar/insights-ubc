@@ -16,7 +16,7 @@ export default class MKeyNode extends _Node{
 
     evaluate(){
         var temp:number = this.course[this.m_key];
-        console.log("returning... " + temp);
+        //console.log("returning... " + temp);
         return temp;
     }
 }
