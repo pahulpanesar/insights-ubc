@@ -119,15 +119,19 @@ export default class InsightFacade implements IInsightFacade {
                 let filteredArray:Course[] = [];
                 let t: Tokenizer = new Tokenizer();
                 var option: any = {};
+                var flag:boolean = false;
                 t.addKeys(query);
                 this.dataSets.forEach((dataSet: Array<any>) => {
-                    for(var i = 0; i< dataSet.length; i++){
+                    for(var i = 0; i< dataSet.length; i++) {
                         let c: Course = dataSet[i];
-                        let q: Query = new Query(t,c);
-                        let o: OptionNode = new OptionNode(t,c);
+                        let q: Query = new Query(t, c);
+                        let o: OptionNode = new OptionNode(t, c);
                         q.parse(); //Tokenizes filters, stops before OPTIONS
                         o.parse(); //starts tokenizing at OPTIONS
-                        option = o.evaluate();
+                        if (!flag) {
+                            option = o.evaluate();
+                            flag = true;
+                        }
                         if(q.evaluate()){ //If AST (Query Object) returns true add it to the filtered Array
                             filteredArray.push(c)
                         }
