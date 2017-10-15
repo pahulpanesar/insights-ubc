@@ -4,12 +4,15 @@ export default class Tokenizer{
     tokens: any[] = [];
     index:number = 0;
 
-    getTokens(){
-
+    printTokens(){
+        console.log("======================");
+        for(var i =0; i<this.tokens.length;i++){
+            console.log(this.tokens[i]);
+        }
     }
     addKeys(json: any){
         Object.keys(json).forEach((elem) => {
-            console.log(elem);
+           // console.log(elem);
             //console.log(Object.keys(elem));
             this.tokens.push(elem);
             var temp = elem;
@@ -21,7 +24,7 @@ export default class Tokenizer{
                     }
                     else {
                         this.tokens.push(e);
-                        console.log(e);
+                        //console.log(e);
                     }
 
                 });
@@ -31,7 +34,7 @@ export default class Tokenizer{
             }
             else{
                 this.tokens.push(json[elem]);
-                console.log(json[elem]);
+                //console.log(json[elem]);
             }
         });
         return this.tokens;
@@ -39,14 +42,25 @@ export default class Tokenizer{
 
     getNext(): string{
 
-       let temp:string = this.tokens[this.index];
-       this.index++;
-       return temp;
+        if(this.index < this.tokens.length) {
+            let temp: string = this.tokens[this.index];
+            this.index++;
+            return temp;
+        }
+        else{
+            return "NO_MORE_TOKENS";
+        }
 
     }
-    checkNext(): boolean{
+    checkNext(): string{
 
-        return this.index < this.tokens.length;
+        if(this.index<this.tokens.length) {
+            let temp: string = this.tokens[this.index];
+            return temp;
+        }
+        else{
+            return "NO_MORE_TOKENS"
+        }
 
     }
 }

@@ -18,10 +18,11 @@ export default class Query extends _Node {
         this.filter = new FilterNode(this.tokenizer,this.course);
         this.filter.parse();
 
+
     }
 
     evaluate(){
-        this.filter.evaluate();
+        return this.filter.evaluate();
         //TOD0 filter courses
     }
 
