@@ -141,15 +141,16 @@ export default class InsightFacade implements IInsightFacade {
                 reject({code: 424, body: {"error": "No dataset"}});
             }
             try{
-                let filteredArray: Array<Course> = [];
+                var filteredArray: Array<Course> = [];
                 var t: Tokenizer = new Tokenizer();
                 t.addKeys(parsedQuery);
                 Object.keys(this.dataSets).forEach((setName) => {
                     let dataSet: Array<any> = this.dataSets[setName];
                     for (var i = 0; i < dataSet.length; i++) {
+                        t.index = 0;
                         let c: Course = dataSet[i];
                         let q: Query = new Query(t, c);
-                        q.parse();
+                        q.parseFilter();
                         if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
                             filteredArray.push(c)
                         }

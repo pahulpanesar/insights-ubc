@@ -14,7 +14,7 @@ export default class FilterNode extends _Node{
     }
 
     parse(){
-        var s = this.getAndCheckToken("AND|OR|LT|GT|EQ|IS|NOT");
+        var s = this.getAndCheckToken("AND|OR|LT|GT|EQ|IS|NOT", false);
 
         //switch statement creates the proper node depending on the kind of filter
         switch(s){

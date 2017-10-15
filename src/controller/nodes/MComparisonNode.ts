@@ -14,7 +14,7 @@ export default class MComparisonNode extends _Node{
     }
 
     parse(){
-        var s = this.getAndCheckToken("GT|LT|EQ");
+        var s = this.getAndCheckToken("GT|LT|EQ", false);
         s == null ? console.log("parser got null") : this.comparator = s;
         console.log(s);
         this.m_key.parse();

@@ -39,10 +39,9 @@ export default class Tokenizer{
         return this.tokens;
     }
 
-    getNext(): string{
-
+    getNext(index: boolean): string{
+       if(index) this.index++;
        let temp:string = this.tokens[this.index];
-       this.index++;
        return temp;
 
     }

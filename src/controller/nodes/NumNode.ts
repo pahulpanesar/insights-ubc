@@ -9,7 +9,7 @@ export default class NumNode extends _Node{
     }
 
     parse(){
-        var s = this.getAndCheckToken("[0-9]+");
+        var s = this.getAndCheckToken("[0-9]+", true);
         this.number = parseInt(s);
     }
 
