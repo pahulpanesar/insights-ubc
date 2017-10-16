@@ -12,7 +12,7 @@ export default class ColumnNode extends _Node{
 
     parse(){
         var s = this.getAndCheckToken("COLUMNS", true);
-        while(this.tokenizer.getNext(false) !== "ORDER"){
+        while(this.tokenizer.getNext(false) !== "ORDER" || this.tokenizer.getNext(false) !== "NO_MORE_TOKENS"){
             var key: KeyNode = new KeyNode(this.tokenizer,this.course);
             key.parse();
             this.options.push(key.evaluate());

@@ -7,6 +7,7 @@ let JSZIP = require('jszip');
 import Course from "../dataStructs/Course";
 import Tokenizer from "../dataStructs/Tokenizer";
 import Query from "../dataStructs/Query";
+import OptionNode from "./nodes/OptionNode";
 let fs = require('fs');
 
 export default class InsightFacade implements IInsightFacade {
@@ -142,15 +143,25 @@ export default class InsightFacade implements IInsightFacade {
             }
             try{
                 var filteredArray: Array<Course> = [];
+                var optionObj:any = {};
+                var flag:boolean = false;
                 let resArray: Array<any> = [];
                     var t: Tokenizer = new Tokenizer();
                 t.addKeys(parsedQuery);
+
                 Object.keys(this.dataSets).forEach((setName) => {
                     let dataSet: Array<any> = this.dataSets[setName];
                     for (var i = 0; i < dataSet.length; i++) {
                         t.index = 0;
                         let c: Course = dataSet[i];
                         let q: Query = new Query(t, c);
+                        
+                        if(!flag) {
+                            let o: OptionNode = new OptionNode(t, c);
+                            o.parse();
+                            optionObj = o.evaluate();
+                        }
+
                         q.parseFilter();
                         if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
                             filteredArray.push(c)
