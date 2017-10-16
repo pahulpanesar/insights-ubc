@@ -23,7 +23,7 @@ export default class _Node{ //underscore is to distinguish from native TS class
         if(typeof s === "number") {
             s = s.toString();
         }
-        if(!s.match(regex)){
+        if(!s.match(regex) && s !== "NO_MORE_TOKENS"){
             //console.log("no match: " + regex + "   " + s);
             throw new Error("no matching regex");
         } // example terminates here

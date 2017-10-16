@@ -13,7 +13,9 @@ export default class OrderNode extends _Node {
 
     parse(){
         var s = this.getAndCheckToken("ORDER", true);
-        this.key.parse();
+        if(s && s !== "NO_MORE_TOKENS"){
+            this.key.parse();
+        }
     }
     evaluate(){
         return this.key.evaluate();

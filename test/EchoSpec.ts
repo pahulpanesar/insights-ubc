@@ -40,8 +40,43 @@ describe("EchoSpec", function () {
     const NON_ZIP_PATH = './courses';
     const BAD_JSON_PATH = './badjson.zip';
     const SIMPLE_QUERY = { "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } };
-    const SIMPLE_QUERY_IS = '{ "WHERE":{ "IS":{ "courses_dept": "cpsc" } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
-    const COMPLEX_QUERY = '{ "WHERE":{ "OR":[ { "AND":[ { "GT":{ "courses_avg":90 } }, { "IS":{ "courses_dept":"adhe" } } ] }, { "EQ":{ "courses_avg":95 } } ] }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_avg" ], "ORDER":"courses_avg" } }';
+    const SIMPLE_QUERY_IS = { "WHERE":{ "IS":{ "courses_dept": "cpsc" } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } };
+    const COMPLEX_QUERY = { "WHERE":{ "OR":[ { "AND":[ { "GT":{ "courses_avg":90 } }, { "IS":{ "courses_dept":"adhe" } } ] }, { "EQ":{ "courses_avg":95 } } ] }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_avg" ], "ORDER":"courses_avg" } };
+    const PROF_QUERY = {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "adhe"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "^c.*"
+                    }
+                }
+
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_instructor",
+                "courses_dept"
+            ]
+        }
+    };
+    const PROF_QUERY_REPSPONSE = {
+        result:[
+        {courses_instructor:'crisfield, erin',courses_dept: 'adhe'},
+        {courses_instructor:'crisfield, erin',courses_dept: 'adhe'},
+        {courses_instructor:'crisfield, erin',courses_dept: 'adhe'},
+        {courses_instructor:'crisfield, erin',courses_dept: 'adhe'},
+        {courses_instructor:'crisfield, erin',courses_dept: 'adhe'},
+        {courses_instructor:'crisfield, erin',courses_dept: 'adhe'},
+        {courses_instructor:'crisfield, erin',courses_dept: 'adhe'},
+        {courses_instructor:'chan, jennifer',courses_dept: 'adhe'},
+        {courses_instructor:'chan, jennifer',courses_dept: 'adhe'}
+    ]};
     const SIMPLE_QUERY_RESPONSE = {
         result:
             [ { courses_dept: 'epse', courses_avg: 97.09 },
@@ -353,6 +388,24 @@ describe("EchoSpec", function () {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(SIMPLE_QUERY_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - new proper dataset prof query", function () {
+        this.timeout(15000);
+        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return insightFace.performQuery(PROF_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(PROF_QUERY_REPSPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err.body.error);
                 expect.fail();

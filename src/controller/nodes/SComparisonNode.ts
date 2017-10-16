@@ -21,7 +21,7 @@ export default class SComparisonNode extends _Node{
     }
 
     evaluate(){
-        return (this.inputString.evaluate() === this.s_key.evaluate());
+        return this.s_key.evaluate().match(this.inputString.evaluate());
     }
 
 
