@@ -25,7 +25,7 @@ export default class _Node{ //underscore is to distinguish from native TS class
         }
         if(!s.match(regex)){
             //console.log("no match: " + regex + "   " + s);
-            return null;
+            throw new Error("no matching regex");
         } // example terminates here
         //console.log("match: " + s);
         //else{console.log("matched:" + s + "  to  " + regex)}
