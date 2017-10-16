@@ -1,6 +1,7 @@
 import _Node from "./Node";
 import Tokenizer from "../../dataStructs/Tokenizer";
 import Course from "../../dataStructs/Course";
+import {error} from "util";
 
 export default class InputStringNode extends _Node{
     inputString: string;
@@ -11,10 +12,23 @@ export default class InputStringNode extends _Node{
     parse(){
         var s = this.getAndCheckToken("[^*]", true);
         this.inputString = s;
+        let temp: string = this.inputString;
+        if(this.inputString.charAt(0) === '*' && this.inputString.charAt(this.inputString.length - 1) === '*' && this.inputString.length > 2){
+            this.inputString = '^' + this.inputString.substring(1, this.inputString.length - 1) + '$';
+        }
+        else if(this.inputString.charAt(0) === '*' && this.inputString.length > 1) {
+            this.inputString = this.inputString.substring(1) + '$';
+        }
+        else if(this.inputString.charAt(this.inputString.length - 1 ) === '*' && this.inputString.length > 1) {
+            this.inputString = '^' + this.inputString.substring(0, this.inputString.length - 1) ;
+        }
+        else if(this.inputString.indexOf('*') !== -1) {
+            throw error("Incorrect wildcard positioning")
+        }
     }
 
     evaluate(){
         //console.log("returning... " + this.inputString);
-        return this.inputString;
+        return new RegExp(this.inputString);
     }
 }

@@ -21,7 +21,9 @@ export default class SComparisonNode extends _Node{
     }
 
     evaluate(){
-        return this.s_key.evaluate().match(this.inputString.evaluate());
+        let regex: RegExp = this.inputString.evaluate();
+        let key: string = this.s_key.evaluate();
+        return regex.test(key);
     }
 
 

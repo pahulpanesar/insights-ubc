@@ -40,8 +40,6 @@ describe("EchoSpec", function () {
     const NON_ZIP_PATH = './courses';
     const BAD_JSON_PATH = './badjson.zip';
     const SIMPLE_QUERY = { "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } };
-    const SIMPLE_QUERY_IS = { "WHERE":{ "IS":{ "courses_dept": "cpsc" } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } };
-    const COMPLEX_QUERY = { "WHERE":{ "OR":[ { "AND":[ { "GT":{ "courses_avg":90 } }, { "IS":{ "courses_dept":"adhe" } } ] }, { "EQ":{ "courses_avg":95 } } ] }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_avg" ], "ORDER":"courses_avg" } };
     const PROF_QUERY = {
         "WHERE": {
             "AND": [
@@ -52,7 +50,7 @@ describe("EchoSpec", function () {
                 },
                 {
                     "IS": {
-                        "courses_instructor": "^c.*"
+                        "courses_instructor": "c*"
                     }
                 }
 
@@ -77,6 +75,9 @@ describe("EchoSpec", function () {
         {courses_instructor:'chan, jennifer',courses_dept: 'adhe'},
         {courses_instructor:'chan, jennifer',courses_dept: 'adhe'}
     ]};
+    const SIMPLE_QUERY_BAD_ORDER = { "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_fail" } };
+    const SIMPLE_QUERY_IS = '{ "WHERE":{ "IS":{ "courses_dept": "cpsc" } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
+    const COMPLEX_QUERY = { "WHERE":{ "OR":[ { "AND":[ { "GT":{ "courses_avg":90 } }, { "IS":{ "courses_dept":"adhe" } } ] }, { "EQ":{ "courses_avg":95 } } ] }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_avg" ], "ORDER":"courses_avg" } };
     const SIMPLE_QUERY_RESPONSE = {
         result:
             [ { courses_dept: 'epse', courses_avg: 97.09 },
@@ -290,6 +291,23 @@ describe("EchoSpec", function () {
         console.log(optionObj);
         return (optionObj.columns[0] === "course_dept") && (optionObj.columns[1] === "courses_id") && (optionObj.columns[2] === "courses_avg");
     });
+
+    it("Reject bad Order", function () {
+        try {
+            t.addKeys((JSON.parse(testJSONComplex)));
+            var q: Query = new Query(t, null);
+            q.parseFilter();
+            var o: OptionNode = new OptionNode(t, null);
+            o.parse();
+            var optionObj = o.evaluate();
+            console.log(optionObj);
+            return false;
+        }
+        catch(e){
+            return true;
+        }
+    });
+
     it("REMOVEDATASET 404 - remove empty dataset", function () {
         return insightFace.removeDataset("courses").then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
