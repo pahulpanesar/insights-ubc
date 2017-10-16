@@ -40,6 +40,61 @@ describe("EchoSpec", function () {
     const NON_ZIP_PATH = './courses';
     const BAD_JSON_PATH = './badjson.zip';
     const SIMPLE_QUERY = { "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } };
+    const GT_LT_QUERY = {
+        "WHERE": {
+            "AND": [
+                {
+                    "GT": {
+                        "courses_avg": 95.50
+                    }
+                },
+                {
+                    "LT": {
+                        "courses_avg": 95.60
+                    }
+                }
+
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_avg",
+                "courses_dept"
+            ],
+            "ORDER": "courses_avg"
+        }
+    };
+    const NOT_LT = {
+        "WHERE": {
+            "NOT": {
+                "LT": {
+                    "courses_avg": 99
+                }
+            }
+
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_avg",
+                "courses_dept"
+            ],
+            "ORDER": "courses_avg"
+        }
+    };
+    const NOT_LT_RESPONSE = {
+        result:[
+            {courses_avg: 99.19,courses_dept: 'cnps'},
+            {courses_avg: 99.78,courses_dept: 'math'},
+            {courses_avg: 99.78,courses_dept: 'math'}
+            ]};
+    const GT_LT_QUERY_RESPONSE = {
+        result:[
+            {courses_avg: 95.54,courses_dept: 'chbe'},
+            {courses_avg: 95.54,courses_dept: 'chbe'},
+            {courses_avg: 95.56,courses_dept: 'math'},
+            {courses_avg: 95.56,courses_dept: 'math'},
+            {courses_avg: 95.58,courses_dept: 'edcp'},
+            {courses_avg: 95.58,courses_dept: 'edcp'}]};
     const PROF_QUERY = {
         "WHERE": {
             "AND": [
@@ -460,6 +515,42 @@ describe("EchoSpec", function () {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(COMPLEX_QUERY_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - new proper dataset gt lt query", function () {
+        this.timeout(15000);
+        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return insightFace.performQuery(GT_LT_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(GT_LT_QUERY_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - new proper dataset not lt query", function () {
+        this.timeout(15000);
+        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return insightFace.performQuery(NOT_LT).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(NOT_LT_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();
