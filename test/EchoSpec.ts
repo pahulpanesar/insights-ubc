@@ -39,7 +39,7 @@ describe("EchoSpec", function () {
     const DATA_PATH = './courses.zip';
     const NON_ZIP_PATH = './courses';
     const BAD_JSON_PATH = './badjson.zip';
-    const SIMPLE_QUERY = '{ "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
+    const SIMPLE_QUERY = { "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } };
     const SIMPLE_QUERY_IS = '{ "WHERE":{ "IS":{ "courses_dept": "cpsc" } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
     const COMPLEX_QUERY = '{ "WHERE":{ "OR":[ { "AND":[ { "GT":{ "courses_avg":90 } }, { "IS":{ "courses_dept":"adhe" } } ] }, { "EQ":{ "courses_avg":95 } } ] }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_avg" ], "ORDER":"courses_avg" } }';
     const SIMPLE_QUERY_RESPONSE = {

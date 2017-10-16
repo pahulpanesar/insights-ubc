@@ -137,7 +137,7 @@ export default class InsightFacade implements IInsightFacade {
 
     performQuery(query: any): Promise <InsightResponse> {
         return new Promise((fulfill, reject) => {
-            let parsedQuery: any = JSON.parse(query);
+            let parsedQuery: any = query;
             if(Object.keys(this.dataSets).length < 1) {
                 reject({code: 424, body: {"error": "No dataset"}});
             }
