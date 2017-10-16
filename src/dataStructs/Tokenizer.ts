@@ -7,16 +7,15 @@ export default class Tokenizer{
     constructor() {
     }
 
-    addKeys(parsed: any){
-        Object.keys(parsed).forEach((elem) => {
+    addKeys(json: any){
+        Object.keys(json).forEach((elem) => {
+            // console.log(elem);
             //console.log(Object.keys(elem));
-            if(elem !== "OPTIONS" && elem !== "WHERE"){
-                this.tokens.push(elem);
-            }
+            this.tokens.push(elem);
             var temp = elem;
             //console.log(typeof json[elem]);
-            if(Array.isArray(parsed[elem])){
-                parsed[elem].forEach((e:any) =>{
+            if(Array.isArray(json[elem])){
+                json[elem].forEach((e:any) =>{
                     if(typeof e === "object"){
                         this.addKeys(e);
                     }
@@ -24,33 +23,34 @@ export default class Tokenizer{
                         this.tokens.push(e);
                         //console.log(e);
                     }
+
                 });
             }
-            else if(typeof parsed[elem] === "object"){
-                if(elem !== "OPTIONS"){
-                    this.addKeys(parsed[temp]);
-                }
+            else if(typeof json[elem] === "object"){
+                this.addKeys(json[temp]);
             }
             else{
-                this.tokens.push(parsed[elem]);
-                console.log(parsed[elem]);
+                this.tokens.push(json[elem]);
+                //console.log(json[elem]);
             }
         });
         return this.tokens;
     }
 
     getNext(index: boolean): string{
-       if(index) this.index++;
-       let temp:string = this.tokens[this.index];
-       return temp;
+
+        if(this.index < this.tokens.length) {
+            let temp: string = this.tokens[this.index];
+            if(index)this.index++;
+            return temp;
+        }
+        else{
+            return "NO_MORE_TOKENS";
+        }
+
     }
 
 
-    checkNext(): boolean{
-
-        return this.index < this.tokens.length;
-
-    }
 }
 
 var testJSON = '{ "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';

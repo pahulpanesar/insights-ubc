@@ -1,6 +1,6 @@
 
 import _Node from "./Node";
-import Tokenizer from "../Tokenizer";
+import Tokenizer from "../../dataStructs/Tokenizer";
 import Course from "../../dataStructs/Course";
 import KeyNode from "./KeyNode";
 
@@ -12,14 +12,14 @@ export default class ColumnNode extends _Node{
 
     parse(){
         var s = this.getAndCheckToken("COLUMNS", true);
-        while(this.tokenizer.checkNext() !== "ORDER"){
+        while(this.tokenizer.getNext(false) !== "ORDER"){
             var key: KeyNode = new KeyNode(this.tokenizer,this.course);
             key.parse();
             this.options.push(key.evaluate());
         }
     }
     evaluate(){
-        console.log("returning... " + this.options);
+        //console.log("returning... " + this.options);
         return this.options;
     }
 }

@@ -1,10 +1,10 @@
 
 
 import _Node from "./Node";
-import Tokenizer from "../Tokenizer";
 import Course from "../../dataStructs/Course";
 import ColumnNode from "./ColumnNode";
-import OrderNode from "../../../../../Downloads/OrderNode";
+import Tokenizer from "../../dataStructs/Tokenizer";
+import OrderNode from "./OrderNode";
 
 export default class OptionNode extends _Node{
     columns:ColumnNode = new ColumnNode(this.tokenizer,this.course);
@@ -13,7 +13,7 @@ export default class OptionNode extends _Node{
         super(t,c);
     }
     parse(){
-        var s = this.getAndCheckToken("OPTIONS");
+        var s = this.getAndCheckToken("OPTIONS",true);
         this.columns.parse();
         this.order.parse();
     }

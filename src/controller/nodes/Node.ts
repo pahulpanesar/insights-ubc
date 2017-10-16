@@ -23,8 +23,11 @@ export default class _Node{ //underscore is to distinguish from native TS class
         if(typeof s === "number") {
             s = s.toString();
         }
-        if(!s.match(regex)){return null;} // example terminates here
-
+        if(!s.match(regex)){
+            console.log("no match: " + regex + "   " + s);
+            return null;
+        } // example terminates here
+        console.log("match: " + s);
         //else{console.log("matched:" + s + "  to  " + regex)}
         return s;
     }

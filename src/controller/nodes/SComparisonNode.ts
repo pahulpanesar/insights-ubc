@@ -14,7 +14,7 @@ export default class SComparisonNode extends _Node{
     }
 
     parse(){
-        console.log(this.getAndCheckToken("IS", false)); //IS:{' s_key ':' [*]? inputstring [*]? '}'
+        this.getAndCheckToken("IS", true); //IS:{' s_key ':' [*]? inputstring [*]? '}'
         this.s_key.parse(); //parse s_key first
         this.inputString.parse(); //parse input_string second
 

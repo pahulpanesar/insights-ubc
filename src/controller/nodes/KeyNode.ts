@@ -1,7 +1,7 @@
 
 import _Node from "./Node";
-import Tokenizer from "../Tokenizer";
 import Course from "../../dataStructs/Course";
+import Tokenizer from "../../dataStructs/Tokenizer";
 
 export default class KeyNode extends _Node{
 
@@ -12,7 +12,7 @@ export default class KeyNode extends _Node{
     }
 
     parse(){
-        var s = this.getAndCheckToken("courses_(debt|id|instructor|title|uuid|avg|pass|fail|audit|)");
+        var s = this.getAndCheckToken("courses_(dept|id|instructor|title|uuid|avg|pass|fail|audit|)",true);
         this.key = s;
     }
     evaluate(){

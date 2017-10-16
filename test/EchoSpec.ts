@@ -14,6 +14,8 @@ import chai = require('chai');
 import chaiHttp = require('chai-http');
 import Response = ChaiHttp.Response;
 import restify = require('restify');
+import Query from "../src/dataStructs/Query";
+import OptionNode from "../src/controller/nodes/OptionNode";
 
 describe("EchoSpec", function () {
 
@@ -209,15 +211,50 @@ describe("EchoSpec", function () {
         })
     });
 
-    it("Should tokenize JSON Simple", function () {
-        t.addKeys(JSON.parse(testJSONSimple));
-        return true;
-    });
-    it("Should tokenize JSON Complex", function () {
-        t.addKeys(JSON.parse(testJSONComplex));
-        return true;
+
+    it("Option object receiving correct columns - SIMPLE", function () {
+        t.addKeys((JSON.parse(testJSONSimple)));
+        var q:Query = new Query(t,null);
+        q.parseFilter();
+        var o:OptionNode = new OptionNode(t,null);
+        o.parse();
+        var optionObj = o.evaluate();
+        console.log(optionObj);
+        return (optionObj.columns[0] === "course_dept") && (optionObj.columns[1] === "courses_avg");
     });
 
+    it("Option object receiving correct order - SIMPLE", function () {
+        t.addKeys((JSON.parse(testJSONSimple)));
+        var q:Query = new Query(t,null);
+        q.parseFilter();
+        var o:OptionNode = new OptionNode(t,null);
+        o.parse();
+        var optionObj = o.evaluate();
+        console.log(optionObj);
+        return (optionObj.order[0] === "courses_avg");
+    });
+
+    it("Option object receiving correct order - COMPLEX", function () {
+        t.addKeys((JSON.parse(testJSONComplex)));
+        var q:Query = new Query(t,null);
+        q.parseFilter();
+        var o:OptionNode = new OptionNode(t,null);
+        o.parse();
+        var optionObj = o.evaluate();
+        console.log(optionObj);
+        return (optionObj.order[0] === "courses_avg");
+    });
+
+    it("Option object receiving correct columns - COMPLEX", function () {
+        t.addKeys((JSON.parse(testJSONComplex)));
+        var q:Query = new Query(t,null);
+        q.parseFilter();
+        var o:OptionNode = new OptionNode(t,null);
+        o.parse();
+        var optionObj = o.evaluate();
+        console.log(optionObj);
+        return (optionObj.columns[0] === "course_dept") && (optionObj.columns[1] === "courses_id") && (optionObj.columns[2] === "courses_avg");
+    });
     it("REMOVEDATASET 404 - remove empty dataset", function () {
         return insightFace.removeDataset("courses").then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);

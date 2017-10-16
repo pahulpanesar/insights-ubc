@@ -1,8 +1,8 @@
 
-import Tokenizer from "../Tokenizer";
 import Course from "../../dataStructs/Course";
 import _Node from "./Node";
 import KeyNode from "./KeyNode";
+import Tokenizer from "../../dataStructs/Tokenizer";
 
 export default class OrderNode extends _Node {
     key:KeyNode = new KeyNode(this.tokenizer,this.course);

@@ -43,7 +43,7 @@ export default class FilterNode extends _Node{
                 //exit?
         }
         this.filter.parse();
-        console.log(s);
+        //console.log(s);
     }
 
     evaluate(){
