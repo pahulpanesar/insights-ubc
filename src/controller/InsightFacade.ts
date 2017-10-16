@@ -155,14 +155,13 @@ export default class InsightFacade implements IInsightFacade {
                         t.index = 0;
                         let c: Course = dataSet[i];
                         let q: Query = new Query(t, c);
-                        
+                        q.parseFilter();
                         if(!flag) {
                             let o: OptionNode = new OptionNode(t, c);
                             o.parse();
                             optionObj = o.evaluate();
                         }
 
-                        q.parseFilter();
                         if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
                             filteredArray.push(c)
                         }
@@ -170,12 +169,13 @@ export default class InsightFacade implements IInsightFacade {
 
                     });
                 filteredArray.sort(function(a, b) {
-                    return a.courses_avg - b.courses_avg;
+                    return a[optionObj.order] - b[optionObj.order];
                 });
                 resArray = filteredArray.map((course) => {
                     let contain: any = {};
-                    contain["courses_dept"] = course["courses_dept"];
-                    contain["courses_avg"] = course["courses_avg"];
+                    optionObj["columns"].forEach((column:any) => {
+                        contain[column] = course[column];
+                    })
                     return contain;
                 });
                 fulfill({code: 200, body: {"result": resArray}});
