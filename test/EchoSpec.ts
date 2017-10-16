@@ -315,7 +315,7 @@ describe("EchoSpec", function () {
     });
 
     it("Option object receiving correct order - SIMPLE", function () {
-        t.addKeys((JSON.parse(testJSONSimple)));
+        t.addKeys(SIMPLE_QUERY);
         var q:Query = new Query(t,null);
         q.parseFilter();
         var o:OptionNode = new OptionNode(t,null);
@@ -326,7 +326,7 @@ describe("EchoSpec", function () {
     });
 
     it("Option object receiving correct order - COMPLEX", function () {
-        t.addKeys((JSON.parse(testJSONComplex)));
+        t.addKeys(COMPLEX_QUERY);
         var q:Query = new Query(t,null);
         q.parseFilter();
         var o:OptionNode = new OptionNode(t,null);
@@ -337,7 +337,7 @@ describe("EchoSpec", function () {
     });
 
     it("Option object receiving correct columns - COMPLEX", function () {
-        t.addKeys((JSON.parse(testJSONComplex)));
+        t.addKeys(COMPLEX_QUERY);
         var q:Query = new Query(t,null);
         q.parseFilter();
         var o:OptionNode = new OptionNode(t,null);

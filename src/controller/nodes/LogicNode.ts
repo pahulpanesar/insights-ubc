@@ -4,26 +4,40 @@ import FilterNode from "./FilterNode";
 import Course from "../../dataStructs/Course";
 
 export class LogicNode extends _Node{
-    filter1: FilterNode = new FilterNode(this.tokenizer, this.course);
-    filter2: FilterNode = new FilterNode(this.tokenizer, this.course);
+    filterNodes: Array<FilterNode> = [];
     logic: string = "";
     constructor(t: Tokenizer,c: Course){
         super(t,c);
     }
 
     parse(){
+        for(var i = 0; i < this.tokenizer.logicIndexArray[this.tokenizer.logicIndex]; i++) {
+            this.filterNodes.push(new FilterNode(this.tokenizer, this.course));
+        }
+        // this.tokenizer.logicIndex++;
         var s = this.getAndCheckToken("AND|OR", true); //may be double checking the regex
-        this.filter1.parse();
-        this.filter2.parse();
+        this.filterNodes.forEach((node) => {
+            node.parse();
+        })
         this.logic = s; //storing logic for evaulate()
     }
 
     evaluate(){
         if(this.logic === 'AND'){
-            return this.filter1.evaluate() && this.filter2.evaluate();
+            for(var i = 0; i < this.filterNodes.length - 1; i++) {
+                if(!(this.filterNodes[i].evaluate() && this.filterNodes[i+1].evaluate())){
+                    return false;
+                }
+            }
+            return true;
         }
         else if(this.logic === 'OR'){
-            return this.filter1.evaluate() || this.filter2.evaluate();
+            for(var i = 0; i < this.filterNodes.length - 1; i++) {
+                if(!(this.filterNodes[i].evaluate() || this.filterNodes[i+1].evaluate())){
+                    return false;
+                }
+            }
+            return true;
         }
 
     }

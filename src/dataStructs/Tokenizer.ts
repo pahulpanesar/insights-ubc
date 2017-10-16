@@ -3,7 +3,8 @@ export default class Tokenizer{
 
     tokens: any[] = [];
     index:number = 0;
-
+    logicIndexArray: Array<number> = [];
+    logicIndex = 0;
     constructor() {
     }
 
@@ -15,6 +16,9 @@ export default class Tokenizer{
             var temp = elem;
             //console.log(typeof json[elem]);
             if(Array.isArray(json[elem])){
+                if(elem === "AND" || elem === "OR"){
+                    this.logicIndexArray.push(json[elem].length);
+                }
                 json[elem].forEach((e:any) =>{
                     if(typeof e === "object"){
                         this.addKeys(e);
