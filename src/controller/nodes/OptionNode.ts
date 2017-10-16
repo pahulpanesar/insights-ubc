@@ -15,7 +15,7 @@ export default class OptionNode extends _Node{
     parse(){
         var s = this.getAndCheckToken("OPTIONS",true);
         this.columns.parse();
-        this.order.parse();
+        this.order.parse(this.columns.evaluate());
     }
 
     evaluate(){
