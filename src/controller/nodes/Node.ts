@@ -10,13 +10,6 @@ export default class _Node{ //underscore is to distinguish from native TS class
         this.tokenizer = t;
         this.course = c;
     }
-    setCourse(course: Course){
-        this.course = course;
-    }
-
-    getCourse(): Course{
-        return this.course;
-    }
 
     getAndCheckToken(regex: string, index: boolean): string{
         var s: any = this.tokenizer.getNext(index);

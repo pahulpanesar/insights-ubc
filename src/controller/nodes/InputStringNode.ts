@@ -10,8 +10,7 @@ export default class InputStringNode extends _Node{
 
     parse(){
         var s = this.getAndCheckToken("[^*]", true);
-        //console.log(s);
-        s == null ? console.log("parser got null") : this.inputString = s;
+        this.inputString = s;
     }
 
     evaluate(){

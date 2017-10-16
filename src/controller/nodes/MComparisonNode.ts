@@ -33,10 +33,7 @@ export default class MComparisonNode extends _Node{
         else if(this.comparator == "EQ"){
             return key === num;
         }
-        else{
-            //console.log("evaluate got an unexpected comparator");
-            return false;
-        }
+
 
     }
 

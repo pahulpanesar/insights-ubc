@@ -15,8 +15,7 @@ export class LogicNode extends _Node{
         var s = this.getAndCheckToken("AND|OR", true); //may be double checking the regex
         this.filter1.parse();
         this.filter2.parse();
-
-        s == null ? console.log("parser got null") : this.logic = s; //storing logic for evaulate()
+        this.logic = s; //storing logic for evaulate()
     }
 
     evaluate(){
