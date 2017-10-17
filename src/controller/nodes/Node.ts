@@ -4,6 +4,7 @@ import Tokenizer from "../../dataStructs/Tokenizer";
 export default class _Node{ //underscore is to distinguish from native TS class
     tokenizer : Tokenizer;
     course: Course;
+    count: number;
     //courseObj : Course = new Course();
 
     constructor (t: Tokenizer,c:Course){

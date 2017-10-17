@@ -6,12 +6,13 @@ import Course from "../../dataStructs/Course";
 export class LogicNode extends _Node{
     filterNodes: Array<FilterNode> = [];
     logic: string = "";
-    constructor(t: Tokenizer,c: Course){
+    constructor(t: Tokenizer,c: Course, count: number){
         super(t,c);
+        this.count =  count;
     }
 
     parse(){
-        for(var i = 0; i < this.tokenizer.logicIndexArray[this.tokenizer.logicIndex]; i++) {
+        for(var i = 0; i < this.tokenizer.logicIndexArray[this.count]; i++) {
             this.filterNodes.push(new FilterNode(this.tokenizer, this.course));
         }
         // this.tokenizer.logicIndex++;

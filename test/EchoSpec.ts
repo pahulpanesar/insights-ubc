@@ -41,29 +41,29 @@ describe("EchoSpec", function () {
     const BAD_JSON_PATH = './badjson.zip';
     const SIMPLE_QUERY = { "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } };
     const GT_LT_QUERY = {
-        "WHERE": {
-            "AND": [
-                {
-                    "GT": {
-                        "courses_avg": 95.50
+            "WHERE": {
+                "AND": [
+                    {
+                        "GT": {
+                            "courses_avg": 95.50
+                        }
+                    },
+                    {
+                        "LT": {
+                            "courses_avg": 95.60
+                        }
                     }
-                },
-                {
-                    "LT": {
-                        "courses_avg": 95.60
-                    }
-                }
 
-            ]
-        },
-        "OPTIONS": {
-            "COLUMNS": [
-                "courses_avg",
-                "courses_dept"
-            ],
-            "ORDER": "courses_avg"
-        }
-    };
+                ]
+            },
+            "OPTIONS": {
+                "COLUMNS": [
+                    "courses_avg",
+                    "courses_dept"
+                ],
+                "ORDER": "courses_avg"
+            }
+        };
     const NOT_LT = {
         "WHERE": {
             "NOT": {
@@ -481,24 +481,6 @@ describe("EchoSpec", function () {
                 expect(val.body).to.deep.equal(PROF_QUERY_REPSPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err.body.error);
-                expect.fail();
-            })
-        }).catch(function (err) {
-            Log.test('Error: ' + err);
-            expect.fail();
-        })
-    });
-
-    it("PERFORMQUERY 200 - new proper dataset simple IS query", function () {
-        this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
-            Log.test('Value: ' + value.code);
-            return insightFace.performQuery(SIMPLE_QUERY_IS).then(function (val: InsightResponse) {
-                Log.test('Value' + val.code);
-                expect(val.code).to.deep.equal(200);
-                expect(val.body).to.deep.equal(SIMPLE_QUERY_RESPONSE);
-            }).catch(function (err) {
-                Log.test('Error: ' + err);
                 expect.fail();
             })
         }).catch(function (err) {

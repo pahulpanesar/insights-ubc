@@ -5,10 +5,11 @@ import MComparisonNode from "./MComparisonNode";
 import SComparisonNode from "./SComparisonNode";
 import NegationNode from "./NegationNode";
 import Course from "../../dataStructs/Course";
+import {error} from "util";
 
 export default class FilterNode extends _Node{
     filter: any;
-
+    count: number = -1;
     constructor(t: Tokenizer, c:Course){
         super(t,c);
     }
@@ -20,8 +21,9 @@ export default class FilterNode extends _Node{
         switch(s){
             case "AND":
             case "OR":
+                this.count++;
                 //create logic node
-                this.filter = new LogicNode(this.tokenizer,this.course);
+                this.filter = new LogicNode(this.tokenizer,this.course, this.count);
                 break;
             case "LT":
             case "GT":
@@ -39,7 +41,7 @@ export default class FilterNode extends _Node{
                 //create negation node
             default:
                 //console.log("parser got unexpected value");
-                break;
+                throw error("Failed regex");
                 //exit?
         }
         this.filter.parse();
@@ -47,6 +49,7 @@ export default class FilterNode extends _Node{
     }
 
     evaluate(){
+        this.count = 0;
         return this.filter.evaluate();
     }
 }

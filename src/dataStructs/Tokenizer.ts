@@ -1,4 +1,6 @@
 
+import {error} from "util";
+
 export default class Tokenizer{
 
     tokens: any[] = [];
@@ -17,6 +19,9 @@ export default class Tokenizer{
             //console.log(typeof json[elem]);
             if(Array.isArray(json[elem])){
                 if(elem === "AND" || elem === "OR"){
+                    if(json[elem].length < 1) {
+                        throw error("Empty and/or");
+                    }
                     this.logicIndexArray.push(json[elem].length);
                 }
                 json[elem].forEach((e:any) =>{
