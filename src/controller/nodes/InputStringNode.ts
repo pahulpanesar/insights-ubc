@@ -17,7 +17,7 @@ export default class InputStringNode extends _Node{
         this.inputString = s;
         let temp: string = this.inputString;
         if(this.inputString === "**") {
-            this.inputString = "";
+            this.inputString = "\*";
         }
         else if(this.inputString === "*" || this.inputString === "***"){
             this.inputString = "^\*";
