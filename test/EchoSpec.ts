@@ -95,6 +95,9 @@ describe("EchoSpec", function () {
             {courses_avg: 95.56,courses_dept: 'math'},
             {courses_avg: 95.58,courses_dept: 'edcp'},
             {courses_avg: 95.58,courses_dept: 'edcp'}]};
+    const CS_310_QUERY = { "WHERE":{ "IS":{
+        "courses_instructor": "baniassad"}
+    }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_instructor" ] } };
     const PROF_QUERY = {
         "WHERE": {
             "AND": [
@@ -543,4 +546,21 @@ describe("EchoSpec", function () {
         })
     });
 
+    it("PERFORMQUERY 200 - new proper find instrucs", function () {
+        this.timeout(15000);
+        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return insightFace.performQuery(CS_310_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(SIMPLE_QUERY_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
 });

@@ -25,6 +25,9 @@ export default class InputStringNode extends _Node{
         else if(this.inputString.indexOf('*') !== -1) {
             throw error("Incorrect wildcard positioning")
         }
+        else {
+            this.inputString = '^' + this.inputString + '$';
+        }
     }
 
     evaluate(){
