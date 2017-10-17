@@ -11,6 +11,9 @@ export default class InputStringNode extends _Node{
 
     parse(){
         var s = this.getAndCheckToken("[^*]", true);
+        if(typeof s !== "string"){
+            throw error("Not string");
+        }
         this.inputString = s;
         let temp: string = this.inputString;
         if(this.inputString === "**") {
