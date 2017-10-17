@@ -96,7 +96,7 @@ describe("EchoSpec", function () {
             {courses_avg: 95.58,courses_dept: 'edcp'},
             {courses_avg: 95.58,courses_dept: 'edcp'}]};
     const CS_310_QUERY = { "WHERE":{ "IS":{
-        "courses_instructor": "baniassad"}
+        "courses_instructor": "***"}
     }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_instructor" ] } };
     const PROF_QUERY = {
         "WHERE": {
