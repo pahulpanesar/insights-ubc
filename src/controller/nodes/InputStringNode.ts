@@ -20,7 +20,7 @@ export default class InputStringNode extends _Node{
             this.inputString = "^\*";
         }
         else if(this.inputString.charAt(0) === '*' && this.inputString.charAt(this.inputString.length - 1) === '*'){
-            this.inputString = '^' + this.inputString.substring(1, this.inputString.length - 1) + '$';
+            this.inputString = this.inputString.substring(1, this.inputString.length - 1);
         }
         else if(this.inputString.charAt(0) === '*' && this.inputString.length > 1) {
             this.inputString = this.inputString.substring(1) + '$';
