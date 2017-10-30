@@ -177,7 +177,7 @@ export default class InsightFacade implements IInsightFacade {
                     let contain: any = {};
                     optionObj["columns"].forEach((column:any) => {
                         contain[column] = course[column];
-                    })
+                    });
                     return contain;
                 });
                 fulfill({code: 200, body: {"result": resArray}});

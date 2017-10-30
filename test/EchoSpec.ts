@@ -142,7 +142,7 @@ describe("EchoSpec", function () {
                 },
                 {
                     "IS": {
-                        "courses_instructor": 09
+                        "courses_instructor": "c*"
                     }
                 }
 
@@ -656,7 +656,7 @@ describe("EchoSpec", function () {
         this.timeout(15000);
         return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
-            return insightFace.performQuery(PROF_QUERY).then(function (val: InsightResponse) {
+            return insightFace.performQuery(OR_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(OR_RESPONSE);
