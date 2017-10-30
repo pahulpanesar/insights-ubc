@@ -129,9 +129,6 @@ describe("EchoSpec", function () {
             "ORDER": "courses_avg"
         }
     };
-    const CS_310_QUERY = { "WHERE":{ "IS":{
-        "courses_instructor": "*banias*"}
-    }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_instructor" ] } };
     const PROF_QUERY = {
         "WHERE": {
             "AND": [
@@ -168,7 +165,7 @@ describe("EchoSpec", function () {
         {courses_instructor:'chan, jennifer',courses_dept: 'adhe'}
     ]};
     const SIMPLE_QUERY_BAD_ORDER = { "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_fail" } };
-    const SIMPLE_QUERY_IS = '{ "WHERE":{ "IS":{ "courses_dept": nj } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
+    const SIMPLE_QUERY_IS_BAD = '{ "WHERE": {"IS": {"courses_dept": nj } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
     const COMPLEX_QUERY = { "WHERE":{ "OR":[ { "AND":[ { "GT":{ "courses_avg":90 } }, { "IS":{ "courses_dept":"adhe" } } ] }, { "EQ":{ "courses_avg":95 } } ] }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_avg" ], "ORDER":"courses_avg" } };
     const SIMPLE_QUERY_RESPONSE = {
         result:
@@ -244,6 +241,35 @@ describe("EchoSpec", function () {
             "ORDER":"courses_avg"
         }
     };
+
+    const EXCALIBUR = {
+        "WHERE": {
+            "AND": [
+                {"OR":[{
+                    "IS": {
+                        "courses_dept": "adhe"
+                    }},{
+                    "IS": {
+                        "courses_dept": "cpsc"
+                    }}] },
+                {
+                    "GT": {
+
+                        "courses_avg": 93
+                    }
+                }
+
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_instructor",
+                "courses_dept"
+            ]
+        }
+    };
+
+    const EXCALIBUR_RESPONSE = {"result":[{"courses_instructor":"bishundayal, deonarine","courses_dept":"adhe"},{"courses_instructor":"bishundayal, deonarine","courses_dept":"adhe"},{"courses_instructor":"tsiknis, georgios","courses_dept":"cpsc"},{"courses_instructor":"","courses_dept":"cpsc"},{"courses_instructor":"knorr, edwin max","courses_dept":"cpsc"},{"courses_instructor":"","courses_dept":"cpsc"},{"courses_instructor":"friedman, joel","courses_dept":"cpsc"},{"courses_instructor":"","courses_dept":"cpsc"},{"courses_instructor":"carenini, giuseppe","courses_dept":"cpsc"},{"courses_instructor":"","courses_dept":"cpsc"},{"courses_instructor":"","courses_dept":"cpsc"},{"courses_instructor":"","courses_dept":"cpsc"}]};
     const OR_RESPONSE = {"result":[{"courses_dept":"cnps","courses_id":"574","courses_avg":99.19},{"courses_dept":"math","courses_id":"527","courses_avg":99.78},{"courses_dept":"math","courses_id":"527","courses_avg":99.78}]};
 
     const BIG_AND = {"result":[{"courses_dept":"epse","courses_id":"421","courses_avg":98.36},{"courses_dept":"epse","courses_id":"449","courses_avg":98.58},{"courses_dept":"epse","courses_id":"449","courses_avg":98.58},{"courses_dept":"epse","courses_id":"449","courses_avg":98.8},{"courses_dept":"spph","courses_id":"300","courses_avg":98.98},{"courses_dept":"spph","courses_id":"300","courses_avg":98.98}]};
@@ -265,6 +291,41 @@ describe("EchoSpec", function () {
                         "courses_pass":20
                     }
                 }
+            ]},
+        "OPTIONS":{
+            "COLUMNS":[
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER":"courses_avg"
+        }
+    };
+
+    const NESTED_AND_QUERY = {
+        "WHERE":{
+            "AND": [
+                {"AND": [{
+                    "GT": {
+                        "courses_avg":98
+                    }
+                },
+                    {
+                        "EQ": {
+                            "courses_fail":0
+                        }
+                }]},
+                {"AND": [{
+                    "GT": {
+                        "courses_pass":20
+                    }
+                },
+                    {
+                        "EQ": {
+                            "courses_fail":0
+                        }
+                    }]}
+
             ]},
         "OPTIONS":{
             "COLUMNS":[
@@ -663,6 +724,59 @@ describe("EchoSpec", function () {
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - two nested ands", function () {
+        this.timeout(15000);
+        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return insightFace.performQuery(NESTED_AND_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(BIG_AND);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - excalibur", function () {
+        this.timeout(15000);
+        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return insightFace.performQuery(EXCALIBUR).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(EXCALIBUR_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 400 - test on string", function () {
+        this.timeout(15000);
+        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return insightFace.performQuery(SIMPLE_QUERY_IS_BAD).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect.fail();
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect(err.code).to.deep.equal(400);
             })
         }).catch(function (err) {
             Log.test('Error: ' + err);
