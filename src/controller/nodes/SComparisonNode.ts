@@ -20,7 +20,7 @@ export default class SComparisonNode extends _Node{
 
     }
 
-    evaluate(){
+    evaluate(): boolean{
         let regex: RegExp = this.inputString.evaluate();
         let key: string = this.s_key.evaluate();
         return regex.test(key);

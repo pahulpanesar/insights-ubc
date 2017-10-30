@@ -45,7 +45,7 @@ export default class InsightFacade implements IInsightFacade {
                                         if (dataOb.result != null) {
                                             dataOb.result.forEach((x: any) => {
                                                 if (x["Course"] != null) {
-                                                    validCourse = true;
+                                                    validCourse = true; //at least one not != null course, anything set it back to false???
                                                 }
                                             })
                                         }
@@ -146,7 +146,7 @@ export default class InsightFacade implements IInsightFacade {
                 var optionObj:any = {};
                 var flag:boolean = false;
                 let resArray: Array<any> = [];
-                    var t: Tokenizer = new Tokenizer();
+                var t: Tokenizer = new Tokenizer();
                 t.addKeys(parsedQuery);
 
                 Object.keys(this.dataSets).forEach((setName) => {
