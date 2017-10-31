@@ -312,7 +312,8 @@ export default class InsightFacade implements IInsightFacade {
         })
     }
 
-    isRoomQuery(tokens: string[]){
+
+    isRoomQuery(tokens: string[]): boolean{
         var roomFlag: number = -1;
         for(var i =0;i<tokens.length;i++){
             if(tokens[i].toString().match("rooms_")){
@@ -324,7 +325,7 @@ export default class InsightFacade implements IInsightFacade {
                 }
             }
             if(tokens[i].toString().match("courses_")){
-                if(roomFlag === -1) {
+                if(roomFlag == -1) {
                     roomFlag = 0;
                 }
                 else if(roomFlag === 1){
@@ -335,48 +336,54 @@ export default class InsightFacade implements IInsightFacade {
         return roomFlag === 1;
     }
 
-
     performQuery(query: any): Promise <InsightResponse> {
         return new Promise((fulfill, reject) => {
-            let parsedQuery: any = query;
-            if(Object.keys(this.dataSets).length < 1) {
-                reject({code: 424, body: {"error": "No dataset"}});
-            }
             try{
-                var filteredArray: Array<Course> = [];
+                if(Object.keys(this.dataSets).length < 1 ) {
+                    reject({code: 424, body: {"error": "No dataset"}});
+                }
+                if(this.isRoomQuery){
+                    if(!Object.keys(this.dataSets).includes("rooms")){
+                        throw new Error("no rooms in dataset");
+                    }
+                }
+                else {
+                    if(!Object.keys(this.dataSets).includes("courses")){
+                        throw new Error("no courses in dataset");
+                    }
+                }
+                var filteredArray: Array<any> = [];
                 var optionObj:any = {};
                 var flag:boolean = false;
                 let resArray: Array<any> = [];
                 var t: Tokenizer = new Tokenizer();
-                t.addKeys(parsedQuery);
-                Object.keys(this.dataSets).forEach((setName) => {
-                    let dataSet: Array<any> = this.dataSets[setName];
-                    for (var i = 0; i < dataSet.length; i++) {
-                        t.index = 0;
-                        let c: Course = dataSet[i];
-                        let q: Query = new Query(t, c);
-                        q.parseFilter();
-                        if(!flag) {
-                            let o: OptionNode = new OptionNode(t, c);
-                            o.parse();
-                            optionObj = o.evaluate();
-                        }
-
-                        if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
-                            filteredArray.push(c)
-                        }
+                t.addKeys(query);
+                let dataSet = this.isRoomQuery ? this.dataSets["rooms"] : this.dataSets["courses"];
+                for (var i = 0; i < dataSet.length; i++) {
+                    t.index = 0;
+                    let c: any = dataSet[i];
+                    let q: Query = new Query(t, c);
+                    q.parseFilter();
+                    if(!flag) {
+                        let o: OptionNode = new OptionNode(t, c);
+                        o.parse();
+                        optionObj = o.evaluate();
                     }
 
-                    });
+                    if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
+                        filteredArray.push(c)
+                    }
+                }
+
                 if(optionObj.order) {
                     filteredArray.sort(function(a, b) {
                         return a[optionObj.order] - b[optionObj.order];
                     });
                 }
-                resArray = filteredArray.map((course) => {
+                resArray = filteredArray.map((struct) => {
                     let contain: any = {};
                     optionObj["columns"].forEach((column:any) => {
-                        contain[column] = course[column];
+                        contain[column] = struct[column];
                     });
                     return contain;
                 });

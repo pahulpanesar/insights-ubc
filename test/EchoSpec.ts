@@ -26,7 +26,7 @@ describe("EchoSpec", function () {
         expect(response).to.have.property('body');
         expect(response.code).to.be.a('number');
     }
-   
+
     before(function () {
         Log.test('Before: ' + (<any>this).test.parent.title);
     });
