@@ -519,5 +519,47 @@ describe("EchoSpec", function () {
         }
     });
 
+    it("PERFORMQUERY 200 - simple room", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.SIMPLE_ROOM_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value: ' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body.result).to.deep.equal(test.SIMPLE_ROOM_QUERY_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - simple room 2", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.SIMPLE_ROOM_QUERY_2).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                for(var i = 0; i < val.body.result.length; i++){
+                    console.log("val: ");
+                    console.log(val.body.result[i]);
+                    console.log("res: ");
+                    console.log(test.SIMPLE_ROOM_QUERY_2_RESPONSE.result[i]);
+                }
+                expect(val.code).to.deep.equal(200);
+                expect(val.body.result).to.equal(test.SIMPLE_ROOM_QUERY_2_RESPONSE.result);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
 
 });

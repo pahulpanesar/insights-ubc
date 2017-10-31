@@ -26,7 +26,7 @@ export default class _Node{ //underscore is to distinguish from native TS class
     getAndCheckToken(regex: string, index: boolean): string{
         var s: any = this.tokenizer.getNext(index);
         if(!s.match(regex) && s !== "NO_MORE_TOKENS"){
-            //console.log("no match: " + regex + "   " + s);
+            console.log("no match: " + regex + "   " + s);
             throw new Error("no matching regex");
         } // example terminates here
         //console.log("match: " + s);

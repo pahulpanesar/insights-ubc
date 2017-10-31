@@ -12,7 +12,7 @@ export default class KeyNode extends _Node{
     }
 
     parse(){
-        var s = this.getAndCheckToken("courses_(dept|id|instructor|title|uuid|avg|pass|fail|audit|)",true);
+        var s = this.getAndCheckToken("(courses|rooms)_(dept|id|instructor|title|uuid|avg|pass|fail|audit|lat|lon|seats|year|fullname|shortname|number|name|address|type|furniture|href)",true);
         this.key = s;
     }
     evaluate(){
