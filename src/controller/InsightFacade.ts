@@ -312,22 +312,22 @@ export default class InsightFacade implements IInsightFacade {
         })
     }
 
-    isRoomQuery(tokens: any[]){
+    isRoomQuery(tokens: string[]): boolean{
         var roomFlag: number = -1;
         for(var i =0;i<tokens.length;i++){
-            if(tokens[i].match("rooms_")){
-                if(roomFlag < 0) {
+            if(tokens[i].toString().match("rooms_")){
+                if(roomFlag === -1) {
                     roomFlag = 1;
                 }
-                else{
+                else if(roomFlag === 0){
                     throw new Error("Malformed Query - Room/Course");
                 }
             }
-            if(tokens[i].match("courses_")){
-                if(roomFlag < 0) {
+            if(tokens[i].toString().match("courses_")){
+                if(roomFlag == -1) {
                     roomFlag = 0;
                 }
-                else{
+                else if(roomFlag === 1){
                     throw new Error("Malformed Query - Room/Course");
                 }
             }
@@ -335,14 +335,13 @@ export default class InsightFacade implements IInsightFacade {
         return roomFlag === 1;
     }
 
-
     performQuery(query: any): Promise <InsightResponse> {
         return new Promise((fulfill, reject) => {
             try{
                 if(Object.keys(this.dataSets).length < 1 ) {
                     reject({code: 424, body: {"error": "No dataset"}});
                 }
-                if(isRoomQuery){
+                if(this.isRoomQuery){
                     if(!Object.keys(this.dataSets).includes("rooms")){
                         throw new Error("no rooms in dataset");
                     }
@@ -358,7 +357,7 @@ export default class InsightFacade implements IInsightFacade {
                 let resArray: Array<any> = [];
                 var t: Tokenizer = new Tokenizer();
                 t.addKeys(query);
-                let dataSet = isRoomQuery ? this.dataSets["rooms"] : this.dataSets["courses"];
+                let dataSet = this.isRoomQuery ? this.dataSets["rooms"] : this.dataSets["courses"];
                 for (var i = 0; i < dataSet.length; i++) {
                     t.index = 0;
                     let c: any = dataSet[i];
