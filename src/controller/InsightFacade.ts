@@ -324,7 +324,7 @@ export default class InsightFacade implements IInsightFacade {
                 }
             }
             if(tokens[i].toString().match("courses_")){
-                if(roomFlag < 0) {
+                if(roomFlag === -1) {
                     roomFlag = 0;
                 }
                 else if(roomFlag === 1){
