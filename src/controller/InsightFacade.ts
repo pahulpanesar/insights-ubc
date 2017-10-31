@@ -96,14 +96,22 @@ export default class InsightFacade implements IInsightFacade {
                                         this.addCourse(dataObject);
                                     })
                                 });
+                                this.saveToDisk(id).then(() => {
+                                    fulfill({code: 204, body: {}});
+                                })
                             }
-                            if(id === "rooms"){}
-                            Object.keys(rooms).forEach((room) => {
-                                this.addRoom(rooms[room], room);
-                            });
-                            this.saveToDisk(id).then(() => {
-                                fulfill({code: 204, body: {}});
-                            })
+                            if(id === "rooms"){
+                                let pArr2: Array<Promise<any>> = [];
+                                Object.keys(rooms).forEach((room) => {
+                                    let p: Promise<any> = this.addRoom(rooms[room], room);
+                                    pArr2.push(p);
+                                });
+                                Promise.all(pArr2).then(() => {
+                                    this.saveToDisk(id).then(() => {
+                                        fulfill({code: 204, body: {}});
+                                    })
+                                })
+                            }
                         })
                     })
             }
@@ -147,77 +155,82 @@ export default class InsightFacade implements IInsightFacade {
         }
     }
 
-    addRoom(dataObject: any, fileName: string): void {
-        try{
-            let shortName: string  = fileName.substring(fileName.lastIndexOf('/') + 1);
-            if(!this.validRooms.includes(shortName)){
+    addRoom(dataObject: any, fileName: string): Promise<any> {
+        return new Promise((fulfill, reject) => {
+            try{
+                let shortName: string  = fileName.substring(fileName.lastIndexOf('/') + 1);
+                if(!this.validRooms.includes(shortName)){
+                    return;
+                }
+                let childs0 = dataObject.childNodes;
+                let preBody = childs0[childs0.length - 1];
+                let preBodyChildren = preBody.childNodes;
+                let body = preBodyChildren[preBodyChildren.length - 1];
+                // let ubcFooter: any = this.findAttrs(body, "ubc7-footer");
+                // let unitFooter: any = this.findAttrs(ubcFooter, "ubc7-unit");
+                // let footerContainer: any = this.findAttrs(unitFooter, "container");
+                // let span10: any = this.findAttrs(footerContainer, "span10");
+                // let addressLocation: any = this.findAttrs(span10, "ubc7-address-location");
+                // let postal: any = this.findAttrs(addressLocation, "postal").childNodes[0].value.trim();
+                let container: any = this.findAttrs(body, "full-width-container");
+                let main: any = this.findAttrs(container, "main");
+                let content: any = this.findAttrs(main, "content");
+                let blockSystem: any = this.findAttrs(content, "block-system-main");
+                let viewBuildings: any = this.findAttrs(blockSystem, "view-buildings-and-classrooms");
+                let viewContent: any = this.findAttrs(viewBuildings, "view-content");
+                let viewsRows: any = this.findAttrs(viewContent, "views-row");
+                let buildingWrapper: any = this.findAttrs(viewsRows, "buildings-wrapper");
+                let buildingInfo: any  = this.findAttrs(buildingWrapper, "building-info");
+                let buildingField: any = this.findAttrs(buildingInfo, "building-field");
+                let fieldContent: any = this.findAttrs(buildingField, "field-content");
+                let name: string = buildingInfo.childNodes[1].childNodes[0].childNodes[0].value;
+                let viewFooter: any = this.findAttrs(viewBuildings, "view-footer");
+                let viewFooterBuildings: any = this.findAttrs(viewFooter, "view-buildings");
+                let viewFooterContent: any = this.findAttrs(viewFooterBuildings, "view-content");
+                let viewsTable: any = this.findAttrs(viewFooterContent, "views-table");
+                if(!viewsTable){
+                    return;
+                }
+                let loc: string = fieldContent.childNodes[0].value;
+                let lat: number;
+                let lon: number;
+                let spaceRegex: RegExp = / /gi;
+                let urlLoc: string = 'http://skaha.cs.ubc.ca:11316/api/v1/team75/' + loc.replace(spaceRegex, '%20');
+                this.getLocation(urlLoc).then((res) => {
+                    lat = res.lat;
+                    lon = res.lon;
+                    let tBody: any = viewsTable.childNodes[3];
+                    for(var i = 1; i < tBody.childNodes.length; i = i+2){
+                        let room: Room = new Room();
+                        room.rooms_fullname = name;
+                        room.rooms_shortname = shortName;
+                        let tRow = tBody.childNodes[i];
+                        room.rooms_number = tRow.childNodes[1].childNodes[1].childNodes[0].value.trim();
+                        room.rooms_address = loc;
+                        room.rooms_lon = lon;
+                        room.rooms_lat = lat;
+                        room.rooms_name = room.rooms_shortname + '_' + room.rooms_number;
+                        room.rooms_seats = tRow.childNodes[3].childNodes[0].value.trim();
+                        room.rooms_furniture = tRow.childNodes[5].childNodes[0].value.trim();
+                        room.rooms_type = tRow.childNodes[7].childNodes[0].value.trim();
+                        room.rooms_href = tRow.childNodes[9].childNodes[1].attrs[0].value.trim();
+                        this.dataSets["rooms"].push(room);
+                        fulfill(true);
+                    }
+                }).catch((err) => {
+                    reject(err);
+                });
+
+                // console.log(name);
+                // console.log(shortName);
+                // console.log(loc);
+            }
+            catch (err){
+                reject(err);
                 return;
             }
-            let childs0 = dataObject.childNodes;
-            let preBody = childs0[childs0.length - 1];
-            let preBodyChildren = preBody.childNodes;
-            let body = preBodyChildren[preBodyChildren.length - 1];
-            // let ubcFooter: any = this.findAttrs(body, "ubc7-footer");
-            // let unitFooter: any = this.findAttrs(ubcFooter, "ubc7-unit");
-            // let footerContainer: any = this.findAttrs(unitFooter, "container");
-            // let span10: any = this.findAttrs(footerContainer, "span10");
-            // let addressLocation: any = this.findAttrs(span10, "ubc7-address-location");
-            // let postal: any = this.findAttrs(addressLocation, "postal").childNodes[0].value.trim();
-            let container: any = this.findAttrs(body, "full-width-container");
-            let main: any = this.findAttrs(container, "main");
-            let content: any = this.findAttrs(main, "content");
-            let blockSystem: any = this.findAttrs(content, "block-system-main");
-            let viewBuildings: any = this.findAttrs(blockSystem, "view-buildings-and-classrooms");
-            let viewContent: any = this.findAttrs(viewBuildings, "view-content");
-            let viewsRows: any = this.findAttrs(viewContent, "views-row");
-            let buildingWrapper: any = this.findAttrs(viewsRows, "buildings-wrapper");
-            let buildingInfo: any  = this.findAttrs(buildingWrapper, "building-info");
-            let buildingField: any = this.findAttrs(buildingInfo, "building-field");
-            let fieldContent: any = this.findAttrs(buildingField, "field-content");
-            let name: string = buildingInfo.childNodes[1].childNodes[0].childNodes[0].value;
-            let viewFooter: any = this.findAttrs(viewBuildings, "view-footer");
-            let viewFooterBuildings: any = this.findAttrs(viewFooter, "view-buildings");
-            let viewFooterContent: any = this.findAttrs(viewFooterBuildings, "view-content");
-            let viewsTable: any = this.findAttrs(viewFooterContent, "views-table");
-            if(!viewsTable){
-                return;
-            }
-            let loc: string = fieldContent.childNodes[0].value;
-            let lat: number;
-            let lon: number;
-            let spaceRegex: RegExp = / /gi;
-            let urlLoc: string = 'http://skaha.cs.ubc.ca:11316/api/v1/team75/' + loc.replace(spaceRegex, '%20');
-            this.getLocation(urlLoc).then((res) => {
-                console.log(res);
-                lat = res.lat;
-                lon = res.lon;
-            }).catch((err) => {
-                throw new Error(err);
-            });
-            let tBody: any = viewsTable.childNodes[3];
-            for(var i = 1; i < tBody.childNodes.length; i = i+2){
-                let room: Room = new Room();
-                room.rooms_fullname = name;
-                room.rooms_shortname = shortName;
-                let tRow = tBody.childNodes[i];
-                room.rooms_number = tRow.childNodes[1].childNodes[1].childNodes[0].value.trim();
-                room.rooms_address = loc;
-                room.rooms_lon = lon;
-                room.rooms_lat = lat;
-                room.rooms_name = room.rooms_shortname + '_' + room.rooms_number;
-                room.rooms_seats = tRow.childNodes[3].childNodes[0].value.trim();
-                room.rooms_furniture = tRow.childNodes[5].childNodes[0].value.trim();
-                room.rooms_type = tRow.childNodes[7].childNodes[0].value.trim();
-                room.rooms_href = tRow.childNodes[9].childNodes[1].attrs[0].value.trim();
-                this.dataSets["rooms"].push(room);
-            }
-            // console.log(name);
-            // console.log(shortName);
-            // console.log(loc);
-        }
-        catch (err){
-            return;
-        }
+        })
+
     }
 
     getLocation(url: string): Promise<any> {
@@ -230,16 +243,15 @@ export default class InsightFacade implements IInsightFacade {
                 res.on('end', function(){
                     body = body.trim();
                     let res: any = {};
-                    if(body.indexOf("\"lat\":") != -1) {
+                    if(body.indexOf("lat") != -1) {
                         res.lat  = parseFloat(body.substring(body.indexOf("\"lat\":")+6,body.indexOf(",")));
                     }
-                    if(body.indexOf("\"lon\":") != -1) {
+                    if(body.indexOf("lon") != -1) {
                         res.lon  = parseFloat(body.substring(body.indexOf("\"lon\":")+6,body.indexOf("}")));
                     }
                     if(body.indexOf("\"error\":") != -1) {
                         res.error  = (body.substring(body.indexOf(":")+2,body.indexOf("}")-1));
                     }
-                    console.log(res);
                     fulfill(res);
                 });
 
@@ -311,9 +323,8 @@ export default class InsightFacade implements IInsightFacade {
                 var optionObj:any = {};
                 var flag:boolean = false;
                 let resArray: Array<any> = [];
-                    var t: Tokenizer = new Tokenizer();
+                var t: Tokenizer = new Tokenizer();
                 t.addKeys(parsedQuery);
-
                 Object.keys(this.dataSets).forEach((setName) => {
                     let dataSet: Array<any> = this.dataSets[setName];
                     for (var i = 0; i < dataSet.length; i++) {
