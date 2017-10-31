@@ -1,4 +1,3 @@
-import Log from "../Util";
 
 export default class Course {
     [key: string]: any;

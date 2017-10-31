@@ -8,23 +8,28 @@ import Course from "../dataStructs/Course";
 import Tokenizer from "../dataStructs/Tokenizer";
 import Query from "../dataStructs/Query";
 import OptionNode from "./nodes/OptionNode";
+import Room from "../dataStructs/Room";
+let http = require("http");
 let fs = require('fs');
+let parse5 =  require('parse5');
+
 
 export default class InsightFacade implements IInsightFacade {
 
     private dataSets: any = {};
+    private validRooms: Array<string> = [];
     constructor() {
         Log.trace('InsightFacadeImpl::init()');
     }
     addDataset(id: string, content: string): Promise<InsightResponse> {
         return new Promise((fulfill, reject) => {
-
             try {
                 var files: any;
                 var validCourse: boolean = false;
                 var zip = new JSZIP();
                 var pArr: Array<Promise<any>> = [];
                 let dataObjectArray: Array<any> = [];
+                let rooms: any = {};
                 zip.loadAsync(content, {base64: true}).then((zip: any) => {
                     if (this.dataSets[id] != undefined && this.dataSets[id] != null) {
                         fulfill({code: 201, body: {}});
@@ -34,23 +39,42 @@ export default class InsightFacade implements IInsightFacade {
                         fulfill({code: 201, body: {}});
                     }
                     else {
-                        this.dataSets[id] = new Array<Course>();
+                        if(id === "courses") {
+                            this.dataSets[id] = new Array<Course>();
+                        }
+                        if(id === "rooms") {
+                            this.dataSets[id] = new Array<Room>();
+                        }
                         files = zip.files;
                         Object.keys(files).forEach((filename) => {
                             let file: JSZipObject = files[filename];
                             pArr.push(
                                 file.async('string').then((fileData) => {
                                     if (fileData != '') {
-                                        let dataOb: any = new Object(JSON.parse((fileData)));
-                                        if (dataOb.result != null) {
-                                            dataOb.result.forEach((x: any) => {
-                                                if (x["Course"] != null) {
-                                                    validCourse = true;
-                                                }
-                                            })
+                                        if(id === "courses"){
+                                            let dataOb: any = new Object(JSON.parse((fileData)));
+                                            if (dataOb.result != null) {
+                                                dataOb.result.forEach((x: any) => {
+                                                    if (x["Course"] != null) {
+                                                        validCourse = true;
+                                                    }
+                                                })
+                                            }
+                                            if (dataOb.result.length > 0) {
+                                                dataObjectArray.push(dataOb.result);
+                                            }
                                         }
-                                        if (dataOb.result.length > 0) {
-                                            dataObjectArray.push(dataOb.result);
+                                        if(id === "rooms") {
+                                            let dataOb: any = new Object(parse5.parse(fileData));
+                                            if (file.name === "index.htm") {
+                                                this.addValidRooms(dataOb);
+                                            }
+                                            else if (!file.dir && file.name.indexOf(".DS_Store") == -1) {
+                                                if (file.name.indexOf("buildings-and-classrooms") == -1) {
+                                                    throw new Error("no building");
+                                                }
+                                                rooms[file.name] = dataOb;
+                                            }
                                         }
                                     }
                                 }).catch((err) => {
@@ -63,15 +87,19 @@ export default class InsightFacade implements IInsightFacade {
                 })
                     .then(() => {
                         Promise.all(pArr).then(() => {
-                            if(!validCourse) {
-                                reject({code: 400, body: {"error": "No valid courses"}});
+                            if(id === "courses"){
+                                if(!validCourse){
+                                    reject({code: 400, body: {"error": "No valid courses"}});
+                                }
+                                dataObjectArray.forEach((dataArray) => {
+                                    dataArray.forEach((dataObject: any) => {
+                                        this.addCourse(dataObject);
+                                    })
+                                });
                             }
-                            dataObjectArray.forEach((dataArray) => {
-                                dataArray.forEach((dataObject: any) => {
-                                    if (id === "courses") {
-                                        this.addCourse(dataObject, id);
-                                    }
-                                })
+                            if(id === "rooms"){}
+                            Object.keys(rooms).forEach((room) => {
+                                this.addRoom(rooms[room], room);
                             });
                             this.saveToDisk(id).then(() => {
                                 fulfill({code: 204, body: {}});
@@ -90,17 +118,154 @@ export default class InsightFacade implements IInsightFacade {
             if (!fs.existsSync('./disk')){
                 fs.mkdirSync('./disk');
             }
-                let filename: string = './disk/' + id + '.json'
+                let filename: string = './disk/' + id + '.json';
                 fs.writeFileSync(filename, JSON.stringify(this.dataSets[id]));
                 fulfill();
         })
     }
 
-    addCourse(dataObject: any, id: string): void {
+    addValidRooms(dataObject: any): void {
+        try{
+            let childs0 = dataObject.childNodes;
+            let preBody = childs0[childs0.length - 1];
+            let preBodyChildren = preBody.childNodes;
+            let body = preBodyChildren[preBodyChildren.length - 1];
+            let container: any = this.findAttrs(body, "full-width-container");
+            let main: any = this.findAttrs(container, "main");
+            let content: any = this.findAttrs(main, "content");
+            let blockSystem: any = this.findAttrs(content, "block-system-main");
+            let viewBuildings: any = this.findAttrs(blockSystem, "view-buildings-and-classrooms");
+            let viewContent: any = this.findAttrs(viewBuildings, "view-content");
+            let viewsTable: any = this.findAttrs(viewContent, "views-table");
+            let tBody: any = viewsTable.childNodes[3];
+            for(var i = 1; i < tBody.childNodes.length; i = i+2){
+                this.validRooms.push(tBody.childNodes[i].childNodes[3].childNodes[0].value.trim());
+            }
+        }
+        catch (err){
+            return;
+        }
+    }
+
+    addRoom(dataObject: any, fileName: string): void {
+        try{
+            let shortName: string  = fileName.substring(fileName.lastIndexOf('/') + 1);
+            if(!this.validRooms.includes(shortName)){
+                return;
+            }
+            let childs0 = dataObject.childNodes;
+            let preBody = childs0[childs0.length - 1];
+            let preBodyChildren = preBody.childNodes;
+            let body = preBodyChildren[preBodyChildren.length - 1];
+            // let ubcFooter: any = this.findAttrs(body, "ubc7-footer");
+            // let unitFooter: any = this.findAttrs(ubcFooter, "ubc7-unit");
+            // let footerContainer: any = this.findAttrs(unitFooter, "container");
+            // let span10: any = this.findAttrs(footerContainer, "span10");
+            // let addressLocation: any = this.findAttrs(span10, "ubc7-address-location");
+            // let postal: any = this.findAttrs(addressLocation, "postal").childNodes[0].value.trim();
+            let container: any = this.findAttrs(body, "full-width-container");
+            let main: any = this.findAttrs(container, "main");
+            let content: any = this.findAttrs(main, "content");
+            let blockSystem: any = this.findAttrs(content, "block-system-main");
+            let viewBuildings: any = this.findAttrs(blockSystem, "view-buildings-and-classrooms");
+            let viewContent: any = this.findAttrs(viewBuildings, "view-content");
+            let viewsRows: any = this.findAttrs(viewContent, "views-row");
+            let buildingWrapper: any = this.findAttrs(viewsRows, "buildings-wrapper");
+            let buildingInfo: any  = this.findAttrs(buildingWrapper, "building-info");
+            let buildingField: any = this.findAttrs(buildingInfo, "building-field");
+            let fieldContent: any = this.findAttrs(buildingField, "field-content");
+            let name: string = buildingInfo.childNodes[1].childNodes[0].childNodes[0].value;
+            let viewFooter: any = this.findAttrs(viewBuildings, "view-footer");
+            let viewFooterBuildings: any = this.findAttrs(viewFooter, "view-buildings");
+            let viewFooterContent: any = this.findAttrs(viewFooterBuildings, "view-content");
+            let viewsTable: any = this.findAttrs(viewFooterContent, "views-table");
+            if(!viewsTable){
+                return;
+            }
+            let loc: string = fieldContent.childNodes[0].value;
+            let lat: number;
+            let lon: number;
+            let spaceRegex: RegExp = / /gi;
+            let urlLoc: string = 'http://skaha.cs.ubc.ca:11316/api/v1/team75/' + loc.replace(spaceRegex, '%20');
+            this.getLocation(urlLoc).then((res) => {
+                console.log(res);
+                lat = res.lat;
+                lon = res.lon;
+            }).catch((err) => {
+                throw new Error(err);
+            });
+            let tBody: any = viewsTable.childNodes[3];
+            for(var i = 1; i < tBody.childNodes.length; i = i+2){
+                let room: Room = new Room();
+                room.rooms_fullname = name;
+                room.rooms_shortname = shortName;
+                let tRow = tBody.childNodes[i];
+                room.rooms_number = tRow.childNodes[1].childNodes[1].childNodes[0].value.trim();
+                room.rooms_address = loc;
+                room.rooms_lon = lon;
+                room.rooms_lat = lat;
+                room.rooms_name = room.rooms_shortname + '_' + room.rooms_number;
+                room.rooms_seats = tRow.childNodes[3].childNodes[0].value.trim();
+                room.rooms_furniture = tRow.childNodes[5].childNodes[0].value.trim();
+                room.rooms_type = tRow.childNodes[7].childNodes[0].value.trim();
+                room.rooms_href = tRow.childNodes[9].childNodes[1].attrs[0].value.trim();
+                this.dataSets["rooms"].push(room);
+            }
+            // console.log(name);
+            // console.log(shortName);
+            // console.log(loc);
+        }
+        catch (err){
+            return;
+        }
+    }
+
+    getLocation(url: string): Promise<any> {
+        return new Promise(function(fulfill, reject) {
+            http.get(url, function(res: any){
+                var body = '';
+                res.on('data', function(chunck: any) {
+                    body += chunck;
+                });
+                res.on('end', function(){
+                    body = body.trim();
+                    let res: any = {};
+                    if(body.indexOf("\"lat\":") != -1) {
+                        res.lat  = parseFloat(body.substring(body.indexOf("\"lat\":")+6,body.indexOf(",")));
+                    }
+                    if(body.indexOf("\"lon\":") != -1) {
+                        res.lon  = parseFloat(body.substring(body.indexOf("\"lon\":")+6,body.indexOf("}")));
+                    }
+                    if(body.indexOf("\"error\":") != -1) {
+                        res.error  = (body.substring(body.indexOf(":")+2,body.indexOf("}")-1));
+                    }
+                    console.log(res);
+                    fulfill(res);
+                });
+
+            }).on('error', function(e: any) {
+                console.log("Got error: " + e.message);
+                reject(e);
+            });
+        })
+    }
+
+    findAttrs(parent: any, value: string): any{
+        let child: any;
+        for(var i = 0; i < parent.childNodes.length; i++){
+            if(parent.childNodes[i].attrs && parent.childNodes[i].attrs[0] && parent.childNodes[i].attrs[0].value.indexOf(value) !== -1){
+                child = parent.childNodes[i];
+                break;
+            }
+        }
+        return child;
+    }
+
+    addCourse(dataObject: any): void {
         let course: Course = new Course();
-        let courses: any = this.dataSets[id];
+        let courses: any = this.dataSets["courses"];
         course.courses_title = dataObject.Title;
-        course.courses_uuid = dataObject["id"];
+        course.courses_uuid = dataObject.id;
         course.courses_id = dataObject.Course;
         course.courses_dept = dataObject.Subject;
         course.courses_instructor = dataObject.Professor;

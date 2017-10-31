@@ -31,12 +31,16 @@ describe("EchoSpec", function () {
     var t = new Tokenizer();
     var insightFace: InsightFacade = null;
     var zip = null;
-    let dataString: string = null;
+    let dataStringCourses: string = null;
+    let dataStringRooms: string = null;
     let nonZipString: string = null;
     let badZipString: string = null;
     let badJsonString: string = null;
-    const BAD_ZIP_PATH ='./badcourses.zip';
-    const DATA_PATH = './courses.zip';
+    let badRoomString: string = null;
+    const BAD_ROOM_PATH = './badRooms.zip';
+    const BAD_ZIP_PATH = './badcourses.zip';
+    const COURSES_PATH = './courses.zip';
+    const ROOMS_PATH = './rooms.zip';
     const NON_ZIP_PATH = './courses';
     const BAD_JSON_PATH = './badjson.zip';
     const SIMPLE_QUERY = { "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } };
@@ -346,10 +350,12 @@ describe("EchoSpec", function () {
         insightFace = new InsightFacade();
         zip = new JSZip();
         // insightFace.removeDataset("courses");
-        dataString = fs.readFileSync(DATA_PATH,'base64');
+        dataStringCourses = fs.readFileSync(COURSES_PATH,'base64');
+        dataStringRooms = fs.readFileSync(ROOMS_PATH, 'base64');
         nonZipString = fs.readdirSync(NON_ZIP_PATH,'base64');
         badZipString = fs.readFileSync(BAD_ZIP_PATH, 'base64');
         badJsonString = fs.readFileSync(BAD_JSON_PATH, 'base64');
+        badRoomString = fs.readFileSync(BAD_ROOM_PATH, 'base64');
     });
 
     after(function () {
@@ -359,6 +365,7 @@ describe("EchoSpec", function () {
     afterEach(function () {
         Log.test('AfterTest: ' + (<any>this).currentTest.title);
         insightFace.removeDataset("courses");
+        insightFace.removeDataset("rooms");
     });
 
     it("Should be able to echo", function () {
@@ -527,8 +534,8 @@ describe("EchoSpec", function () {
 
     it("ADDDATASET 201 - old proper dataset", function () {
         this.timeout(5000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
-            return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
+            return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
                 Log.test('Value: ' + value.code);
                 expect(value.code).to.deep.equal(201);
             }).catch(function (err) {
@@ -542,7 +549,7 @@ describe("EchoSpec", function () {
 
     it("REMOVEDATASET 204 - given proper dataset", function () {
         this.timeout(5000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
         }).catch((err) => {
             Log.test('Errorboo: ' + err);
@@ -563,7 +570,7 @@ describe("EchoSpec", function () {
 
     it("ADDDATASET 204 - new proper dataset", function () {
         this.timeout(5000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             expect(value.code).to.deep.equal(204);
         }).catch(function (err) {
@@ -607,7 +614,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper dataset simple GT query", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(SIMPLE_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -625,7 +632,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper dataset prof query", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(PROF_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -643,7 +650,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper dataset complex query", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(COMPLEX_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -661,7 +668,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper dataset gt lt query", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(GT_LT_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -679,7 +686,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper dataset not lt query", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(NOT_LT).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -697,7 +704,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper find big", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(BIG_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -715,7 +722,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper find or", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(OR_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -733,7 +740,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - two nested ands", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(NESTED_AND_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -751,7 +758,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - excalibur", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(EXCALIBUR).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -769,7 +776,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 400 - test on string", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(SIMPLE_QUERY_IS_BAD).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -780,6 +787,17 @@ describe("EchoSpec", function () {
             })
         }).catch(function (err) {
             Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("ADDDATASET 204 - rooms", function () {
+        this.timeout(5000);
+        return insightFace.addDataset("rooms", dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            expect(value.code).to.deep.equal(204);
+        }).catch(function (err) {
+            Log.test('Error: ' + err.body.error);
             expect.fail();
         })
     });
