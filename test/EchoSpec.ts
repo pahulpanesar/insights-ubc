@@ -489,14 +489,34 @@ describe("EchoSpec", function () {
     });
 
     it("isRoom - course", function () {
-        var tok: Tokenizer = new Tokenizer();
-        tok.addKeys(test.SIMPLE_QUERY);
-        return !test.insightFace.isRoomQuery(tok.tokens);
+        test.t = new Tokenizer();
+        test.t.addKeys(test.SIMPLE_QUERY);
+        return !test.insightFace.isRoomQuery(test.t.tokens);
     });
     it("isRoom - room", function () {
-        var tok: Tokenizer = new Tokenizer();
-        tok.addKeys(test.SIMPLE_QUERY);
-        return !test.insightFace.isRoomQuery(tok.tokens);
+        test.t = new Tokenizer();
+        test.t.addKeys(test.ROOM_QUERY);
+        return test.insightFace.isRoomQuery(test.t.tokens);
+    });
+    it("isRoom - course - mix", function () {
+        try {
+            test. t.addKeys(test.MIX_QUERY_COURSE);
+            test.insightFace.isRoomQuery(test.t.tokens);
+            return false;
+        }
+        catch(e){
+            return e === "Malformed Query - Room/Course";
+        }
+    });
+    it("isRoom - room - mix", function () {
+        try {
+            test. t.addKeys(test.MIX_QUERY_ROOM);
+            test.insightFace.isRoomQuery(test.t.tokens);
+            return false;
+        }
+        catch(e){
+            return e === "Malformed Query - Room/Course";
+        }
     });
 
 

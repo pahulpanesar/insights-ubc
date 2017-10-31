@@ -8,6 +8,9 @@ export default class TestConstants {
 
     testJSONSimple = '{ "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
 
+    ROOM_QUERY = '{ "WHERE": { "IS": { "rooms_name": "DMP_*" } }, "OPTIONS": { "COLUMNS": [ "rooms_name" ], "ORDER": "rooms_name" } }';
+    MIX_QUERY_COURSE = '"WHERE": { "AND": [ { "GT": { "courses_avg": 95.50 } }, { "IS": { "rooms_name": "DMP_*" } } ] }, "OPTIONS": { "COLUMNS": [ "courses_avg", "courses_dept" ], "ORDER": "courses_avg" } };';
+    MIX_QUERY_ROOM= '"WHERE": { "AND": [ { "IS": { "rooms_name": "DMP_*" } } ,{ "GT": { "courses_avg": 95.50 } } ] }, "OPTIONS": { "COLUMNS": [ "courses_avg", "courses_dept" ], "ORDER": "courses_avg" } };';
     t = new Tokenizer();
 
     insightFace: InsightFacade = null;
