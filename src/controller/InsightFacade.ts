@@ -109,7 +109,11 @@ export default class InsightFacade implements IInsightFacade {
                                 Promise.all(pArr2).then(() => {
                                     this.saveToDisk(id).then(() => {
                                         fulfill({code: 204, body: {}});
+                                    }).catch((err) => {
+                                        throw new Error("MAN!");
                                     })
+                                }).catch((err) => {
+                                    throw new Error("wtf");
                                 })
                             }
                         })
@@ -151,7 +155,7 @@ export default class InsightFacade implements IInsightFacade {
             }
         }
         catch (err){
-            return;
+            throw new Error("bad index");
         }
     }
 
@@ -160,6 +164,7 @@ export default class InsightFacade implements IInsightFacade {
             try{
                 let shortName: string  = fileName.substring(fileName.lastIndexOf('/') + 1);
                 if(!this.validRooms.includes(shortName)){
+                    fulfill("valid rooms doesn't include this");
                     return;
                 }
                 let childs0 = dataObject.childNodes;
@@ -187,8 +192,13 @@ export default class InsightFacade implements IInsightFacade {
                 let viewFooter: any = this.findAttrs(viewBuildings, "view-footer");
                 let viewFooterBuildings: any = this.findAttrs(viewFooter, "view-buildings");
                 let viewFooterContent: any = this.findAttrs(viewFooterBuildings, "view-content");
+                if(!viewFooterContent) {
+                    fulfill(true);
+                    return;
+                }
                 let viewsTable: any = this.findAttrs(viewFooterContent, "views-table");
                 if(!viewsTable){
+                    reject("no valid table");
                     return;
                 }
                 let loc: string = fieldContent.childNodes[0].value;
@@ -215,21 +225,17 @@ export default class InsightFacade implements IInsightFacade {
                         room.rooms_type = tRow.childNodes[7].childNodes[0].value.trim();
                         room.rooms_href = tRow.childNodes[9].childNodes[1].attrs[0].value.trim();
                         this.dataSets["rooms"].push(room);
-                        fulfill(true);
                     }
+                    fulfill(true);
                 }).catch((err) => {
                     reject(err);
                 });
-
-                // console.log(name);
-                // console.log(shortName);
-                // console.log(loc);
             }
             catch (err){
                 reject(err);
-                return;
             }
         })
+
 
     }
 
@@ -264,13 +270,19 @@ export default class InsightFacade implements IInsightFacade {
 
     findAttrs(parent: any, value: string): any{
         let child: any;
-        for(var i = 0; i < parent.childNodes.length; i++){
-            if(parent.childNodes[i].attrs && parent.childNodes[i].attrs[0] && parent.childNodes[i].attrs[0].value.indexOf(value) !== -1){
-                child = parent.childNodes[i];
-                break;
+        try{
+            for(var i = 0; i < parent.childNodes.length; i++){
+                if(parent.childNodes[i].attrs && parent.childNodes[i].attrs[0] && parent.childNodes[i].attrs[0].value.indexOf(value) !== -1){
+                    child = parent.childNodes[i];
+                    break;
+                }
             }
+            return child;
         }
-        return child;
+        catch (err){
+            console.log(value);
+        }
+
     }
 
     addCourse(dataObject: any): void {
@@ -345,7 +357,7 @@ export default class InsightFacade implements IInsightFacade {
                 if(Object.keys(this.dataSets).length < 1 ) {
                     reject({code: 424, body: {"error": "No dataset"}});
                 }
-                if(this.isRoomQuery){
+                if(this.isRoomQuery(query)){
                     if(!Object.keys(this.dataSets).includes("rooms")){
                         throw new Error("no rooms in dataset");
                     }
@@ -361,7 +373,7 @@ export default class InsightFacade implements IInsightFacade {
                 let resArray: Array<any> = [];
                 var t: Tokenizer = new Tokenizer();
                 t.addKeys(query);
-                let dataSet = this.isRoomQuery ? this.dataSets["rooms"] : this.dataSets["courses"];
+                let dataSet = this.isRoomQuery(query) ? this.dataSets["rooms"] : this.dataSets["courses"];
                 for (var i = 0; i < dataSet.length; i++) {
                     t.index = 0;
                     let c: any = dataSet[i];
