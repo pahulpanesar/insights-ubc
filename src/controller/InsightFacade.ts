@@ -313,7 +313,10 @@ export default class InsightFacade implements IInsightFacade {
     }
 
 
-    isRoomQuery(tokens: string[]): boolean{
+    isRoomQuery(query: any): boolean{
+        var t = new Tokenizer();
+        t.addKeys(query);
+        var tokens: any[] = t.tokens;
         var roomFlag: number = -1;
         for(var i =0;i<tokens.length;i++){
             if(tokens[i].toString().match("rooms_")){
