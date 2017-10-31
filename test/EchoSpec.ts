@@ -526,7 +526,7 @@ describe("EchoSpec", function () {
             return test.insightFace.performQuery(test.SIMPLE_ROOM_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value: ' + val.code);
                 expect(val.code).to.deep.equal(200);
-                expect(val.body.result).to.deep.equal(test.SIMPLE_ROOM_QUERY_RESPONSE);
+                expect(val.body).to.deep.equal(test.SIMPLE_ROOM_QUERY_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err.body.error);
                 expect.fail();
@@ -543,14 +543,8 @@ describe("EchoSpec", function () {
             Log.test('Value: ' + value.code);
             return test.insightFace.performQuery(test.SIMPLE_ROOM_QUERY_2).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
-                for(var i = 0; i < val.body.result.length; i++){
-                    console.log("val: ");
-                    console.log(val.body.result[i]);
-                    console.log("res: ");
-                    console.log(test.SIMPLE_ROOM_QUERY_2_RESPONSE.result[i]);
-                }
                 expect(val.code).to.deep.equal(200);
-                expect(val.body.result).to.equal(test.SIMPLE_ROOM_QUERY_2_RESPONSE.result);
+                expect(val.body).to.deep.equal(test.SIMPLE_ROOM_QUERY_2_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();
