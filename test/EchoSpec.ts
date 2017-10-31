@@ -31,12 +31,16 @@ describe("EchoSpec", function () {
     var t = new Tokenizer();
     var insightFace: InsightFacade = null;
     var zip = null;
-    let dataString: string = null;
+    let dataStringCourses: string = null;
+    let dataStringRooms: string = null;
     let nonZipString: string = null;
     let badZipString: string = null;
     let badJsonString: string = null;
-    const BAD_ZIP_PATH ='./badcourses.zip';
-    const DATA_PATH = './courses.zip';
+    let badRoomString: string = null;
+    const BAD_ROOM_PATH = './badRooms.zip';
+    const BAD_ZIP_PATH = './badcourses.zip';
+    const COURSES_PATH = './courses.zip';
+    const ROOMS_PATH = './rooms.zip';
     const NON_ZIP_PATH = './courses';
     const BAD_JSON_PATH = './badjson.zip';
     const SIMPLE_QUERY = { "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } };
@@ -129,9 +133,6 @@ describe("EchoSpec", function () {
             "ORDER": "courses_avg"
         }
     };
-    const CS_310_QUERY = { "WHERE":{ "IS":{
-        "courses_instructor": "*banias*"}
-    }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_instructor" ] } };
     const PROF_QUERY = {
         "WHERE": {
             "AND": [
@@ -142,7 +143,7 @@ describe("EchoSpec", function () {
                 },
                 {
                     "IS": {
-                        "courses_instructor": 09
+                        "courses_instructor": "c*"
                     }
                 }
 
@@ -168,7 +169,7 @@ describe("EchoSpec", function () {
         {courses_instructor:'chan, jennifer',courses_dept: 'adhe'}
     ]};
     const SIMPLE_QUERY_BAD_ORDER = { "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_fail" } };
-    const SIMPLE_QUERY_IS = '{ "WHERE":{ "IS":{ "courses_dept": nj } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
+    const SIMPLE_QUERY_IS_BAD = '{ "WHERE": {"IS": {"courses_dept": nj } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
     const COMPLEX_QUERY = { "WHERE":{ "OR":[ { "AND":[ { "GT":{ "courses_avg":90 } }, { "IS":{ "courses_dept":"adhe" } } ] }, { "EQ":{ "courses_avg":95 } } ] }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_id", "courses_avg" ], "ORDER":"courses_avg" } };
     const SIMPLE_QUERY_RESPONSE = {
         result:
@@ -244,6 +245,35 @@ describe("EchoSpec", function () {
             "ORDER":"courses_avg"
         }
     };
+
+    const EXCALIBUR = {
+        "WHERE": {
+            "AND": [
+                {"OR":[{
+                    "IS": {
+                        "courses_dept": "adhe"
+                    }},{
+                    "IS": {
+                        "courses_dept": "cpsc"
+                    }}] },
+                {
+                    "GT": {
+
+                        "courses_avg": 93
+                    }
+                }
+
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_instructor",
+                "courses_dept"
+            ]
+        }
+    };
+
+    const EXCALIBUR_RESPONSE = {"result":[{"courses_instructor":"bishundayal, deonarine","courses_dept":"adhe"},{"courses_instructor":"bishundayal, deonarine","courses_dept":"adhe"},{"courses_instructor":"tsiknis, georgios","courses_dept":"cpsc"},{"courses_instructor":"","courses_dept":"cpsc"},{"courses_instructor":"knorr, edwin max","courses_dept":"cpsc"},{"courses_instructor":"","courses_dept":"cpsc"},{"courses_instructor":"friedman, joel","courses_dept":"cpsc"},{"courses_instructor":"","courses_dept":"cpsc"},{"courses_instructor":"carenini, giuseppe","courses_dept":"cpsc"},{"courses_instructor":"","courses_dept":"cpsc"},{"courses_instructor":"","courses_dept":"cpsc"},{"courses_instructor":"","courses_dept":"cpsc"}]};
     const OR_RESPONSE = {"result":[{"courses_dept":"cnps","courses_id":"574","courses_avg":99.19},{"courses_dept":"math","courses_id":"527","courses_avg":99.78},{"courses_dept":"math","courses_id":"527","courses_avg":99.78}]};
 
     const BIG_AND = {"result":[{"courses_dept":"epse","courses_id":"421","courses_avg":98.36},{"courses_dept":"epse","courses_id":"449","courses_avg":98.58},{"courses_dept":"epse","courses_id":"449","courses_avg":98.58},{"courses_dept":"epse","courses_id":"449","courses_avg":98.8},{"courses_dept":"spph","courses_id":"300","courses_avg":98.98},{"courses_dept":"spph","courses_id":"300","courses_avg":98.98}]};
@@ -276,6 +306,41 @@ describe("EchoSpec", function () {
         }
     };
 
+    const NESTED_AND_QUERY = {
+        "WHERE":{
+            "AND": [
+                {"AND": [{
+                    "GT": {
+                        "courses_avg":98
+                    }
+                },
+                    {
+                        "EQ": {
+                            "courses_fail":0
+                        }
+                }]},
+                {"AND": [{
+                    "GT": {
+                        "courses_pass":20
+                    }
+                },
+                    {
+                        "EQ": {
+                            "courses_fail":0
+                        }
+                    }]}
+
+            ]},
+        "OPTIONS":{
+            "COLUMNS":[
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER":"courses_avg"
+        }
+    };
+
     before(function () {
         Log.test('Before: ' + (<any>this).test.parent.title);
     });
@@ -285,10 +350,12 @@ describe("EchoSpec", function () {
         insightFace = new InsightFacade();
         zip = new JSZip();
         // insightFace.removeDataset("courses");
-        dataString = fs.readFileSync(DATA_PATH,'base64');
+        dataStringCourses = fs.readFileSync(COURSES_PATH,'base64');
+        dataStringRooms = fs.readFileSync(ROOMS_PATH, 'base64');
         nonZipString = fs.readdirSync(NON_ZIP_PATH,'base64');
         badZipString = fs.readFileSync(BAD_ZIP_PATH, 'base64');
         badJsonString = fs.readFileSync(BAD_JSON_PATH, 'base64');
+        badRoomString = fs.readFileSync(BAD_ROOM_PATH, 'base64');
     });
 
     after(function () {
@@ -298,6 +365,7 @@ describe("EchoSpec", function () {
     afterEach(function () {
         Log.test('AfterTest: ' + (<any>this).currentTest.title);
         insightFace.removeDataset("courses");
+        insightFace.removeDataset("rooms");
     });
 
     it("Should be able to echo", function () {
@@ -466,8 +534,8 @@ describe("EchoSpec", function () {
 
     it("ADDDATASET 201 - old proper dataset", function () {
         this.timeout(5000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
-            return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
+            return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
                 Log.test('Value: ' + value.code);
                 expect(value.code).to.deep.equal(201);
             }).catch(function (err) {
@@ -481,7 +549,7 @@ describe("EchoSpec", function () {
 
     it("REMOVEDATASET 204 - given proper dataset", function () {
         this.timeout(5000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
         }).catch((err) => {
             Log.test('Errorboo: ' + err);
@@ -502,7 +570,7 @@ describe("EchoSpec", function () {
 
     it("ADDDATASET 204 - new proper dataset", function () {
         this.timeout(5000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             expect(value.code).to.deep.equal(204);
         }).catch(function (err) {
@@ -546,7 +614,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper dataset simple GT query", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(SIMPLE_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -564,7 +632,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper dataset prof query", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(PROF_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -582,7 +650,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper dataset complex query", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(COMPLEX_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -600,7 +668,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper dataset gt lt query", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(GT_LT_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -618,7 +686,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper dataset not lt query", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(NOT_LT).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -636,7 +704,7 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper find big", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return insightFace.performQuery(BIG_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
@@ -654,9 +722,9 @@ describe("EchoSpec", function () {
 
     it("PERFORMQUERY 200 - new proper find or", function () {
         this.timeout(15000);
-        return insightFace.addDataset("courses", dataString).then(function (value: InsightResponse) {
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
-            return insightFace.performQuery(PROF_QUERY).then(function (val: InsightResponse) {
+            return insightFace.performQuery(OR_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(OR_RESPONSE);
@@ -669,15 +737,68 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
-
-    it("Geocode - correct input", function () {
-        try{
-            var s = insightFace.getGeocode("6363 Agronomy Road");
-            console.log(s);
-        }
-        catch(e){
-            console.log(e);
-        }
+  
+    it("PERFORMQUERY 200 - two nested ands", function () {
+        this.timeout(15000);
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return insightFace.performQuery(NESTED_AND_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(BIG_AND);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
     });
 
+    it("PERFORMQUERY 200 - excalibur", function () {
+        this.timeout(15000);
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return insightFace.performQuery(EXCALIBUR).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(EXCALIBUR_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 400 - test on string", function () {
+        this.timeout(15000);
+        return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return insightFace.performQuery(SIMPLE_QUERY_IS_BAD).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect.fail();
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect(err.code).to.deep.equal(400);
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("ADDDATASET 204 - rooms", function () {
+        this.timeout(5000);
+        return insightFace.addDataset("rooms", dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            expect(value.code).to.deep.equal(204);
+        }).catch(function (err) {
+            Log.test('Error: ' + err.body.error);
+            expect.fail();
+        })
+    });
 });
