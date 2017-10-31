@@ -1,6 +1,7 @@
 import Course from "../../dataStructs/Course";
 import Tokenizer from "../../dataStructs/Tokenizer";
 import {type} from "os";
+import Room from "../../dataStructs/Room";
 
 export default class _Node{ //underscore is to distinguish from native TS class
     tokenizer : Tokenizer;
@@ -16,7 +17,7 @@ export default class _Node{ //underscore is to distinguish from native TS class
             this.dataStruct = <Room> c;
         }
         else{
-            console.log("UHOH SOMETHING FUCKY IS HAPPENING....");
+            throw new Error("Class error");
         }
         this.tokenizer = t;
 

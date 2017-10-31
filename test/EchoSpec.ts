@@ -801,4 +801,12 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+
+    it("isRoom - course", function () {
+        var tok: Tokenizer = new Tokenizer();
+        tok.addKeys(SIMPLE_QUERY);
+        return false;
+    });
+
+
 });

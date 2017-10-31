@@ -312,6 +312,29 @@ export default class InsightFacade implements IInsightFacade {
         })
     }
 
+    isRoomQuery(tokens: any[]){
+        var roomFlag: number = -1;
+        for(var i =0;i<any.length;i++){
+            if(tokens[i].match("rooms_")){
+                if(roomFlag < 0) {
+                    roomFlag = 1;
+                }
+                else{
+                    throw new Error("Malformed Query - Room/Course");
+                }
+            }
+            if(tokens[i].match("courses_")){
+                if(roomFlag < 0) {
+                    roomFlag = 0;
+                }
+                else{
+                    throw new Error("Malformed Query - Room/Course");
+                }
+            }
+        }
+        return roomFlag === 1;
+    }
+
 
     performQuery(query: any): Promise <InsightResponse> {
         return new Promise((fulfill, reject) => {
