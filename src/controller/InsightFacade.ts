@@ -400,6 +400,7 @@ export default class InsightFacade implements IInsightFacade {
                     optionObj["columns"].forEach((column:any) => {
                         contain[column] = struct[column];
                     });
+
                     return contain;
                 });
                 fulfill({code: 200, body: {"result": resArray}});

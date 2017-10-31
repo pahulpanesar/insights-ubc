@@ -10,7 +10,7 @@ export default class SKeyNode extends _Node{
         super(t,c);
     }
     parse(){
-        var s = this.getAndCheckToken("(courses|rooms)_(dept|id|instructor|title|uuid|lat|lon|seats|name|address)", true); //check if it's a valid m_key
+        var s = this.getAndCheckToken("(courses|rooms)_(dept|id|instructor|title|uuid|lat|lon|name|address|fullname|shortname|furniture|href|type)", true); //check if it's a valid s_key
         this.s_key = s;
     }
 
