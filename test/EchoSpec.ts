@@ -737,7 +737,7 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
-
+  
     it("PERFORMQUERY 200 - two nested ands", function () {
         this.timeout(15000);
         return insightFace.addDataset("courses", dataStringCourses).then(function (value: InsightResponse) {

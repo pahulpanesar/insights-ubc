@@ -290,11 +290,11 @@ export default class InsightFacade implements IInsightFacade {
 
     // filterCourses(id: string): Array<any> {
     //     let filteredCourses: Array<any> = [];
-    //     let course: Course;
+    //     let dataStruct: Course;
     //     let courses: Array<Course> = this.dataSets[id];
     //     filteredCourses = courses.filter(
-    //        course => course.courses_avg >= 97);
-    //     return filteredCourses.map(course => course.courses_dept + " " + course.courses_avg)
+    //        dataStruct => dataStruct.courses_avg >= 97);
+    //     return filteredCourses.map(dataStruct => dataStruct.courses_dept + " " + dataStruct.courses_avg)
     // }
 
     removeDataset(id: string): Promise<InsightResponse> {
@@ -311,6 +311,7 @@ export default class InsightFacade implements IInsightFacade {
             }
         })
     }
+
 
     performQuery(query: any): Promise <InsightResponse> {
         return new Promise((fulfill, reject) => {

@@ -12,7 +12,7 @@ export default class Query extends _Node {
 
     parseFilter(){
         this.getAndCheckToken("WHERE",true);
-        this.filter = new FilterNode(this.tokenizer,this.course);
+        this.filter = new FilterNode(this.tokenizer,this.dataStruct);
         this.filter.parse();
     }
 

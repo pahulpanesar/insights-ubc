@@ -38,7 +38,7 @@ export default class Tokenizer{
             else if(typeof json[elem] === "object"){
                 this.addKeys(json[temp]);
             }
-            else{
+            else {
                 this.tokens.push(json[elem]);
                 //console.log(json[elem]);
             }

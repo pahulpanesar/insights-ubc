@@ -5,7 +5,7 @@ import _Node from "./Node";
 import Course from "../../dataStructs/Course";
 
 export default class NegationNode extends _Node{
-    filter = new FilterNode(this.tokenizer,this.course);
+    filter = new FilterNode(this.tokenizer,this.dataStruct);
     constructor(t: Tokenizer,c:Course){
         super(t,c);
     }

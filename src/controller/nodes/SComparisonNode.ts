@@ -5,8 +5,8 @@ import SKeyNode from "./SKeyNode";
 import Course from "../../dataStructs/Course";
 
 export default class SComparisonNode extends _Node{
-    inputString: InputStringNode = new InputStringNode(this.tokenizer,this.course);
-    s_key: SKeyNode = new SKeyNode(this.tokenizer,this.course);
+    inputString: InputStringNode = new InputStringNode(this.tokenizer,this.dataStruct);
+    s_key: SKeyNode = new SKeyNode(this.tokenizer,this.dataStruct);
 
 
     constructor(t: Tokenizer,c:Course){
@@ -20,7 +20,7 @@ export default class SComparisonNode extends _Node{
 
     }
 
-    evaluate(){
+    evaluate(): boolean{
         let regex: RegExp = this.inputString.evaluate();
         let key: string = this.s_key.evaluate();
         return regex.test(key);

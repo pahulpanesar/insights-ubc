@@ -23,20 +23,20 @@ export default class FilterNode extends _Node{
             case "OR":
                 this.count++;
                 //create logic node
-                this.filter = new LogicNode(this.tokenizer,this.course, this.count);
+                this.filter = new LogicNode(this.tokenizer,this.dataStruct, this.count);
                 break;
             case "LT":
             case "GT":
             case "EQ":
                 //create MComparison node
-                this.filter = new MComparisonNode(this.tokenizer, this.course);
+                this.filter = new MComparisonNode(this.tokenizer, this.dataStruct);
                 break;
             case "IS":
-                this.filter = new SComparisonNode(this.tokenizer, this.course);
+                this.filter = new SComparisonNode(this.tokenizer, this.dataStruct);
                 break;
                 //create SComparison node
             case "NOT":
-                this.filter = new NegationNode(this.tokenizer, this.course);
+                this.filter = new NegationNode(this.tokenizer, this.dataStruct);
                 break;
                 //create negation node
             default:

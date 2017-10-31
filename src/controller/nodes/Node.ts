@@ -1,15 +1,25 @@
 import Course from "../../dataStructs/Course";
 import Tokenizer from "../../dataStructs/Tokenizer";
+import {type} from "os";
 
 export default class _Node{ //underscore is to distinguish from native TS class
     tokenizer : Tokenizer;
-    course: Course;
+    dataStruct: any;
     count: number;
     //courseObj : Course = new Course();
 
-    constructor (t: Tokenizer,c:Course){
+    constructor (t: Tokenizer,c:any){
+        if(c instanceof Course){
+            this.dataStruct = <Course> c;
+        }
+        else if(c instanceof Room){
+            this.dataStruct = <Room> c;
+        }
+        else{
+            console.log("UHOH SOMETHING FUCKY IS HAPPENING....");
+        }
         this.tokenizer = t;
-        this.course = c;
+
     }
 
     getAndCheckToken(regex: string, index: boolean): string{
