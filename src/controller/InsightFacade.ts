@@ -314,7 +314,7 @@ export default class InsightFacade implements IInsightFacade {
 
     isRoomQuery(tokens: any[]){
         var roomFlag: number = -1;
-        for(var i =0;i<any.length;i++){
+        for(var i =0;i<tokens.length;i++){
             if(tokens[i].match("rooms_")){
                 if(roomFlag < 0) {
                     roomFlag = 1;
