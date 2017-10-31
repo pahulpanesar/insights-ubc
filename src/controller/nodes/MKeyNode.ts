@@ -10,7 +10,7 @@ export default class MKeyNode extends _Node{
         super(t,c);
     }
     parse(){
-        var s = this.getAndCheckToken("courses_(avg|pass|fail|audit|year)", true); //check if it's a valid m_key
+        var s = this.getAndCheckToken("(courses|rooms)_(avg|pass|fail|audit|year|fullname|shortname|number|name|address|type|furniture|href)", true); //check if it's a valid m_key
         this.m_key = s;
     }
 
