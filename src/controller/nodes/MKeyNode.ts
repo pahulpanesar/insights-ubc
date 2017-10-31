@@ -6,7 +6,7 @@ import Course from "../../dataStructs/Course";
 export default class MKeyNode extends _Node{
     m_key: string;
 
-    constructor(t: Tokenizer,c: Course){
+    constructor(t: Tokenizer,c: any){
         super(t,c);
     }
     parse(){
@@ -15,7 +15,7 @@ export default class MKeyNode extends _Node{
     }
 
     evaluate(){
-        var temp:number = this.course[this.m_key];
+        var temp:number = this.dataStruct[this.m_key];
         //console.log("returning... " + temp);
         return temp;
     }

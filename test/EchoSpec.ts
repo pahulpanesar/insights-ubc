@@ -669,4 +669,15 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+
+    it("Geocode - correct input", function () {
+        try{
+            var s = insightFace.getGeocode("6363 Agronomy Road");
+            console.log(s);
+        }
+        catch(e){
+            console.log(e);
+        }
+    });
+
 });

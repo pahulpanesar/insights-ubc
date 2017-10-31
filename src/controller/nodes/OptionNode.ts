@@ -7,8 +7,8 @@ import Tokenizer from "../../dataStructs/Tokenizer";
 import OrderNode from "./OrderNode";
 
 export default class OptionNode extends _Node{
-    columns:ColumnNode = new ColumnNode(this.tokenizer,this.course);
-    order:OrderNode = new OrderNode(this.tokenizer,this.course);
+    columns:ColumnNode = new ColumnNode(this.tokenizer,this.dataStruct);
+    order:OrderNode = new OrderNode(this.tokenizer,this.dataStruct);
     constructor(t:Tokenizer,c:Course){
         super(t,c);
     }

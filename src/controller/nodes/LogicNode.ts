@@ -13,7 +13,7 @@ export class LogicNode extends _Node{
 
     parse(){
         for(var i = 0; i < this.tokenizer.logicIndexArray[this.count]; i++) {
-            this.filterNodes.push(new FilterNode(this.tokenizer, this.course));
+            this.filterNodes.push(new FilterNode(this.tokenizer, this.dataStruct));
         }
         // this.tokenizer.logicIndex++;
         var s = this.getAndCheckToken("AND|OR", true); //may be double checking the regex

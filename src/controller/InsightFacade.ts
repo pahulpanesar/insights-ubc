@@ -8,6 +8,7 @@ import Course from "../dataStructs/Course";
 import Tokenizer from "../dataStructs/Tokenizer";
 import Query from "../dataStructs/Query";
 import OptionNode from "./nodes/OptionNode";
+import * as http from "http";
 let fs = require('fs');
 
 export default class InsightFacade implements IInsightFacade {
@@ -45,7 +46,7 @@ export default class InsightFacade implements IInsightFacade {
                                         if (dataOb.result != null) {
                                             dataOb.result.forEach((x: any) => {
                                                 if (x["Course"] != null) {
-                                                    validCourse = true; //at least one not != null course, anything set it back to false???
+                                                    validCourse = true; //at least one not != null dataStruct, anything set it back to false???
                                                 }
                                             })
                                         }
@@ -113,11 +114,11 @@ export default class InsightFacade implements IInsightFacade {
 
     // filterCourses(id: string): Array<any> {
     //     let filteredCourses: Array<any> = [];
-    //     let course: Course;
+    //     let dataStruct: Course;
     //     let courses: Array<Course> = this.dataSets[id];
     //     filteredCourses = courses.filter(
-    //        course => course.courses_avg >= 97);
-    //     return filteredCourses.map(course => course.courses_dept + " " + course.courses_avg)
+    //        dataStruct => dataStruct.courses_avg >= 97);
+    //     return filteredCourses.map(dataStruct => dataStruct.courses_dept + " " + dataStruct.courses_avg)
     // }
 
     removeDataset(id: string): Promise<InsightResponse> {
@@ -133,6 +134,43 @@ export default class InsightFacade implements IInsightFacade {
                 reject({code: 404, body: {"error": "No dataset to remove"}});
             }
         })
+    }
+
+    getGeocode(address: string){
+        var url: string = "http://skaha.cs.ubc.ca:11316/api/v1/team75/";
+        url += address.split(' ').join('%20');
+        http.get(url, res => {
+            res.setEncoding('utf8');
+            let rawData = '';
+            res.on('data', (chunk) => {
+                console.log(chunk);
+                rawData += chunk;
+
+            });
+            res.on('end', () => {
+                try {
+                    console.log("!!!" + rawData);
+                    const parsedData = JSON.parse(rawData);
+                    return parsedData;
+
+                } catch (e) {
+                    console.error(e.message);
+                }
+            });
+        }).on('error', (e) => {
+            console.error('Got error: ' + e.message);
+        });
+
+
+    }
+
+    isRoomQuery(tokens: any[]): boolean{
+        for(var i =0;i<tokens.length;i++){
+            if(tokens[i].match("rooms_")){
+                return true;
+            }
+        }
+        return false;
     }
 
     performQuery(query: any): Promise <InsightResponse> {
