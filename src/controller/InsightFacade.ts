@@ -136,42 +136,6 @@ export default class InsightFacade implements IInsightFacade {
         })
     }
 
-    getGeocode(address: string){
-        var url: string = "http://skaha.cs.ubc.ca:11316/api/v1/team75/";
-        url += address.split(' ').join('%20');
-        http.get(url, res => {
-            res.setEncoding('utf8');
-            let rawData = '';
-            res.on('data', (chunk) => {
-                console.log(chunk);
-                rawData += chunk;
-
-            });
-            res.on('end', () => {
-                try {
-                    console.log("!!!" + rawData);
-                    const parsedData = JSON.parse(rawData);
-                    return parsedData;
-
-                } catch (e) {
-                    console.error(e.message);
-                }
-            });
-        }).on('error', (e) => {
-            console.error('Got error: ' + e.message);
-        });
-
-
-    }
-
-    isRoomQuery(tokens: any[]): boolean{
-        for(var i =0;i<tokens.length;i++){
-            if(tokens[i].match("rooms_")){
-                return true;
-            }
-        }
-        return false;
-    }
 
     performQuery(query: any): Promise <InsightResponse> {
         return new Promise((fulfill, reject) => {
