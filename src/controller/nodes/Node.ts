@@ -10,7 +10,7 @@ export default class _Node{ //underscore is to distinguish from native TS class
     //courseObj : Course = new Course();
 
     constructor (t: Tokenizer,c:any){
-        if(c instanceof Course){
+       /* if(c instanceof Course){
             this.dataStruct = <Course> c;
         }
         else if(c instanceof Room){
@@ -18,7 +18,8 @@ export default class _Node{ //underscore is to distinguish from native TS class
         }
         else{
             throw new Error("Class error");
-        }
+        }*/
+        this.dataStruct = c;
         this.tokenizer = t;
 
     }

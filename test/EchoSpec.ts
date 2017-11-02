@@ -555,5 +555,125 @@ describe("EchoSpec", function () {
         })
     });
 
+    it("PERFORMQUERY METRO", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.METRO).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.METRO_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
+    it("PERFORMQUERY ROOM-NUMBER", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.ROOM_NUMBER_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.ROOM_NUMBER_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
+    it("DIESEL", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.DIESEL).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.DIESEL_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
+    it("NAUTTILUS", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.NAUTILUS).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.NAUTILUS_RESONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
+    it("NITRO", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.NITRO).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.NITRO_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
+    it("PISCES", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.PISCES).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.PISCES_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
+    it("GALLIUM", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.GALLIUM).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.GALLIUM_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
+
 
 });
