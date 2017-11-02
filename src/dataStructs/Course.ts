@@ -10,7 +10,7 @@ export default class Course {
     courses_fail: number;// - The number of students that failed the course offering.
     courses_audit: number;// - The number of students that audited the course offering.
     courses_uuid: string;// - The unique id of a course offering.
-
+    courses_year: number; //This key represents the year the course was offered. If the "Section":"overall"property is set, the year should be 1900
     constructor() {
     }
 }

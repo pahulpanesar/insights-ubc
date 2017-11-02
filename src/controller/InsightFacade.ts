@@ -297,6 +297,12 @@ export default class InsightFacade implements IInsightFacade {
         course.courses_fail = dataObject.Fail;
         course.courses_audit = dataObject.Audit;
         course.courses_avg = dataObject.Avg;
+        if(dataObject.Section === "overall"){
+            course.courses_year = 1900;
+        }
+        else{
+            course.courses_year = parseInt(dataObject.Year);
+        }
         courses.push(course);
     }
 
