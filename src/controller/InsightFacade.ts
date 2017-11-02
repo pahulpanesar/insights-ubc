@@ -354,7 +354,7 @@ export default class InsightFacade implements IInsightFacade {
     performQuery(query: any): Promise <InsightResponse> {
         return new Promise((fulfill, reject) => {
             try{
-                if(Object.keys(this.dataSets).length < 1 ) {
+                if(Object.keys(this.dataSets).length < 1 || (!fs.existsSync('./disk/rooms.json') &&  !fs.existsSync('./disk/courses.json'))) {
                     reject({code: 424, body: {"error": "No dataset"}});
                 }
                 if(this.isRoomQuery(query)){
