@@ -665,7 +665,7 @@ describe("EchoSpec", function () {
     });
     it("GALLIUM", function () {
         this.timeout(15000);
-        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+        return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return test.insightFace.performQuery(test.GALLIUM).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
