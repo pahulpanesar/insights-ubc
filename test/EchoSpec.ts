@@ -562,6 +562,12 @@ describe("EchoSpec", function () {
             return test.insightFace.performQuery(test.METRO).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
+                for(var i = 0; i < val.body.result.length; i++) {
+                    console.log("ours:");
+                    console.log(val.body.result[i]);
+                    console.log("theirs:");
+                    console.log(test.METRO_RESPONSE.result[i])
+                }
                 expect(val.body).to.deep.equal(test.METRO_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err.toString());
@@ -674,6 +680,40 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+    it("ODYSSEY", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.ODYSSEY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.ODYSSEY_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
 
+    it("OKELYDOKELY", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.OKELY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.OKELY_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
 
 });

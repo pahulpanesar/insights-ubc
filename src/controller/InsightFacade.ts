@@ -395,7 +395,7 @@ export default class InsightFacade implements IInsightFacade {
                         return a[optionObj.order] - b[optionObj.order];
                     });
                 }
-                resArray = filteredArray.map((struct) => {
+                resArr6ay = filteredArray.map((struct) => {
                     let contain: any = {};
                     optionObj["columns"].forEach((column:any) => {
                         contain[column] = struct[column];
