@@ -392,10 +392,13 @@ export default class InsightFacade implements IInsightFacade {
 
                 if(optionObj.order) {
                     filteredArray.sort(function(a, b) {
-                        return a[optionObj.order] - b[optionObj.order];
+                        if(a[optionObj.order] < b[optionObj.order]) return -1;
+                        if(a[optionObj.order] > b[optionObj.order]) return 1;
+                        return 0;
+                        //return a[optionObj.order] - b[optionObj.order];
                     });
                 }
-                resArr6ay = filteredArray.map((struct) => {
+                resArray = filteredArray.map((struct) => {
                     let contain: any = {};
                     optionObj["columns"].forEach((column:any) => {
                         contain[column] = struct[column];

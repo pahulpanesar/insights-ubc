@@ -562,12 +562,12 @@ describe("EchoSpec", function () {
             return test.insightFace.performQuery(test.METRO).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
-                for(var i = 0; i < val.body.result.length; i++) {
+                /*for(var i = 0; i < val.body.result.length; i++) {
                     console.log("ours:");
                     console.log(val.body.result[i]);
                     console.log("theirs:");
                     console.log(test.METRO_RESPONSE.result[i])
-                }
+                }*/
                 expect(val.body).to.deep.equal(test.METRO_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err.toString());
