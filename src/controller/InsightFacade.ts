@@ -324,9 +324,6 @@ export default class InsightFacade implements IInsightFacade {
 
     removeDataset(id: string): Promise<InsightResponse> {
         return new Promise((fulfill, reject) => {
-            if(id !== "rooms" && id !== "courses"){
-                reject({code: 404, body: {"error": "Not valid dataset"}});
-            }
             if(fs.existsSync('./disk/' + id + '.json')) {
                 fs.unlinkSync('./disk/' + id + '.json');
                 if(this.dataSets[id]) {
