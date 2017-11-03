@@ -670,6 +670,12 @@ describe("EchoSpec", function () {
             return test.insightFace.performQuery(test.PLENTY_OF_SEATS).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
+                 for(var i = 0; i < val.body.result.length; i++) {
+                   console.log("ours:");
+                   console.log(val.body.result[i]);
+                   console.log("theirs:");
+                   console.log(test.PLENTY_OF_SEATS_RESPONSE.result[i])
+                }
                expect(val.body).to.deep.equal(test.PLENTY_OF_SEATS_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err.toString());
@@ -787,4 +793,29 @@ describe("EchoSpec", function () {
         })
     });
 
+    it("PERFORMQUERY 424 - dataset added and removed", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.removeDataset("rooms").then(function(value: InsightResponse){
+                Log.test('Value: ' + value.code);
+                return test.insightFace.performQuery(test.PLATINUM).then(function (val: InsightResponse) {
+                    Log.test('Value' + val.code);
+                    expect.fail();
+                }).catch(function (err) {
+                    Log.test('Error: ' + err.body.error);
+                    expect(err.code).to.deep.equal(424);
+                })
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.body.error);
+            expect.fail();
+        });
+    });
+
 });
+
+//double adddataset
