@@ -220,7 +220,7 @@ export default class InsightFacade implements IInsightFacade {
                         room.rooms_lon = lon;
                         room.rooms_lat = lat;
                         room.rooms_name = room.rooms_shortname + '_' + room.rooms_number;
-                        room.rooms_seats = tRow.childNodes[3].childNodes[0].value.trim();
+                        room.rooms_seats = parseInt(tRow.childNodes[3].childNodes[0].value.trim());
                         room.rooms_furniture = tRow.childNodes[5].childNodes[0].value.trim();
                         room.rooms_type = tRow.childNodes[7].childNodes[0].value.trim();
                         room.rooms_href = tRow.childNodes[9].childNodes[1].attrs[0].value.trim();

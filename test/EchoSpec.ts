@@ -663,6 +663,23 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+    it("PLENTY_OF_SEATS", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.PLENTY_OF_SEATS).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+               expect(val.body).to.deep.equal(test.PLENTY_OF_SEATS_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
     it("GALLIUM", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
@@ -697,6 +714,23 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+    it("OMEGA", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.OMEGA).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.OMEGA_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
 
     it("OKELYDOKELY", function () {
         this.timeout(15000);
@@ -706,6 +740,24 @@ describe("EchoSpec", function () {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(test.OKELY_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
+
+    it("PLATINUM", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.PLATINUM).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.PLATINUM_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err.toString());
                 expect.fail();
