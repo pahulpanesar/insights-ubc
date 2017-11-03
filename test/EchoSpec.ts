@@ -686,6 +686,12 @@ describe("EchoSpec", function () {
             Log.test('Value: ' + value.code);
             return test.insightFace.performQuery(test.GALLIUM).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
+                for(var i = 0; i < val.body.result.length; i++) {
+                    console.log("ours:");
+                    console.log(val.body.result[i]);
+                    console.log("theirs:");
+                    console.log(test.GALLIUM_RESPONSE.result[i])
+                }
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(test.GALLIUM_RESPONSE);
             }).catch(function (err) {
@@ -750,6 +756,7 @@ describe("EchoSpec", function () {
         })
     });
 
+
     it("PLATINUM", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
@@ -765,6 +772,18 @@ describe("EchoSpec", function () {
         }).catch(function (err) {
             Log.test('Error: ' + err.toString());
             expect.fail();
+        })
+    });
+
+
+    it("PERFORMQUERY 424 - no dataset added", function () {
+        this.timeout(15000);
+        return test.insightFace.performQuery(test.SIMPLE_QUERY_IS_BAD).then(function (val: InsightResponse) {
+            Log.test('Value' + val.code);
+            expect.fail();
+        }).catch(function (err) {
+            Log.test('Error: ' + err.body.error);
+            expect(err.code).to.deep.equal(424);
         })
     });
 

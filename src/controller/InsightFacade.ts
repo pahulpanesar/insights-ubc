@@ -364,12 +364,12 @@ export default class InsightFacade implements IInsightFacade {
                     reject({code: 424, body: {"error": "No dataset"}});
                 }
                 if(this.isRoomQuery(query)){
-                    if(!Object.keys(this.dataSets).includes("rooms")){
+                    if(this.dataSets["rooms"] == null || this.dataSets["rooms"].length == 0){
                         throw new Error("no rooms in dataset");
                     }
                 }
                 else {
-                    if(!Object.keys(this.dataSets).includes("courses")){
+                    if(this.dataSets["courses"] == null || this.dataSets["courses"].length == 0){
                         throw new Error("no courses in dataset");
                     }
                 }
