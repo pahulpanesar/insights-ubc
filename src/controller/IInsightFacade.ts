@@ -6,7 +6,7 @@
 
 export interface InsightResponse {
     code: number;
-    body: {"result": Array<any>}; // the actual response
+    body: {}; // the actual response
 }
 
 export interface IInsightFacade {
