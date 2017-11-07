@@ -301,7 +301,7 @@ export default class InsightFacade implements IInsightFacade {
             course.courses_year = 1900;
         }
         else{
-            course.courses_year = parseInt(dataObject.Year);
+            course.courses_year = Number.parseInt(dataObject.Year);
         }
         courses.push(course);
     }
