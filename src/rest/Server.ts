@@ -7,7 +7,7 @@ import restify = require('restify');
 
 import Log from "../Util";
 import {InsightResponse} from "../controller/IInsightFacade";
-
+import Routes from './Routes';
 /**
  * This configures the REST endpoints for the server.
  */
@@ -71,6 +71,9 @@ export default class Server {
                 that.rest.get('/echo/:msg', Server.echo);
 
                 // Other endpoints will go here
+                that.rest.put('/dataset/:id', Routes.putDataset);
+                that.rest.post('/query', restify.bodyParser(), Routes.postQuery);
+                that.rest.del('/dataset/:id', Routes.deleteDataset);
 
                 that.rest.listen(that.port, function () {
                     Log.info('Server::start() - restify listening: ' + that.rest.url);
