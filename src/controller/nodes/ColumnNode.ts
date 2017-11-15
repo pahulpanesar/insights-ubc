@@ -6,7 +6,7 @@ import KeyNode from "./KeyNode";
 
 export default class ColumnNode extends _Node{
     options: string[] = [];
-    constructor(t:Tokenizer,c:Course){
+    constructor(t:Tokenizer,c:any){
         super(t,c);
     }
 

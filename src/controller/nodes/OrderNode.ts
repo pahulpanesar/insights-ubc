@@ -7,7 +7,7 @@ import Tokenizer from "../../dataStructs/Tokenizer";
 export default class OrderNode extends _Node {
     key:KeyNode = new KeyNode(this.tokenizer,this.dataStruct);
     options:string[];
-    constructor(t:Tokenizer, c: Course){
+    constructor(t:Tokenizer, c: any){
         super(t,c);
     }
 
