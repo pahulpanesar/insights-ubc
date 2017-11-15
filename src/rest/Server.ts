@@ -6,8 +6,10 @@
 import restify = require('restify');
 
 import Log from "../Util";
-import {InsightResponse} from "../controller/IInsightFacade";
+import { InsightResponse } from "../controller/IInsightFacade";
 import InsightFacade from "../controller/InsightFacade";
+
+
 
 /**
  * This configures the REST endpoints for the server.
@@ -16,7 +18,6 @@ export default class Server {
 
     private port: number;
     private rest: restify.Server;
-    static insightFacade: InsightFacade = new InsightFacade();
 
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
@@ -56,21 +57,21 @@ export default class Server {
                     name: 'insightUBC'
                 });
 
-                // support CORS
-                that.rest.use(function crossOrigin(req, res, next) {
-                    res.header("Access-Control-Allow-Origin", "*");
-                    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-                    return next();
-                });
+                that.rest.use(restify.bodyParser({ mapParams: true, mapFiles: true }));
 
-                that.rest.get('/', function (req: restify.Request, res: restify.Response, next: restify.Next) {
-                    res.send(200);
-                    return next();
-                });
+                that.rest.use(restify.CORS());
 
+                // that.rest.get('/', function (req: restify.Request, res: restify.Response, next: restify.Next) {
+                //     res.send(200);
+                //     return next();
+                // });
                 // provides the echo service
                 // curl -is  http://localhost:4321/echo/myMessage
-                that.rest.get('/echo/:msg', Server.echo);
+                // that.rest.get('/echo/:msg', Server.echo);
+                // Other endpoints will go here
+                that.rest.get("/public/.*", restify.serveStatic({
+                    'directory': __dirname
+                }));
 
                 that.rest.get('/.*/', restify.serveStatic({
                     'directory': __dirname + '/views/',
@@ -81,6 +82,8 @@ export default class Server {
                 that.rest.del('/dataset/:id', Server.delDataset);
                 that.rest.post('/query', Server.postQuery);
 
+                // findLocation
+                // that.rest.post('/loc', Server.findLoc);
                 that.rest.listen(that.port, function () {
                     Log.info('Server::start() - restify listening: ' + that.rest.url);
                     fulfill(true);
@@ -98,9 +101,11 @@ export default class Server {
         });
     }
 
+
     public static putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let insightFacade: InsightFacade = new InsightFacade();
         let dataStr = new Buffer(req.params.body).toString('base64');
-        this.insightFacade.addDataset(req.params.id, dataStr).then(function (response: InsightResponse) {
+        insightFacade.addDataset(req.params.id, dataStr).then(function (response: InsightResponse) {
             res.json(response.code, response.body);
             return next();
         }).catch(function (response: InsightResponse) {
@@ -110,7 +115,8 @@ export default class Server {
     }
 
     public static delDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
-        this.insightFacade.removeDataset(req.params.id).then(function (response: InsightResponse) {
+        let insightFacade: InsightFacade = new InsightFacade();
+        insightFacade.removeDataset(req.params.id).then(function (response: InsightResponse) {
             res.json(response.code, response.body);
             return next();
         }).catch(function (response: InsightResponse) {
@@ -120,7 +126,8 @@ export default class Server {
     }
 
     public static postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
-        this.insightFacade.performQuery(req.body).then(function (response: InsightResponse) {
+        let insightFacade: InsightFacade = new InsightFacade();
+        insightFacade.performQuery(req.body).then(function (response: InsightResponse) {
             res.json(response.code, response.body);
             return next();
         }).catch(function (response: InsightResponse) {
