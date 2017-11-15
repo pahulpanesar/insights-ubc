@@ -842,13 +842,41 @@ describe("EchoSpec", function () {
             });
     });
 
+    it("DEL description", function () {
+        this.timeout(10000);
+        chai.use(chaiHttp);
+        let URL = "http://localhost:4321";
+        return chai.request(URL)
+            .del('/dataset/rooms')
+            .attach("body", fs.readFileSync(test.ROOMS_PATH), test.ROOMS_PATH)
+            .then(function (res: any) {
+                Log.trace('then:');
+                expect(res.code).to.deep.equal(204);
+            })
+            .catch(function (err) {
+                Log.trace('catch:');
+                // some assertions
+                expect.fail();
+            });
+    });
 
-    it("Test addDataset: Invalid dataset - Return code (400)", function () {
-        return test.insightFace.addDataset('courses', "").then(function (response: InsightResponse) {
-            expect.fail();
-        }).catch(function (response: InsightResponse) {
-            expect(response.code).to.equal(400);
-        });
+
+    it("POST description", function () {
+        this.timeout(10000);
+        chai.use(chaiHttp);
+        let URL = "http://localhost:4321";
+        return chai.request(URL)
+            .post('/query')
+            .send(test.SIMPLE_ROOM_QUERY)
+            .then(function (res: Response) {
+                Log.trace('then:');
+                // some assertions
+            })
+            .catch(function (err) {
+                Log.trace('catch:');
+                // some assertions
+                expect.fail();
+            });
     });
 
     it("ADDDATASET 400 - empty dataset overwrite", function () {
@@ -899,6 +927,24 @@ describe("EchoSpec", function () {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal({"result": []});
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - elixir", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.ELIXIR).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.ELIXIR_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();

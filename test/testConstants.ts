@@ -944,4 +944,30 @@ export default class TestConstants {
         }
     };
 
+    ELIXIR = {
+        "WHERE": {
+            "OR": [
+                {
+                    "IS": {
+                        "courses_instructor": "bani*"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "crisf*"
+                    }
+                }
+
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_instructor",
+                "courses_dept"
+            ]
+        }
+    };
+
+    ELIXIR_RESPONSE = {"result":[{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"}]};
+
 }
