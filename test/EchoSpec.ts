@@ -787,4 +787,21 @@ describe("EchoSpec", function () {
         })
     });
 
+    it("PUT description", function () {
+        this.timeout(10000);
+        chai.use(chaiHttp);
+        let URL = "http://localhost:4321";
+        return chai.request(URL)
+            .put('/dataset/rooms')
+            .attach("body", fs.readFileSync(test.ROOMS_PATH), test.ROOMS_PATH)
+            .then(function (res: Response) {
+                Log.trace('then:');
+                // some assertions
+            })
+            .catch(function (err) {
+                Log.trace('catch:');
+                // some assertions
+                expect.fail();
+            });
+    });
 });
