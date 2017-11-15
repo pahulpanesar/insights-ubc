@@ -937,17 +937,34 @@ describe("EchoSpec", function () {
         })
     });
 
-    it("PERFORMQUERY 200 - elixir", function () {
+    it("PERFORMQUERY 200 - biggest query", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.BIGGEST_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.BIGGEST_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 400 - new proper dataset not lt query", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             return test.insightFace.performQuery(test.ELIXIR).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
-                expect(val.code).to.deep.equal(200);
-                expect(val.body).to.deep.equal(test.ELIXIR_RESPONSE);
+                expect.fail();
             }).catch(function (err) {
                 Log.test('Error: ' + err);
-                expect.fail();
+                expect(err.code).to.deep.equal(400);
             })
         }).catch(function (err) {
             Log.test('Error: ' + err);

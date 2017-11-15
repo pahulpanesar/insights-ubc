@@ -17,6 +17,7 @@ export default class Query extends _Node {
     }
 
     evaluate(){
+        if(!this.tokenizer.tokens.includes("WHERE") || !this.tokenizer.tokens.includes("OPTIONS")) throw new Error("No options");
         return this.filter.evaluate();
         //TOD0 filter courses
     }

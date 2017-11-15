@@ -959,15 +959,56 @@ export default class TestConstants {
                 }
 
             ]
-        },
-        "OPTIONS": {
-            "COLUMNS": [
-                "courses_instructor",
-                "courses_dept"
-            ]
         }
     };
 
     ELIXIR_RESPONSE = {"result":[{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"}]};
+
+    BIGGEST_QUERY = {
+        "WHERE": {
+            "OR": [
+                {
+                    "NOT":{"AND": [{
+                        "GT": {
+                            "courses_avg": 98
+                        }
+                    },
+                        {
+                            "EQ": {
+                                "courses_fail": 0
+                            }
+                        }]
+                }},
+                {
+                    "AND": [{
+                        "LT": {
+                            "courses_pass": 20
+                        }
+                    },
+                        {
+                            "IS": {
+                                "courses_dept": 20
+                            }
+                        },
+                        {
+                            "EQ": {
+                                "courses_fail": 0
+                            }
+                        }]
+                }
+
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    };
+
+    BIGGEST_RESPONSE = {"result": {}};
 
 }
