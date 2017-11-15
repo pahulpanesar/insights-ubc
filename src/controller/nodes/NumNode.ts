@@ -4,7 +4,7 @@ import Course from "../../dataStructs/Course";
 export default class NumNode extends _Node{
     number: number;
 
-    constructor(t: any,c:Course){
+    constructor(t: any,c:any){
         super(t,c);
     }
 

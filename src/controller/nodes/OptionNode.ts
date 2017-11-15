@@ -9,7 +9,7 @@ import OrderNode from "./OrderNode";
 export default class OptionNode extends _Node{
     columns:ColumnNode = new ColumnNode(this.tokenizer,this.dataStruct);
     order:OrderNode = new OrderNode(this.tokenizer,this.dataStruct);
-    constructor(t:Tokenizer,c:Course){
+    constructor(t:Tokenizer,c:any){
         super(t,c);
     }
     parse(){

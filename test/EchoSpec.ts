@@ -670,7 +670,7 @@ describe("EchoSpec", function () {
             return test.insightFace.performQuery(test.PLENTY_OF_SEATS).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
-               expect(val.body).to.deep.equal(test.PLENTY_OF_SEATS_RESPONSE);
+                expect(val.body).to.deep.equal(test.PLENTY_OF_SEATS_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err.toString());
                 expect.fail();
@@ -694,6 +694,29 @@ describe("EchoSpec", function () {
                 }*/
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(test.GALLIUM_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
+    it("FLUORINE", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.FLUORINE).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                /*  for(var i = 0; i < val.body.result.length; i++) {
+                      console.log("ours:");
+                      console.log(val.body.result[i]);
+                      console.log("theirs:");
+                      console.log(test.GALLIUM_RESPONSE.result[i])
+                  }*/
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.FLUORINE_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err.toString());
                 expect.fail();
@@ -809,6 +832,25 @@ describe("EchoSpec", function () {
             expect.fail();
         });
     });
+
+    it("EQUAL SEATS", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.EQUAL_SEATS).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.EQUAL_SEATS_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
+
 
 });
 
