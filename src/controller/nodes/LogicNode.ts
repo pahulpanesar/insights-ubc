@@ -11,9 +11,9 @@ export class LogicNode extends _Node{
     }
 
     parse(){
-        if(!this.count) this.count = 0;
+        this.count++;
         for(var i = 0; i < this.tokenizer.logicIndexArray[this.count]; i++) {
-            let fn: FilterNode = new FilterNode(this.tokenizer, this.dataStruct, this.count);
+            let fn: FilterNode = new FilterNode(this.tokenizer, this.dataStruct, this.count+i);
             this.filterNodes.push(fn);
         }
         // this.tokenizer.logicIndex++;

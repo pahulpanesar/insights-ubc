@@ -21,7 +21,7 @@ export default class FilterNode extends _Node{
             case "AND":
             case "OR":
                 //create logic node
-                this.filter = new LogicNode(this.tokenizer,this.dataStruct, this.count+1);
+                this.filter = new LogicNode(this.tokenizer,this.dataStruct, this.count);
                 break;
             case "LT":
             case "GT":

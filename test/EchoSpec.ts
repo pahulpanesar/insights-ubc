@@ -943,10 +943,11 @@ describe("EchoSpec", function () {
             Log.test('Value: ' + value.code);
             return test.insightFace.performQuery(test.BIGGEST_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
+                console.log(val.body);
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(test.BIGGEST_RESPONSE);
             }).catch(function (err) {
-                Log.test('Error: ' + err);
+                Log.test('Error: ' + err.body.error);
                 expect.fail();
             })
         }).catch(function (err) {
