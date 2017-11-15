@@ -394,10 +394,10 @@ export default class InsightFacade implements IInsightFacade {
                 for (var i = 0; i < dataSet.length; i++) {
                     t.index = 0;
                     let c: any = dataSet[i];
-                    let q: Query = new Query(t, c);
+                    let q: Query = new Query(t, c, -1);
                     q.parseFilter();
                     if(!flag) {
-                        let o: OptionNode = new OptionNode(t, c);
+                        let o: OptionNode = new OptionNode(t, c, -1);
                         o.parse();
                         optionObj = o.evaluate();
                         flag = true;
