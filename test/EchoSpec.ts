@@ -62,45 +62,45 @@ describe("EchoSpec", function () {
         expect(out.body).to.deep.equal({message: 'echo...echo'});
     });
 
-    // it("Test Server", function() {
-    //
-    //     // Init
-    //     chai.use(chaiHttp);
-    //     let server = new Server(4321);
-    //     let URL = "http://127.0.0.1:4321";
-    //
-    //     // Test
-    //     expect(server).to.not.equal(undefined);
-    //     try{
-    //         Server.echo((<restify.Request>{}), null, null);
-    //         expect.fail()
-    //     } catch(err) {
-    //         expect(err.message).to.equal("Cannot read property 'json' of null");
-    //     }
-    //
-    //     return server.start().then(function(success: boolean) {
-    //         return chai.request(URL)
-    //             .get("/")
-    //     }).catch(function(err) {
-    //         expect.fail()
-    //     }).then(function(res: Response) {
-    //         expect(res.status).to.be.equal(200);
-    //         return chai.request(URL)
-    //             .get("/echo/Hello")
-    //     }).catch(function(err) {
-    //         expect.fail()
-    //     }).then(function(res: Response) {
-    //         expect(res.status).to.be.equal(200);
-    //         return server.start()
-    //     }).then(function(success: boolean) {
-    //         expect.fail();
-    //     }).catch(function(err) {
-    //         expect(err.code).to.equal('EADDRINUSE');
-    //         return server.stop();
-    //     }).catch(function(err) {
-    //         expect.fail();
-    //     });
-    // });
+    it("Test Server", function() {
+
+        // Init
+        chai.use(chaiHttp);
+        let server = new Server(4321);
+        let URL = "http://127.0.0.1:4321";
+
+        // Test
+        expect(server).to.not.equal(undefined);
+        try{
+            Server.echo((<restify.Request>{}), null, null);
+            expect.fail()
+        } catch(err) {
+            expect(err.message).to.equal("Cannot read property 'json' of null");
+        }
+
+        return server.start().then(function(success: boolean) {
+            return chai.request(URL)
+                .get("/")
+        }).catch(function(err) {
+            expect.fail()
+        }).then(function(res: Response) {
+            expect(res.status).to.be.equal(200);
+            return chai.request(URL)
+                .get("/echo/Hello")
+        }).catch(function(err) {
+            expect.fail()
+        }).then(function(res: Response) {
+            expect(res.status).to.be.equal(200);
+            return server.start()
+        }).then(function(success: boolean) {
+            expect.fail();
+        }).catch(function(err) {
+            expect(err.code).to.equal('EADDRINUSE');
+            return server.stop();
+        }).catch(function(err) {
+            expect.fail();
+        });
+    });
 
     it("Should be able to echo silence", function () {
         let out = Server.performEcho('');
@@ -150,9 +150,9 @@ describe("EchoSpec", function () {
 
     it("Option object receiving correct columns - SIMPLE", function () {
         test.t.addKeys((JSON.parse(test.testJSONSimple)));
-        var q:Query = new Query(test.t,null);
+        var q:Query = new Query(test.t,null,-1);
         q.parseFilter();
-        var o:OptionNode = new OptionNode(test.t,null);
+        var o:OptionNode = new OptionNode(test.t,null,-1);
         o.parse();
         var optionObj = o.evaluate();
         console.log(optionObj);
@@ -161,9 +161,9 @@ describe("EchoSpec", function () {
 
     it("Option object receiving correct order - SIMPLE", function () {
         test.t.addKeys(test.SIMPLE_QUERY);
-        var q:Query = new Query(test.t,null);
+        var q:Query = new Query(test.t,null,-1);
         q.parseFilter();
-        var o:OptionNode = new OptionNode(test.t,null);
+        var o:OptionNode = new OptionNode(test.t,null,-1);
         o.parse();
         var optionObj = o.evaluate();
         console.log(optionObj);
@@ -172,9 +172,9 @@ describe("EchoSpec", function () {
 
     it("Option object receiving correct order - COMPLEX", function () {
         test.t.addKeys(test.COMPLEX_QUERY);
-        var q:Query = new Query(test.t,null);
+        var q:Query = new Query(test.t,null,-1);
         q.parseFilter();
-        var o:OptionNode = new OptionNode(test.t,null);
+        var o:OptionNode = new OptionNode(test.t,null,-1);
         o.parse();
         var optionObj = o.evaluate();
         console.log(optionObj);
@@ -183,9 +183,9 @@ describe("EchoSpec", function () {
 
     it("Option object receiving correct columns - COMPLEX", function () {
         test.t.addKeys(test.COMPLEX_QUERY);
-        var q:Query = new Query(test.t,null);
+        var q:Query = new Query(test.t,null,-1);
         q.parseFilter();
-        var o:OptionNode = new OptionNode(test.t,null);
+        var o:OptionNode = new OptionNode(test.t,null,-1);
         o.parse();
         var optionObj = o.evaluate();
         console.log(optionObj);
@@ -195,9 +195,9 @@ describe("EchoSpec", function () {
     it("Reject bad Order", function () {
         try {
             test. t.addKeys((JSON.parse(test.testJSONComplex)));
-            var q: Query = new Query(test.t, null);
+            var q: Query = new Query(test.t, null, -1);
             q.parseFilter();
-            var o: OptionNode = new OptionNode(test.t, null);
+            var o: OptionNode = new OptionNode(test.t, null, -1);
             o.parse();
             var optionObj = o.evaluate();
             console.log(optionObj);
@@ -352,33 +352,24 @@ describe("EchoSpec", function () {
         })
     });
 
-    it("PERFORMQUERY 200 - new proper dataset gt lt query", function () {
+    it("PERFORMQUERY 200 - big query", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
             let query: any = {
                 "WHERE": {
 
-                    "OR": [{
+                    "AND": [{
                         "GT": {
                             "courses_avg": 70
                         }
                     },
-                        {
-                            "IS": {
-                                "courses_dept": "adhe"
-                            }
-                        },
-                        {
-                            "GT": {
+                       {
+                            "LT": {
                                 "courses_avg": 70
                             }
-                        },
-                        {
-                            "IS": {
-                                "courses_dept": "biol"
-                            }
                         }
+
                     ]
 
                 },
@@ -394,6 +385,8 @@ describe("EchoSpec", function () {
             return test.insightFace.performQuery(query)
                 .then(function (response: InsightResponse) {
                     expect(response.code).to.equal(200);
+                    console.log(response.body);
+                    expect(response.body).to.deep.equal({"result": []});
                     console.log(response.code);
                     console.log("expect to return 57366 objects");
                     //console.log(response.body);
@@ -574,23 +567,23 @@ describe("EchoSpec", function () {
         })
     });
 
-    // it("PERFORMQUERY 200 - simple room 2", function () {
-    //     this.timeout(15000);
-    //     return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
-    //         Log.test('Value: ' + value.code);
-    //         return test.insightFace.performQuery(test.SIMPLE_ROOM_QUERY_2).then(function (val: InsightResponse) {
-    //             Log.test('Value' + val.code);
-    //             expect(val.code).to.deep.equal(200);
-    //             expect(val.body).to.deep.equal(test.SIMPLE_ROOM_QUERY_2_RESPONSE);
-    //         }).catch(function (err) {
-    //             Log.test('Error: ' + err);
-    //             expect.fail();
-    //         })
-    //     }).catch(function (err) {
-    //         Log.test('Error: ' + err);
-    //         expect.fail();
-    //     })
-    // });
+    it("PERFORMQUERY 200 - simple room 2", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.SIMPLE_ROOM_QUERY_2).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.SIMPLE_ROOM_QUERY_2_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
 
     it("PERFORMQUERY METRO", function () {
         this.timeout(15000);
@@ -615,6 +608,7 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+
     it("PERFORMQUERY ROOM-NUMBER", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
@@ -632,6 +626,7 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+
     it("DIESEL", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
@@ -649,6 +644,7 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+
     it("NAUTTILUS", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
@@ -666,6 +662,7 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+
     it("NITRO", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
@@ -683,6 +680,7 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+
     it("PISCES", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
@@ -700,23 +698,25 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
-    // it("PLENTY_OF_SEATS", function () {
-    //     this.timeout(15000);
-    //     return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
-    //         Log.test('Value: ' + value.code);
-    //         return test.insightFace.performQuery(test.PLENTY_OF_SEATS).then(function (val: InsightResponse) {
-    //             Log.test('Value' + val.code);
-    //             expect(val.code).to.deep.equal(200);
-    //            expect(val.body).to.deep.equal(test.PLENTY_OF_SEATS_RESPONSE);
-    //         }).catch(function (err) {
-    //             Log.test('Error: ' + err.toString());
-    //             expect.fail();
-    //         })
-    //     }).catch(function (err) {
-    //         Log.test('Error: ' + err.toString());
-    //         expect.fail();
-    //     })
-    // });
+
+    it("PLENTY_OF_SEATS", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.PLENTY_OF_SEATS).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+               expect(val.body).to.deep.equal(test.PLENTY_OF_SEATS_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
+
     it("GALLIUM", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
@@ -824,23 +824,23 @@ describe("EchoSpec", function () {
         })
     });
 
-    // it("PUT description", function () {
-    //     this.timeout(10000);
-    //     chai.use(chaiHttp);
-    //     let URL = "http://localhost:4321";
-    //     return chai.request(URL)
-    //         .put('/dataset/rooms')
-    //         .attach("body", fs.readFileSync(test.ROOMS_PATH), test.ROOMS_PATH)
-    //         .then(function (res: any) {
-    //             Log.trace('then:');
-    //             expect(res.code).to.deep.equal(204);
-    //         })
-    //         .catch(function (err) {
-    //             Log.trace('catch:');
-    //             // some assertions
-    //             expect.fail();
-    //         });
-    // });
+    it("PUT description", function () {
+        this.timeout(10000);
+        chai.use(chaiHttp);
+        let URL = "http://localhost:4321";
+        return chai.request(URL)
+            .put('/dataset/rooms')
+            .attach("body", fs.readFileSync(test.ROOMS_PATH), test.ROOMS_PATH)
+            .then(function (res: any) {
+                Log.trace('then:');
+                expect(res.code).to.deep.equal(204);
+            })
+            .catch(function (err) {
+                Log.trace('catch:');
+                // some assertions
+                expect.fail();
+            });
+    });
 
 
     it("Test addDataset: Invalid dataset - Return code (400)", function () {
@@ -881,6 +881,24 @@ describe("EchoSpec", function () {
                     Log.test('Error: ' + err.body.error);
                     expect(err.code).to.deep.equal(424);
                 })
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - mango", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.MANGO).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal({"result": []});
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();

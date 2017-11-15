@@ -7,8 +7,8 @@ export default class KeyNode extends _Node{
 
     key:string = "";
 
-    constructor(t:Tokenizer,c:Course){
-        super(t,c);
+    constructor(t: Tokenizer,c: any,count:number){
+        super(t,c,count);
     }
 
     parse(){

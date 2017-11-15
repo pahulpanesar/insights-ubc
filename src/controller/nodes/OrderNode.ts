@@ -5,10 +5,10 @@ import KeyNode from "./KeyNode";
 import Tokenizer from "../../dataStructs/Tokenizer";
 
 export default class OrderNode extends _Node {
-    key:KeyNode = new KeyNode(this.tokenizer,this.dataStruct);
+    key:KeyNode = new KeyNode(this.tokenizer,this.dataStruct,this.count);
     options:string[];
-    constructor(t:Tokenizer, c: Course){
-        super(t,c);
+    constructor(t: Tokenizer,c: any,count:number){
+        super(t,c,count);
     }
 
     parse(options: string[]){

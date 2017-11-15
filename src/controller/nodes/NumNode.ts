@@ -1,11 +1,12 @@
 import _Node from "./Node";
 import Course from "../../dataStructs/Course";
+import Tokenizer from "../../dataStructs/Tokenizer";
 
 export default class NumNode extends _Node{
     number: number;
 
-    constructor(t: any,c:Course){
-        super(t,c);
+    constructor(t: Tokenizer,c: any,count:number){
+        super(t,c,count);
     }
 
     parse(){

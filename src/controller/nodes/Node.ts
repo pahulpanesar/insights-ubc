@@ -9,7 +9,7 @@ export default class _Node{ //underscore is to distinguish from native TS class
     count: number;
     //courseObj : Course = new Course();
 
-    constructor (t: Tokenizer,c:any){
+    constructor (t: Tokenizer,c:any, count:number){
        /* if(c instanceof Course){
             this.dataStruct = <Course> c;
         }
@@ -21,6 +21,7 @@ export default class _Node{ //underscore is to distinguish from native TS class
         }*/
         this.dataStruct = c;
         this.tokenizer = t;
+        this.count = count;
 
     }
 
