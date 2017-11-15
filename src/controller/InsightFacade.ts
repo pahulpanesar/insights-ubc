@@ -426,7 +426,7 @@ export default class InsightFacade implements IInsightFacade {
                 fulfill({code: 200, body: {"result": resArray}});
             }
             catch (err){
-                reject({code: 400, body: {"error": err.message}});
+                reject({code: 400, body: {"error": "invalid query"}});
             }
         });
     }
