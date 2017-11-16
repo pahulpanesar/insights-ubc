@@ -414,10 +414,16 @@ export default class InsightFacade implements IInsightFacade {
                     }
                 }
 
-                if(optionObj.order) {
+                if(optionObj.keys) {
                     filteredArray.sort(function(a, b) {
-                        if(a[optionObj.order] < b[optionObj.order]) return -1;
-                        if(a[optionObj.order] > b[optionObj.order]) return 1;
+                        for(var i =0;i<optionObj.keys.length;i++) { //sort by first key, tie break with the second etc...
+                            if (a[optionObj.keys[i]] < b[optionObj.keys[i]]){
+                                return -1;
+                            }
+                            else if (a[optionObj.keys[i]] > b[optionObj.keys[i]]){
+                                return 1;
+                            }
+                        }
                         return 0;
                         //return a[optionObj.order] - b[optionObj.order];
                     });

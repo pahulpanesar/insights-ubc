@@ -19,6 +19,7 @@ export default class OptionNode extends _Node{
     }
 
     evaluate(){
-        return {"columns" : this.columns.evaluate(),"order" : this.order.evaluate()};
+        var tempOrder = this.order.evaluate();
+        return {"columns" : this.columns.evaluate(),"dir" : tempOrder.dir, "keys" : tempOrder.keys};
     }
 }

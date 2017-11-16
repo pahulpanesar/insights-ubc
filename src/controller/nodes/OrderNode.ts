@@ -3,9 +3,13 @@ import Course from "../../dataStructs/Course";
 import _Node from "./Node";
 import KeyNode from "./KeyNode";
 import Tokenizer from "../../dataStructs/Tokenizer";
+import DirectionNode from "./DirectionNode";
+import {dateParser} from "restify";
 
 export default class OrderNode extends _Node {
-    key:KeyNode = new KeyNode(this.tokenizer,this.dataStruct);
+    keys:string[] = [];
+    direction:DirectionNode = new DirectionNode(this.tokenizer,this.dataStruct);
+    directionFlag = false;
     options:string[];
     constructor(t:Tokenizer, c: any){
         super(t,c);
@@ -13,18 +17,27 @@ export default class OrderNode extends _Node {
 
     parse(options: string[]){
         var s = this.getAndCheckToken("ORDER", true);
-        if(s && s !== "NO_MORE_TOKENS"){
-            this.key.parse();
+        if(this.tokenizer.getNext(false) == "dir"){
+            this.direction.parse();
+            this.directionFlag = true;
+        }
+        while(this.tokenizer.getNext(false) != "TRANSFORMATIONS" && this.tokenizer.getNext(false) != "NO_MORE_TOKENS"){
+            var temp = new KeyNode(this.tokenizer,this.dataStruct);
+            temp.parse();
+            this.keys.push(temp.evaluate()) //evaluate here to avoid computation later, not sure if itll fuck with anything
         }
         this.options = options;
     }
     evaluate(){
-        var temp = this.key.evaluate();
-        if(!this.options.includes(temp) && temp.length > 0){
-            throw new Error ("Invalid Order");
+        var tempDir:string = "";
+        if(this.directionFlag){
+            tempDir = this.direction.evaluate();
         }
-        else {
-            return this.key.evaluate();
+        for(var key in this.keys) {
+            if (!this.options.includes(key) && key.length > 0) {
+                throw new Error("Invalid Order");
+            }
         }
+        return {"dir":tempDir,"keys":this.keys};
     }
 }

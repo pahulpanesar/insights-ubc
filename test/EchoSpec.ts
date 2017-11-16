@@ -167,7 +167,7 @@ describe("EchoSpec", function () {
         o.parse();
         var optionObj = o.evaluate();
         console.log(optionObj);
-        return (optionObj.order[0] === "courses_avg");
+        return (optionObj.keys[0] === "courses_avg");
     });
 
     it("Option object receiving correct order - COMPLEX", function () {
@@ -178,7 +178,7 @@ describe("EchoSpec", function () {
         o.parse();
         var optionObj = o.evaluate();
         console.log(optionObj);
-        return (optionObj.order[0] === "courses_avg");
+        return (optionObj.keys[0] === "courses_avg");
     });
 
     it("Option object receiving correct columns - COMPLEX", function () {
