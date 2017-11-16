@@ -906,4 +906,50 @@ export default class TestConstants {
     };
     PLATINUM_RESPONSE = {"result":[{"rooms_fullname":"Hugh Dempster Pavilion","rooms_shortname":"DMP","rooms_number":"101","rooms_name":"DMP_101","rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_lat":49.26125,"rooms_lon":-123.24807,"rooms_seats":40,"rooms_furniture":"Classroom-Movable Tables & Chairs","rooms_type":"Small Group","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/DMP-101"},{"rooms_fullname":"Hugh Dempster Pavilion","rooms_shortname":"DMP","rooms_number":"110","rooms_name":"DMP_110","rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_lat":49.26125,"rooms_lon":-123.24807,"rooms_seats":120,"rooms_furniture":"Classroom-Fixed Tables/Movable Chairs","rooms_type":"Tiered Large Group","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/DMP-110"},{"rooms_fullname":"Hugh Dempster Pavilion","rooms_shortname":"DMP","rooms_number":"201","rooms_name":"DMP_201","rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_lat":49.26125,"rooms_lon":-123.24807,"rooms_seats":40,"rooms_furniture":"Classroom-Movable Tables & Chairs","rooms_type":"Small Group","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/DMP-201"},{"rooms_fullname":"Hugh Dempster Pavilion","rooms_shortname":"DMP","rooms_number":"301","rooms_name":"DMP_301","rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_lat":49.26125,"rooms_lon":-123.24807,"rooms_seats":80,"rooms_furniture":"Classroom-Fixed Tables/Movable Chairs","rooms_type":"Tiered Large Group","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/DMP-301"},{"rooms_fullname":"Hugh Dempster Pavilion","rooms_shortname":"DMP","rooms_number":"310","rooms_name":"DMP_310","rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_lat":49.26125,"rooms_lon":-123.24807,"rooms_seats":160,"rooms_furniture":"Classroom-Fixed Tables/Movable Chairs","rooms_type":"Tiered Large Group","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/DMP-310"}]};
 
+    QUERY_A_D3 = {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 300
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "maxSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["maxSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "maxSeats": {
+                    "MAX": "rooms_seats"
+                }
+            }]
+        }
+    };
+
+    QUERY_A_D3_RESPONSE = {
+        "result": [{
+            "rooms_shortname": "OSBO",
+            "maxSeats": 442
+        }, {
+            "rooms_shortname": "HEBB",
+            "maxSeats": 375
+        }, {
+            "rooms_shortname": "LSC",
+            "maxSeats": 350
+        }]
+    };
+
+
 }
