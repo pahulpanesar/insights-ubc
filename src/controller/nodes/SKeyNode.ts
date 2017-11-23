@@ -6,11 +6,13 @@ import Course from "../../dataStructs/Course";
 export default class SKeyNode extends _Node{
     s_key: string;
 
-    constructor(t: Tokenizer,c:any){
-        super(t,c);
+
+
+    constructor(t: Tokenizer,c: any,count:number){
+        super(t,c,count);
     }
     parse(){
-        var s = this.getAndCheckToken("(courses|rooms)_(dept|id|instructor|title|uuid|name|address|fullname|shortname|furniture|href|type)", true); //check if it's a valid s_key
+        var s = this.getAndCheckToken("(courses|rooms)_(dept|id|instructor|title|uuid|name|address|fullname|number|shortname|furniture|href|type)", true); //check if it's a valid s_key
         this.s_key = s;
     }
 

@@ -7,9 +7,10 @@ export default class _Node{ //underscore is to distinguish from native TS class
     tokenizer : Tokenizer;
     dataStruct: any;
     count: number;
+
     //courseObj : Course = new Course();
 
-    constructor (t: Tokenizer,c:any){
+    constructor (t: Tokenizer,c:any, count:number){
        /* if(c instanceof Course){
             this.dataStruct = <Course> c;
         }
@@ -21,12 +22,14 @@ export default class _Node{ //underscore is to distinguish from native TS class
         }*/
         this.dataStruct = c;
         this.tokenizer = t;
+        this.count = count;
 
     }
 
     getAndCheckToken(regex: string, index: boolean): string{
         var s: any = this.tokenizer.getNext(index);
         if(!s.match(regex) && s !== "NO_MORE_TOKENS"){
+
             console.log("no match: " + regex + "   " + s);
             throw new Error("no matching regex");
         } // example terminates here
