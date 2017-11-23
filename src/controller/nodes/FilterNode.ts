@@ -9,19 +9,21 @@ import {error} from "util";
 
 export default class FilterNode extends _Node{
     filter: any;
+
     count: number = -1;
-    constructor(t: Tokenizer, c:any){
-        super(t,c);
+
+    constructor(t: Tokenizer,c: any,count:number){
+        super(t,c,count);
+
     }
 
     parse(){
-        var s = this.getAndCheckToken("AND|OR|LT|GT|EQ|IS|NOT", false);
+         var s = this.getAndCheckToken("AND|OR|LT|GT|EQ|IS|NOT", false);
 
         //switch statement creates the proper node depending on the kind of filter
         switch(s){
             case "AND":
             case "OR":
-                this.count++;
                 //create logic node
                 this.filter = new LogicNode(this.tokenizer,this.dataStruct, this.count);
                 break;
@@ -29,14 +31,14 @@ export default class FilterNode extends _Node{
             case "GT":
             case "EQ":
                 //create MComparison node
-                this.filter = new MComparisonNode(this.tokenizer, this.dataStruct);
+                this.filter = new MComparisonNode(this.tokenizer, this.dataStruct, this.count);
                 break;
             case "IS":
-                this.filter = new SComparisonNode(this.tokenizer, this.dataStruct);
+                this.filter = new SComparisonNode(this.tokenizer, this.dataStruct,this.count);
                 break;
                 //create SComparison node
             case "NOT":
-                this.filter = new NegationNode(this.tokenizer, this.dataStruct);
+                this.filter = new NegationNode(this.tokenizer, this.dataStruct, this.count);
                 break;
                 //create negation node
             default:

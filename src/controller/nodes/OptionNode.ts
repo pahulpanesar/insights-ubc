@@ -7,11 +7,12 @@ import Tokenizer from "../../dataStructs/Tokenizer";
 import OrderNode from "./OrderNode";
 
 export default class OptionNode extends _Node{
-    columns:ColumnNode = new ColumnNode(this.tokenizer,this.dataStruct);
-    order:OrderNode = new OrderNode(this.tokenizer,this.dataStruct);
-    errorCatch:string[] = [];
-    constructor(t:Tokenizer,c:any){
-        super(t,c);
+
+    columns:ColumnNode = new ColumnNode(this.tokenizer,this.dataStruct,this.count);
+    order:OrderNode = new OrderNode(this.tokenizer,this.dataStruct,this.count);
+     errorCatch:string[] = [];
+    constructor(t: Tokenizer,c: any,count:number){
+        super(t,c,count);
     }
     parse(){
         var s = this.getAndCheckToken("OPTIONS",true);

@@ -5,12 +5,13 @@ import SKeyNode from "./SKeyNode";
 import Course from "../../dataStructs/Course";
 
 export default class SComparisonNode extends _Node{
-    inputString: InputStringNode = new InputStringNode(this.tokenizer,this.dataStruct);
-    s_key: SKeyNode = new SKeyNode(this.tokenizer,this.dataStruct);
+    inputString: InputStringNode = new InputStringNode(this.tokenizer,this.dataStruct,this.count);
+    s_key: SKeyNode = new SKeyNode(this.tokenizer,this.dataStruct,this.count);
 
 
-    constructor(t: Tokenizer,c:any){
-        super(t,c);
+
+    constructor(t: Tokenizer,c: any,count:number){
+        super(t,c,count);
     }
 
     parse(){

@@ -6,8 +6,8 @@ import Course from "../../dataStructs/Course";
 export default class MKeyNode extends _Node{
     m_key: string;
 
-    constructor(t: Tokenizer,c: any){
-        super(t,c);
+    constructor(t: Tokenizer,c: any,count:number){
+        super(t,c,count);
     }
     parse(){
         var s = this.getAndCheckToken("(courses|rooms)_(avg|pass|fail|audit|lat|lon|year|seats)", true); //check if it's a valid m_key

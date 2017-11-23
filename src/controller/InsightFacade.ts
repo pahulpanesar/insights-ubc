@@ -33,59 +33,51 @@ export default class InsightFacade implements IInsightFacade {
                 let dataObjectArray: Array<any> = [];
                 let rooms: any = {};
                 zip.loadAsync(content, {base64: true}).then((zip: any) => {
-                    if (this.dataSets[id] != undefined && this.dataSets[id] != null) {
-                        fulfill({code: 201, body: {}});
+                    if(id === "courses") {
+                        this.dataSets[id] = new Array<Course>();
                     }
-                    else if (fs.existsSync('./disk/' + id + '.json')) {
-                        this.dataSets[id] = JSON.parse(fs.readFileSync("./disk/" + id + ".json", "utf8"));
-                        fulfill({code: 201, body: {}});
+                    if(id === "rooms") {
+                        this.dataSets[id] = new Array<Room>();
                     }
-                    else {
-                        if(id === "courses") {
-                            this.dataSets[id] = new Array<Course>();
-                        }
-                        if(id === "rooms") {
-                            this.dataSets[id] = new Array<Room>();
-                        }
-                        files = zip.files;
-                        Object.keys(files).forEach((filename) => {
-                            let file: JSZipObject = files[filename];
-                            pArr.push(
-                                file.async('string').then((fileData) => {
-                                    if (fileData != '') {
-                                        if(id === "courses"){
-                                            let dataOb: any = new Object(JSON.parse((fileData)));
-                                            if (dataOb.result != null) {
-                                                dataOb.result.forEach((x: any) => {
-                                                    if (x["Course"] != null) {
-                                                        validCourse = true;
-                                                    }
-                                                })
-                                            }
-                                            if (dataOb.result.length > 0) {
-                                                dataObjectArray.push(dataOb.result);
-                                            }
-                                        }
-                                        if(id === "rooms") {
-                                            let dataOb: any = new Object(parse5.parse(fileData));
-                                            if (file.name === "index.htm") {
-                                                this.addValidRooms(dataOb);
-                                            }
-                                            else if (!file.dir && file.name.indexOf(".DS_Store") == -1) {
-                                                if (file.name.indexOf("buildings-and-classrooms") == -1) {
-                                                    this.dataSets[id] = [];
-                                                    reject({code: 400, body: {"error":"no building"}});
+
+                    files = zip.files;
+                    Object.keys(files).forEach((filename) => {
+                        let file: JSZipObject = files[filename];
+                        pArr.push(
+                            file.async('string').then((fileData) => {
+                                if (fileData != '') {
+                                    if(id === "courses"){
+                                        let dataOb: any = new Object(JSON.parse((fileData)));
+                                        if (dataOb.result != null) {
+                                            dataOb.result.forEach((x: any) => {
+                                                if (x["Course"] != null) {
+                                                    validCourse = true;
+
                                                 }
-                                                rooms[file.name] = dataOb;
-                                            }
+                                            })
+                                        }
+                                        if (dataOb.result.length > 0) {
+                                            dataObjectArray.push(dataOb.result);
                                         }
                                     }
-                                }).catch((err) => {
-                                    this.dataSets[id] = [];
-                                    reject({code: 400, body: {"error": err.message}});
-                                }));
-                        });
-                    }
+                                    if(id === "rooms") {
+                                        let dataOb: any = new Object(parse5.parse(fileData));
+                                        if (file.name === "index.htm") {
+                                            this.addValidRooms(dataOb);
+                                        }
+                                        else if (!file.dir && file.name.indexOf(".DS_Store") == -1) {
+                                            if (file.name.indexOf("buildings-and-classrooms") == -1) {
+                                                throw new Error("no building");
+                                            }
+                                            rooms[file.name] = dataOb;
+                                        }
+                                    }
+
+                                }
+                            }).catch((err) => {
+                                reject({code: 400, body: {"error": err.message}});
+                            }));
+                    });
                 }).catch((err:any) => {
                     this.dataSets[id] = [];
                     reject({code: 400, body: {"error": err.message}});
@@ -102,9 +94,20 @@ export default class InsightFacade implements IInsightFacade {
                                         this.addCourse(dataObject);
                                     })
                                 });
-                                this.saveToDisk(id).then(() => {
-                                    fulfill({code: 204, body: {}});
-                                })
+                                if (fs.existsSync('./disk/' + id + '.json')) {
+                                    this.saveToDisk(id).then(() => {
+                                        fulfill({code: 201, body: {}});
+                                    }).catch((err) => {
+                                        throw new Error("ugh");
+                                    })
+                                }
+                                else {
+                                    this.saveToDisk(id).then(() => {
+                                        fulfill({code: 204, body: {}});
+                                    }).catch((err) => {
+                                        throw new Error("MAN!");
+                                    })
+                                }
                             }
                             if(id === "rooms"){
                                 let pArr2: Array<Promise<any>> = [];
@@ -113,15 +116,23 @@ export default class InsightFacade implements IInsightFacade {
                                     pArr2.push(p);
                                 });
                                 Promise.all(pArr2).then(() => {
-                                    this.saveToDisk(id).then(() => {
-                                        fulfill({code: 204, body: {}});
-                                    }).catch((err) => {
-                                        this.dataSets[id] = [];
-                                        reject({code: 400, body: {"error": err.message}});
-                                    })
+
+                                    if (fs.existsSync('./disk/' + id + '.json')) {
+                                        this.saveToDisk(id).then(() => {
+                                            fulfill({code: 201, body: {}});
+                                        }).catch((err) => {
+                                            throw new Error("ugh");
+                                        })
+                                    }
+                                    else {
+                                        this.saveToDisk(id).then(() => {
+                                            fulfill({code: 204, body: {}});
+                                        }).catch((err) => {
+                                            throw new Error("MAN!");
+                                        })
+                                    }
                                 }).catch((err) => {
-                                    this.dataSets[id] = [];
-                                    reject({code: 400, body: {"error": err.message}});
+                                    throw new Error("goodness");
                                 })
                             }
                         })
@@ -310,7 +321,7 @@ export default class InsightFacade implements IInsightFacade {
             course.courses_year = 1900;
         }
         else{
-            course.courses_year = parseInt(dataObject.Year);
+            course.courses_year = Number.parseInt(dataObject.Year);
         }
         courses.push(course);
     }
@@ -369,34 +380,24 @@ export default class InsightFacade implements IInsightFacade {
     performQuery(query: any): Promise <InsightResponse> {
         return new Promise((fulfill, reject) => {
             try{
-                if(Object.keys(this.dataSets).length < 1 || (!fs.existsSync('./disk/rooms.json') &&  !fs.existsSync('./disk/courses.json'))) {
-                    if (this.isRoomQuery(query)) {
-                        if (this.dataSets["rooms"] == null || this.dataSets["rooms"].length == 0) {
-                            reject({code: 424, body: {"error": "no rooms"}});
-                        }
-                    }
-                    else {
-                        if (this.dataSets["courses"] == null || this.dataSets["courses"].length == 0) {
-                            reject({code: 424, body: {"error": "no courses"}});
-                        }
+
+                if(Object.keys(this.dataSets).length < 1 || (!fs.existsSync('./disk/rooms.json') && !fs.existsSync('./disk/courses.json'))) {
+                    reject({code: 424, body: {"error": "No dataset"}});
+                }
+                if(this.isRoomQuery(query)){
+                    if(this.dataSets["rooms"] == null || this.dataSets["rooms"].length == 0 || (!fs.existsSync('./disk/rooms.json'))){
+                        reject({code: 424, body: {"error": "No dataset"}});
                     }
                 }
                 else {
-                    if (this.isRoomQuery(query)) {
-                        if (this.dataSets["rooms"] == null || this.dataSets["rooms"].length == 0) {
-                            this.dataSets["rooms"] = JSON.parse(fs.readFileSync("./disk/rooms.json", "utf8"));
-                        }
-                    }
-                    else {
-                        if (this.dataSets["courses"] == null || this.dataSets["courses"].length == 0) {
-                            this.dataSets["courses"] = JSON.parse(fs.readFileSync("./disk/courses.json", "utf8"));
-                        }
+                    if(this.dataSets["courses"] == null || this.dataSets["courses"].length == 0 || !fs.existsSync('./disk/courses.json')){
+                        reject({code: 424, body: {"error": "No dataset"}});
+
                     }
                 }
                 var filteredArray: Array<any> = [];
                 var optionObj:any = {};
                 var transformationObj:any = {};
-                var flag:boolean = false;
                 let resArray: Array<any> = [];
                 var t: Tokenizer = new Tokenizer();
                 t.addKeys(query);
@@ -404,10 +405,10 @@ export default class InsightFacade implements IInsightFacade {
                 for (var i = 0; i < dataSet.length; i++) {
                     t.index = 0;
                     let c: any = dataSet[i];
-                    let q: Query = new Query(t, c);
+                    let q: Query = new Query(t, c, -1);
                     q.parseFilter();
-                    //if(!flag) {
-                        let o: OptionNode = new OptionNode(t, c);
+
+                        let o: OptionNode = new OptionNode(t, c, -1);
                         o.parse();
                         optionObj = o.evaluate();
                      //   flag = true;
@@ -449,7 +450,7 @@ export default class InsightFacade implements IInsightFacade {
                 fulfill({code: 200, body: {"result": resArray}});
             }
             catch (err){
-                reject({code: 400, body: {"error": err}});
+                reject({code: 400, body: {"error": "invalid query"}});
             }
         });
     }

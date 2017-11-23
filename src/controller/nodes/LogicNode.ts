@@ -6,20 +6,22 @@ import Course from "../../dataStructs/Course";
 export class LogicNode extends _Node{
     filterNodes: Array<FilterNode> = [];
     logic: string = "";
-    constructor(t: Tokenizer,c: any, count: number){
-        super(t,c);
-        this.count =  count;
+
+    constructor(t: Tokenizer,c: any,count:number){
+        super(t,c,count);
     }
 
     parse(){
+        this.count++;
         for(var i = 0; i < this.tokenizer.logicIndexArray[this.count]; i++) {
-            this.filterNodes.push(new FilterNode(this.tokenizer, this.dataStruct));
+            let fn: FilterNode = new FilterNode(this.tokenizer, this.dataStruct, this.count+i);
+            this.filterNodes.push(fn);
         }
         // this.tokenizer.logicIndex++;
         var s = this.getAndCheckToken("AND|OR", true); //may be double checking the regex
-        this.filterNodes.forEach((node) => {
-            node.parse();
-        })
+        for(var i = 0; i < this.filterNodes.length; i++){
+            this.filterNodes[i].parse();
+        }
         this.logic = s; //storing logic for evaulate()
     }
 

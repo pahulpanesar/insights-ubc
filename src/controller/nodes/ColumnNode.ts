@@ -6,9 +6,11 @@ import KeyNode from "./KeyNode";
 
 export default class ColumnNode extends _Node{
     options: string[] = [];
+
     errorCatch: string[] = [];
     constructor(t:Tokenizer,c:any){
         super(t,c);
+
     }
 
     parse(){
@@ -24,6 +26,7 @@ export default class ColumnNode extends _Node{
                 //this.options.push(temp); added later in OrderNode
                 console.log("error caught");
             }
+
             this.options.push(key.evaluate());
         }
     }

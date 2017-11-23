@@ -7,12 +7,13 @@ import DirectionNode from "./DirectionNode";
 import {dateParser} from "restify";
 
 export default class OrderNode extends _Node {
+
     keys:string[] = [];
     direction:DirectionNode = new DirectionNode(this.tokenizer,this.dataStruct);
     directionFlag = false;
     options:string[];
-    constructor(t:Tokenizer, c: any){
-        super(t,c);
+    constructor(t: Tokenizer,c: any,count:number){
+        super(t,c,count);
     }
 
     parse(options: string[],err: string[]){
