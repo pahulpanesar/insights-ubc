@@ -27,15 +27,15 @@ export default class OrderNode extends _Node {
             temp.parse(err);
             this.keys.push(temp.evaluate()) //evaluate here to avoid computation later, not sure if itll fuck with anything
         }
-        this.options = options;
+        this.options = options.concat(err);
     }
     evaluate(){
         var tempDir:string = "";
         if(this.directionFlag){
             tempDir = this.direction.evaluate();
         }
-        for(var key in this.keys) {
-            if (!this.options.includes(key) && key.length > 0) {
+        for(var i = 0;i<this.keys.length;i++) {
+            if (!this.options.includes(this.keys[i]) && this.keys[i].length > 0) {
                 throw new Error("Invalid Order");
             }
         }

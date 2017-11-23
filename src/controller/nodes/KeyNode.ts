@@ -15,9 +15,11 @@ export default class KeyNode extends _Node{
 
     parse(err:string[]){
         if(err.length > 0) {
-            for (var s in err) {
-                this.regex += s;
+
+            for (var i =0;i<err.length;i++) {
+                this.regex +=  "|" + err[i];
             }
+
         }
         var s = this.getAndCheckToken(this.regex,true);
         this.key = s;

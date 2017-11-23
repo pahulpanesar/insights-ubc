@@ -810,7 +810,7 @@ describe("EchoSpec", function () {
         });
     });
 
-    it("QUERY A - D3", function () {
+    it("QUERY_A_D3", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
@@ -827,6 +827,8 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+
+
 
 
 });

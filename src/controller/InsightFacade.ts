@@ -406,12 +406,12 @@ export default class InsightFacade implements IInsightFacade {
                     let c: any = dataSet[i];
                     let q: Query = new Query(t, c);
                     q.parseFilter();
-                    if(!flag) {
+                    //if(!flag) {
                         let o: OptionNode = new OptionNode(t, c);
                         o.parse();
                         optionObj = o.evaluate();
-                        flag = true;
-                    }
+                     //   flag = true;
+                   // }
                     if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
                         filteredArray.push(c)
                     }
