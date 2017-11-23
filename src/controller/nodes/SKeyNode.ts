@@ -6,6 +6,7 @@ import Course from "../../dataStructs/Course";
 export default class SKeyNode extends _Node{
     s_key: string;
 
+
     constructor(t: Tokenizer,c: any,count:number){
         super(t,c,count);
     }

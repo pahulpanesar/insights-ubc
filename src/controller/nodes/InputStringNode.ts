@@ -5,6 +5,7 @@ import {error} from "util";
 
 export default class InputStringNode extends _Node{
     inputString: string;
+
     constructor(t: Tokenizer,c: any,count:number){
         super(t,c,count);
     }

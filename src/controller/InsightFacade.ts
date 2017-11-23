@@ -9,6 +9,8 @@ import Tokenizer from "../dataStructs/Tokenizer";
 import Query from "../dataStructs/Query";
 import OptionNode from "./nodes/OptionNode";
 import Room from "../dataStructs/Room";
+import GroupNode from "./nodes/GroupNode";
+import TransformationNode from "./nodes/TransformationNode";
 let http = require("http");
 let fs = require('fs');
 let parse5 =  require('parse5');
@@ -37,6 +39,7 @@ export default class InsightFacade implements IInsightFacade {
                     if(id === "rooms") {
                         this.dataSets[id] = new Array<Room>();
                     }
+
                     files = zip.files;
                     Object.keys(files).forEach((filename) => {
                         let file: JSZipObject = files[filename];
@@ -49,6 +52,7 @@ export default class InsightFacade implements IInsightFacade {
                                             dataOb.result.forEach((x: any) => {
                                                 if (x["Course"] != null) {
                                                     validCourse = true;
+
                                                 }
                                             })
                                         }
@@ -68,19 +72,22 @@ export default class InsightFacade implements IInsightFacade {
                                             rooms[file.name] = dataOb;
                                         }
                                     }
+
                                 }
                             }).catch((err) => {
                                 reject({code: 400, body: {"error": err.message}});
                             }));
                     });
                 }).catch((err:any) => {
+                    this.dataSets[id] = [];
                     reject({code: 400, body: {"error": err.message}});
                 })
                     .then(() => {
                         Promise.all(pArr).then(() => {
                             if(id === "courses"){
                                 if(!validCourse){
-                                    reject({code: 400, body: {"error": "No valid courses"}});
+                                    this.dataSets[id] = [];
+                                    reject({code: 400, body: {"error":"no valid course"}});
                                 }
                                 dataObjectArray.forEach((dataArray) => {
                                     dataArray.forEach((dataObject: any) => {
@@ -109,6 +116,7 @@ export default class InsightFacade implements IInsightFacade {
                                     pArr2.push(p);
                                 });
                                 Promise.all(pArr2).then(() => {
+
                                     if (fs.existsSync('./disk/' + id + '.json')) {
                                         this.saveToDisk(id).then(() => {
                                             fulfill({code: 201, body: {}});
@@ -131,6 +139,7 @@ export default class InsightFacade implements IInsightFacade {
                     })
             }
             catch (err) {
+                this.dataSets[id] = [];
                 reject({code: 400, body: {"error": err.message}});
             }
         });
@@ -371,6 +380,7 @@ export default class InsightFacade implements IInsightFacade {
     performQuery(query: any): Promise <InsightResponse> {
         return new Promise((fulfill, reject) => {
             try{
+
                 if(Object.keys(this.dataSets).length < 1 || (!fs.existsSync('./disk/rooms.json') && !fs.existsSync('./disk/courses.json'))) {
                     reject({code: 424, body: {"error": "No dataset"}});
                 }
@@ -382,11 +392,12 @@ export default class InsightFacade implements IInsightFacade {
                 else {
                     if(this.dataSets["courses"] == null || this.dataSets["courses"].length == 0 || !fs.existsSync('./disk/courses.json')){
                         reject({code: 424, body: {"error": "No dataset"}});
+
                     }
                 }
                 var filteredArray: Array<any> = [];
                 var optionObj:any = {};
-                var flag:boolean = false;
+                var transformationObj:any = {};
                 let resArray: Array<any> = [];
                 var t: Tokenizer = new Tokenizer();
                 t.addKeys(query);
@@ -396,31 +407,44 @@ export default class InsightFacade implements IInsightFacade {
                     let c: any = dataSet[i];
                     let q: Query = new Query(t, c, -1);
                     q.parseFilter();
-                    if(!flag) {
+
                         let o: OptionNode = new OptionNode(t, c, -1);
                         o.parse();
                         optionObj = o.evaluate();
-                        flag = true;
-                    }
+                     //   flag = true;
+                   // }
                     if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
                         filteredArray.push(c)
                     }
                 }
 
-                if(optionObj.order) {
+                if(optionObj.keys) {
                     filteredArray.sort(function(a, b) {
-                        if(a[optionObj.order] < b[optionObj.order]) return -1;
-                        if(a[optionObj.order] > b[optionObj.order]) return 1;
+                        for(var i =0;i<optionObj.keys.length;i++) { //sort by first key, tie break with the second etc...
+                            if (a[optionObj.keys[i]] < b[optionObj.keys[i]]){
+                                return -1;
+                            }
+                            else if (a[optionObj.keys[i]] > b[optionObj.keys[i]]){
+                                return 1;
+                            }
+                        }
                         return 0;
                         //return a[optionObj.order] - b[optionObj.order];
                     });
                 }
+
+                let trans = new TransformationNode(t,{"errorCatch" : optionObj.errorCatch});
+                trans.parse();
+                transformationObj = trans.evaluate();
+                //error check keys
+                for(var i = 0;i<optionObj.errorCatch.length;i++){
+
+                }
                 resArray = filteredArray.map((struct) => {
                     let contain: any = {};
-                    optionObj["columns"].forEach((column:any) => {
+                    optionObj["columns"].options.forEach((column:any) => {
                         contain[column] = struct[column];
                     });
-
                     return contain;
                 });
                 fulfill({code: 200, body: {"result": resArray}});

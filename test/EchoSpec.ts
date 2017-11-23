@@ -156,7 +156,7 @@ describe("EchoSpec", function () {
         o.parse();
         var optionObj = o.evaluate();
         console.log(optionObj);
-        return (optionObj.columns[0] === "course_dept") && (optionObj.columns[1] === "courses_avg");
+        return (optionObj.columns.options[0] === "course_dept") && (optionObj.columns.options[1] === "courses_avg");
     });
 
     it("Option object receiving correct order - SIMPLE", function () {
@@ -167,7 +167,7 @@ describe("EchoSpec", function () {
         o.parse();
         var optionObj = o.evaluate();
         console.log(optionObj);
-        return (optionObj.order[0] === "courses_avg");
+        return (optionObj.keys[0] === "courses_avg");
     });
 
     it("Option object receiving correct order - COMPLEX", function () {
@@ -178,7 +178,7 @@ describe("EchoSpec", function () {
         o.parse();
         var optionObj = o.evaluate();
         console.log(optionObj);
-        return (optionObj.order[0] === "courses_avg");
+        return (optionObj.keys[0] === "courses_avg");
     });
 
     it("Option object receiving correct columns - COMPLEX", function () {
@@ -189,7 +189,7 @@ describe("EchoSpec", function () {
         o.parse();
         var optionObj = o.evaluate();
         console.log(optionObj);
-        return (optionObj.columns[0] === "course_dept") && (optionObj.columns[1] === "courses_id") && (optionObj.columns[2] === "courses_avg");
+        return (optionObj.columns.options[0] === "course_dept") && (optionObj.columns.options[1] === "courses_id") && (optionObj.columns.options[2] === "courses_avg");
     });
 
     it("Reject bad Order", function () {
@@ -824,6 +824,7 @@ describe("EchoSpec", function () {
         })
     });
 
+
     it("PUT description", function () {
         this.timeout(10000);
         chai.use(chaiHttp);
@@ -910,6 +911,7 @@ describe("EchoSpec", function () {
                     expect(err.code).to.deep.equal(424);
                 })
             }).catch(function (err) {
+
                 Log.test('Error: ' + err);
                 expect.fail();
             })
@@ -933,9 +935,11 @@ describe("EchoSpec", function () {
             })
         }).catch(function (err) {
             Log.test('Error: ' + err);
+
             expect.fail();
         })
     });
+
 
     it("PERFORMQUERY 200 - biggest query", function () {
         this.timeout(15000);
@@ -973,3 +977,5 @@ describe("EchoSpec", function () {
         })
     });
 });
+
+//double adddataset
