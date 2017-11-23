@@ -435,9 +435,13 @@ export default class InsightFacade implements IInsightFacade {
                 let trans = new TransformationNode(t,{"errorCatch" : optionObj.errorCatch});
                 trans.parse();
                 transformationObj = trans.evaluate();
+                //error check keys
+                for(var i = 0;i<optionObj.errorCatch.length;i++){
+
+                }
                 resArray = filteredArray.map((struct) => {
                     let contain: any = {};
-                    optionObj["columns"].forEach((column:any) => {
+                    optionObj["columns"].options.forEach((column:any) => {
                         contain[column] = struct[column];
                     });
                     return contain;
