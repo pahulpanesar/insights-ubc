@@ -14,7 +14,7 @@ export default class GroupNode extends _Node{
         this.getAndCheckToken("GROUP",true);
         while(this.tokenizer.getNext(false) != "APPLY" && this.tokenizer.getNext(false) !== "NO_MORE_TOKENS"){
             var key: KeyNode = new KeyNode(this.tokenizer,this.dataStruct);
-            key.parse();
+            key.parse(this.dataStruct.errorCatch);
             this.keys.push(key.evaluate());
         }
     }

@@ -9,6 +9,8 @@ import Tokenizer from "../dataStructs/Tokenizer";
 import Query from "../dataStructs/Query";
 import OptionNode from "./nodes/OptionNode";
 import Room from "../dataStructs/Room";
+import GroupNode from "./nodes/GroupNode";
+import TransformationNode from "./nodes/TransformationNode";
 let http = require("http");
 let fs = require('fs');
 let parse5 =  require('parse5');
@@ -393,6 +395,7 @@ export default class InsightFacade implements IInsightFacade {
                 }
                 var filteredArray: Array<any> = [];
                 var optionObj:any = {};
+                var transformationObj:any = {};
                 var flag:boolean = false;
                 let resArray: Array<any> = [];
                 var t: Tokenizer = new Tokenizer();
@@ -428,6 +431,10 @@ export default class InsightFacade implements IInsightFacade {
                         //return a[optionObj.order] - b[optionObj.order];
                     });
                 }
+
+                let trans = new TransformationNode(t,{"errorCatch" : optionObj.errorCatch});
+                trans.parse();
+                transformationObj = trans.evaluate();
                 resArray = filteredArray.map((struct) => {
                     let contain: any = {};
                     optionObj["columns"].forEach((column:any) => {

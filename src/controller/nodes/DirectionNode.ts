@@ -10,7 +10,8 @@ export default class DirectionNode extends _Node{
     }
 
     parse(){
-        this.getAndCheckToken("UP|DOWN",true);
+        this.getAndCheckToken("dir",true);
+        this.direction = this.getAndCheckToken("UP|DOWN",true);
     }
     evaluate(){
         return this.direction;

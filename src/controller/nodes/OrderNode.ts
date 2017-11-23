@@ -15,15 +15,16 @@ export default class OrderNode extends _Node {
         super(t,c);
     }
 
-    parse(options: string[]){
+    parse(options: string[],err: string[]){
         var s = this.getAndCheckToken("ORDER", true);
         if(this.tokenizer.getNext(false) == "dir"){
             this.direction.parse();
             this.directionFlag = true;
         }
+        this.getAndCheckToken("keys",true);
         while(this.tokenizer.getNext(false) != "TRANSFORMATIONS" && this.tokenizer.getNext(false) != "NO_MORE_TOKENS"){
             var temp = new KeyNode(this.tokenizer,this.dataStruct);
-            temp.parse();
+            temp.parse(err);
             this.keys.push(temp.evaluate()) //evaluate here to avoid computation later, not sure if itll fuck with anything
         }
         this.options = options;

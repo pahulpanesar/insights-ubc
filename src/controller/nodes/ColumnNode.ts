@@ -6,6 +6,7 @@ import KeyNode from "./KeyNode";
 
 export default class ColumnNode extends _Node{
     options: string[] = [];
+    errorCatch: string[] = [];
     constructor(t:Tokenizer,c:any){
         super(t,c);
     }
@@ -14,12 +15,20 @@ export default class ColumnNode extends _Node{
         var s = this.getAndCheckToken("COLUMNS", true);
         while(this.tokenizer.getNext(false) !== "ORDER" && this.tokenizer.getNext(false) !== "NO_MORE_TOKENS"){
             var key: KeyNode = new KeyNode(this.tokenizer,this.dataStruct);
-            key.parse();
+            var temp = this.tokenizer.getNext(false);
+            try{
+                key.parse([]); //error catch is generated in Columns, therefore an empty array is passed
+            }
+            catch(e){
+                this.errorCatch.push(temp);
+                console.log("!!! " + temp);
+            }
             this.options.push(key.evaluate());
         }
     }
     evaluate(){
         //console.log("returning... " + this.options);
-        return this.options;
+        return {'options': this.options, 'errorCatch': this.errorCatch};
+
     }
 }
