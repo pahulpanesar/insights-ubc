@@ -14,6 +14,7 @@ import TransformationNode from "./nodes/TransformationNode";
 let http = require("http");
 let fs = require('fs');
 let parse5 =  require('parse5');
+let Decimal = require("decimal.js");
 
 
 export default class InsightFacade implements IInsightFacade {
@@ -379,26 +380,26 @@ export default class InsightFacade implements IInsightFacade {
 
     performQuery(query: any): Promise <InsightResponse> {
         return new Promise((fulfill, reject) => {
-            try{
+            try {
 
-                if(Object.keys(this.dataSets).length < 1 || (!fs.existsSync('./disk/rooms.json') && !fs.existsSync('./disk/courses.json'))) {
+                if (Object.keys(this.dataSets).length < 1 || (!fs.existsSync('./disk/rooms.json') && !fs.existsSync('./disk/courses.json'))) {
                     reject({code: 424, body: {"error": "No dataset"}});
                 }
-                if(this.isRoomQuery(query)){
-                    if(this.dataSets["rooms"] == null || this.dataSets["rooms"].length == 0 || (!fs.existsSync('./disk/rooms.json'))){
+                if (this.isRoomQuery(query)) {
+                    if (this.dataSets["rooms"] == null || this.dataSets["rooms"].length == 0 || (!fs.existsSync('./disk/rooms.json'))) {
                         reject({code: 424, body: {"error": "No dataset"}});
                     }
                 }
                 else {
-                    if(this.dataSets["courses"] == null || this.dataSets["courses"].length == 0 || !fs.existsSync('./disk/courses.json')){
+                    if (this.dataSets["courses"] == null || this.dataSets["courses"].length == 0 || !fs.existsSync('./disk/courses.json')) {
                         reject({code: 424, body: {"error": "No dataset"}});
 
                     }
                 }
                 var filteredArray: Array<any> = [];
-                var optionObj:any = {};
-                var transformationObj:any = {};
-                let resArray: Array<any> = [];
+                var optionObj: any = {};
+                let transform: any = query["TRANSFORMATIONS"];
+                var transformationObj: any = {};
                 var t: Tokenizer = new Tokenizer();
                 t.addKeys(query);
                 let dataSet = this.isRoomQuery(query) ? this.dataSets["rooms"] : this.dataSets["courses"];
@@ -406,52 +407,202 @@ export default class InsightFacade implements IInsightFacade {
                     t.index = 0;
                     let c: any = dataSet[i];
                     let q: Query = new Query(t, c, -1);
-                    q.parseFilter();
-
-                        let o: OptionNode = new OptionNode(t, c, -1);
-                        o.parse();
-                        optionObj = o.evaluate();
-                     //   flag = true;
-                   // }
+                    let where: any = query["WHERE"];
+                    if (Object.keys(where).length !== 0) {
+                        q.parseFilter();
+                    }
+                    else {
+                        t.index++;
+                    }
+                    let o: OptionNode = new OptionNode(t, c, -1, transform);
+                    o.parse();
+                    optionObj = o.evaluate();
+                    //   flag = true;
+                    // }
                     if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
                         filteredArray.push(c)
                     }
                 }
 
-                if(optionObj.keys) {
-                    filteredArray.sort(function(a, b) {
-                        for(var i =0;i<optionObj.keys.length;i++) { //sort by first key, tie break with the second etc...
-                            if (a[optionObj.keys[i]] < b[optionObj.keys[i]]){
-                                return -1;
-                            }
-                            else if (a[optionObj.keys[i]] > b[optionObj.keys[i]]){
-                                return 1;
-                            }
-                        }
-                        return 0;
-                        //return a[optionObj.order] - b[optionObj.order];
-                    });
-                }
-
-                let trans = new TransformationNode(t,{"errorCatch" : optionObj.errorCatch},-1);
+                let trans = new TransformationNode(t, {"errorCatch": optionObj.errorCatch}, -1);
                 trans.parse();
                 transformationObj = trans.evaluate();
                 //error check keys
-                for(var i = 0;i<optionObj.errorCatch.length;i++){
+                // for(var i = 0;i<optionObj.errorCatch.length;i++){
+                //
+                // }
 
-                }
-                resArray = filteredArray.map((struct) => {
-                    let contain: any = {};
-                    optionObj["columns"].options.forEach((column:any) => {
-                        contain[column] = struct[column];
+                let groupArray: Array<any> = [];
+                if (!transform) {
+                    groupArray = filteredArray.map((struct) => {
+                        let contain: any = {};
+                        let tKey: boolean = false;
+                        optionObj["columns"].options.forEach((column: any) => {
+                            if (transformationObj !== {}) {
+                                transformationObj.apply.forEach((x: any) => {
+                                    if (column === x.name) {
+                                        contain[column] = struct[x.key];
+                                        tKey = true;
+                                    }
+                                })
+                            }
+                            if (!tKey) {
+                                contain[column] = struct[column];
+                            }
+                        });
+                        return contain;
                     });
-                    return contain;
+                }
+                let map: any = {};
+                for(let group in transformationObj.group){
+                    let g: any = transformationObj["group"][group];
+                    for(let resNode in filteredArray){
+                        if(map[filteredArray[resNode][g]] == null) {
+                            map[filteredArray[resNode][g]] = [];
+                        }
+                        map[filteredArray[resNode][g]].push(filteredArray[resNode]);
+                    }
+                }
+                let pArr: Array<Promise<any>> = [];
+                if(transformationObj.apply.length == 0){
+                    pArr.push(this.tranAction(null, groupArray, map));
+                }
+                transformationObj.apply.forEach((apply:any) => {
+                    pArr.push(this.tranAction(apply, groupArray, map));
                 });
-                fulfill({code: 200, body: {"result": resArray}});
-            }
+                Promise.all(pArr).then(() => {
+                    groupArray = groupArray.map((struct) => {
+                        let contain: any = {};
+                        let tKey: boolean = false;
+                        optionObj["columns"].options.forEach((column:any) => {
+                            if(transformationObj !== {}){
+                                transformationObj.apply.forEach((x:any) => {
+                                    if(column === x.name){
+                                        contain[column] = struct[x.key];
+                                        tKey = true;
+                                    }
+                                })
+                            }
+                            if(!tKey){
+                                contain[column] = struct[column];
+                            }
+                        });
+                        return contain;
+                    });
+
+
+                    if(optionObj.keys) {
+                        groupArray.sort(function(a, b) {
+                            for(var i =0;i<optionObj.keys.length;i++) { //sort by first key, tie break with the second etc...
+                                if (a[optionObj.keys[i]] < b[optionObj.keys[i]]){
+                                    return optionObj.dir === "DOWN"? 1 : -1;
+                                }
+                                else if (a[optionObj.keys[i]] > b[optionObj.keys[i]]){
+                                    return optionObj.dir === "DOWN"? -1 : 1;
+                                }
+                            }
+                            return 0;
+                            //return a[optionObj.order] - b[optionObj.order];
+                        });
+                    }
+                    fulfill({code: 200, body: {"result": groupArray}});
+                });
+                }
             catch (err){
                 reject({code: 400, body: {"error": "invalid query"}});
             }
         });
+    }
+
+    tranAction(apply: any, groupArray: Array<any>, map: any): Promise<any> {
+        return new Promise((fulfill, reject) => {
+            for(var i = 0; i < Object.keys(map).length; i++){
+                if(map[Object.keys(map)[i]].length < 2 || apply == null) groupArray.push(map[Object.keys(map)[i]][0]);
+                else{
+                    let n: any = map[Object.keys(map)[i]][0];
+                    let res: number;
+                    if(apply.action === "MAX") {
+                        this.maxArr(map[Object.keys(map)[i]], apply.key).then((x) => {
+                            res = x;
+                        }).catch((err) => {
+                            reject(err);
+                        })
+                    }
+                    if(apply.action === "MIN") {
+                        this.minArr(map[Object.keys(map)[i]], apply.key).then((x) => {
+                            res = x;
+                        }).catch((err) => {
+                            reject(err);
+                        })
+                    }
+                    if(apply.action === "AVG") {
+                        res = this.avgArr(map[Object.keys(map)[i]], apply.key)
+                    }
+                    if(apply.action === "COUNT") {
+                        this.countArr(map[Object.keys(map)[i]], apply.key).then((x) => {
+                            res = x;
+                        }).catch((err) => {
+                            reject(err);
+                        })
+                    }
+                    if(apply.action === "SUM") {
+                        res = this.sumArr(map[Object.keys(map)[i]], apply.key);
+                    }
+                    n[apply.key] = res;
+                    groupArray.push(n);
+                }
+            }
+        })
+    }
+
+    maxArr(groupArr: Array<any>, key:any) : Promise<number> {
+        return new Promise((fulfill, reject) => {
+            let max:number = 0;
+            max = groupArr.reduce(function(a, b) {
+                return Math.max(a[key], b[key]);
+            }).then(() => {
+                fulfill(max)
+            }).catch((err:any) => {
+                reject(err);
+            })
+        })
+    }
+
+    minArr(groupArr: Array<any>, key:any) : Promise<number> {
+        return new Promise((fulfill, reject) => {
+            let min:number = 0;
+            min += groupArr.reduce(function(a, b) {
+                return Math.min(a, b);
+            }).then(() => {
+                fulfill(min)
+            }).catch((err:any) => {
+                reject(err);
+            })
+        });
+    }
+
+    avgArr(groupArr: Array<any>, key:any) : number {
+        let avg:number = 0;
+        avg += Number((groupArr.map((val:any) => <any>new Decimal(val[key])).reduce((a,b) => a.plus(b)).toNumber() / groupArr.length).toFixed(2));
+        return avg;
+    }
+
+    countArr(groupArr: Array<any>, key:any) : Promise<number> {
+        return new Promise((fulfill, reject) => {
+            let count:number = 0;
+            count += groupArr.reduce(function(a, b) {
+                if(a[key] !== b[key]) return 1;
+                else return 0;
+            }).then(() => {
+                fulfill(count)
+            }).catch((err:any) => {
+                reject(err);
+            })
+        })
+    }
+
+    sumArr(groupArr: Array<any>, key:any) : number {
+        let sum = Number(groupArr.map((val:any) => new Decimal(val[key])).reduce((a,b) => a.plus(b)).toNumber().toFixed(2));
+        return sum;
     }
 }

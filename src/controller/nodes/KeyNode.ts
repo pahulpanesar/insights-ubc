@@ -14,9 +14,21 @@ export default class KeyNode extends _Node{
     }
 
 
-    parse(err:string[]){
+    parse(err:string[], t:any){
+        if(t != null) {
+            let trans: Array<any> = t["APPLY"];
+            this.regex = "(" + this.regex;
+            for (var i = 0; i < trans.length; i++) {
+                let applyKeys: string = "|";
+                Object.keys(trans[i]).forEach((x) => {
+                    applyKeys += x;
+                    applyKeys += '|';
+                });
+                this.regex += applyKeys.substring(0, applyKeys.length - 1);
+            }
+            this.regex += ")";
+        }
         if(err.length > 0) {
-
             for (var i =0;i<err.length;i++) {
                 this.regex +=  "|" + err[i];
             }

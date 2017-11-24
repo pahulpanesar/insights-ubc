@@ -17,7 +17,7 @@ export default class OrderNode extends _Node {
         super(t,c,count);
     }
 
-    parse(options: string[],err: string[]){
+    parse(options: string[],err: string[], t:any){
         var s = this.getAndCheckToken("ORDER", true);
         if(this.tokenizer.getNext(false) == "dir"){
             this.direction.parse();
@@ -27,8 +27,8 @@ export default class OrderNode extends _Node {
 
         while(this.tokenizer.getNext(false) != "TRANSFORMATIONS" && this.tokenizer.getNext(false) != "NO_MORE_TOKENS"){
             var temp = new KeyNode(this.tokenizer,this.dataStruct,this.count);
-            temp.parse(err);
-            this.keys.push(temp.evaluate()) //evaluate here to avoid computation later, not sure if itll fuck with anything
+            temp.parse(err, t);
+            this.keys.push(temp.evaluate());
         }
         this.options = options.concat(err);
     }

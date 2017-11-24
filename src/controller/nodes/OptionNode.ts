@@ -12,16 +12,17 @@ export default class OptionNode extends _Node{
     columns:ColumnNode = new ColumnNode(this.tokenizer,this.dataStruct,this.count);
     order:OrderNode = new OrderNode(this.tokenizer,this.dataStruct,this.count);
     errorCatch:string[] = [];
-    constructor(t: Tokenizer,c: any,count:number){
+    t:any;
+    constructor(t: Tokenizer,c: any,count:number, transform:any){
         super(t,c,count);
+        this.t=transform;
     }
     parse(){
         var s = this.getAndCheckToken("OPTIONS",true);
-        this.columns.parse();
+        this.columns.parse(this.t);
         var tempColumns: any = this.columns.evaluate();
         this.errorCatch = tempColumns.errorCatch;
-        this.order.parse(tempColumns.options,this.errorCatch);
-
+        this.order.parse(tempColumns.options,this.errorCatch, this.t);
     }
 
     evaluate(){
