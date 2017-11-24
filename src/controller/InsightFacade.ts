@@ -453,43 +453,43 @@ export default class InsightFacade implements IInsightFacade {
                         return contain;
                     });
                 }
-                let map: any = {};
-                for(let group in transformationObj.group){
-                    let g: any = transformationObj["group"][group];
-                    for(let resNode in filteredArray){
-                        if(map[filteredArray[resNode][g]] == null) {
-                            map[filteredArray[resNode][g]] = [];
+                else {
+                    let map: any = {};
+                    for (let group in transformationObj.group) {
+                        let g: any = transformationObj["group"][group];
+                        for (let resNode in filteredArray) {
+                            if (map[filteredArray[resNode][g]] == null) {
+                                map[filteredArray[resNode][g]] = [];
+                            }
+                            map[filteredArray[resNode][g]].push(filteredArray[resNode]);
                         }
-                        map[filteredArray[resNode][g]].push(filteredArray[resNode]);
                     }
-                }
-                if(transformationObj.apply.length == 0){
-                    this.tranAction(null, groupArray, map);
-                }
-                transformationObj.apply.forEach((apply:any) => {
-                    this.tranAction(apply, groupArray, map);
-                });
-
-                groupArray = groupArray.map((struct) => {
-                    let contain: any = {};
-                    let tKey: boolean = false;
-                    optionObj["columns"].options.forEach((column:any) => {
-                        if(transformationObj !== {}){
-                            transformationObj.apply.forEach((x:any) => {
-                                if(column === x.name){
-                                    contain[column] = struct[x.key];
-                                    tKey = true;
-                                }
-                            })
-                        }
-                        if(!tKey){
-                            contain[column] = struct[column];
-                        }
+                    if (transformationObj.apply.length == 0) {
+                        this.tranAction(null, groupArray, map);
+                    }
+                    transformationObj.apply.forEach((apply: any) => {
+                        this.tranAction(apply, groupArray, map);
                     });
-                    return contain;
-                });
 
-
+                    groupArray = groupArray.map((struct) => {
+                        let contain: any = {};
+                        let tKey: boolean = false;
+                        optionObj["columns"].options.forEach((column: any) => {
+                            if (transformationObj !== {}) {
+                                transformationObj.apply.forEach((x: any) => {
+                                    if (column === x.name) {
+                                        contain[column] = struct[x.key];
+                                        tKey = true;
+                                    }
+                                })
+                            }
+                            if (!tKey) {
+                                contain[column] = struct[column];
+                            }
+                        });
+                        return contain;
+                    });
+                }
                 if(optionObj.keys) {
                     groupArray.sort(function(a, b) {
                         for(var i =0;i<optionObj.keys.length;i++) { //sort by first key, tie break with the second etc...

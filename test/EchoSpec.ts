@@ -25,7 +25,7 @@ describe("EchoSpec", function () {
         expect(response).to.have.property('code');
         expect(response).to.have.property('body');
         expect(response.code).to.be.a('number');
-    }
+    }00
 
     before(function () {
         Log.test('Before: ' + (<any>this).test.parent.title);
@@ -50,8 +50,12 @@ describe("EchoSpec", function () {
 
     afterEach(function () {
         Log.test('AfterTest: ' + (<any>this).currentTest.title);
-        test.insightFace.removeDataset("courses");
-        test.insightFace.removeDataset("rooms");
+        test.insightFace.removeDataset("courses").catch((err) => {
+            console.log(err);
+        });
+        test.insightFace.removeDataset("rooms").catch((err) => {
+            console.log(err);
+        });
     });
 
     it("Should be able to echo", function () {
@@ -147,66 +151,66 @@ describe("EchoSpec", function () {
         })
     });
 
-    //
-    // it("Option object receiving correct columns - SIMPLE", function () {
-    //     test.t.addKeys((JSON.parse(test.testJSONSimple)));
-    //     var q:Query = new Query(test.t,null,-1);
-    //     q.parseFilter();
-    //     var o:OptionNode = new OptionNode(test.t,null,-1);
-    //     o.parse();
-    //     var optionObj = o.evaluate();
-    //     console.log(optionObj);
-    //     return (optionObj.columns.options[0] === "course_dept") && (optionObj.columns.options[1] === "courses_avg");
-    // });
-    //
-    // it("Option object receiving correct order - SIMPLE", function () {
-    //     test.t.addKeys(test.SIMPLE_QUERY);
-    //     var q:Query = new Query(test.t,null,-1);
-    //     q.parseFilter();
-    //     var o:OptionNode = new OptionNode(test.t,null,-1);
-    //     o.parse();
-    //     var optionObj = o.evaluate();
-    //     console.log(optionObj);
-    //     return (optionObj.keys[0] === "courses_avg");
-    // });
-    //
-    // it("Option object receiving correct order - COMPLEX", function () {
-    //     test.t.addKeys(test.COMPLEX_QUERY);
-    //     var q:Query = new Query(test.t,null,-1);
-    //     q.parseFilter();
-    //     var o:OptionNode = new OptionNode(test.t,null,-1);
-    //     o.parse();
-    //     var optionObj = o.evaluate();
-    //     console.log(optionObj);
-    //     return (optionObj.keys[0] === "courses_avg");
-    // });
-    //
-    // it("Option object receiving correct columns - COMPLEX", function () {
-    //     test.t.addKeys(test.COMPLEX_QUERY);
-    //     var q:Query = new Query(test.t,null,-1);
-    //     q.parseFilter();
-    //     var o:OptionNode = new OptionNode(test.t,null,-1);
-    //     o.parse();
-    //     var optionObj = o.evaluate();
-    //     console.log(optionObj);
-    //     return (optionObj.columns.options[0] === "course_dept") && (optionObj.columns.options[1] === "courses_id") && (optionObj.columns.options[2] === "courses_avg");
-    // });
-    //
-    // it("Reject bad Order", function () {
-    //     try {
-    //         test. t.addKeys((JSON.parse(test.testJSONComplex)));
-    //         var q: Query = new Query(test.t, null, -1);
-    //         q.parseFilter();
-    //         var o: OptionNode = new OptionNode(test.t, null, -1);
-    //         o.parse();
-    //         var optionObj = o.evaluate();
-    //         console.log(optionObj);
-    //         return false;
-    //     }
-    //     catch(e){
-    //         return true;
-    //     }
-    // });
+
+    it("Option object receiving correct columns - SIMPLE", function () {
+        test.t.addKeys((JSON.parse(test.testJSONSimple)));
+        var q:Query = new Query(test.t,null,-1);
+        q.parseFilter();
+        var o:OptionNode = new OptionNode(test.t,null,-1,null);
+        o.parse();
+        var optionObj = o.evaluate();
+        //console.log(optionObj);
+        return (optionObj.columns.options[0] === "course_dept") && (optionObj.columns.options[1] === "courses_avg");
+    });
+
+    it("Option object receiving correct order - SIMPLE", function () {
+        test.t.addKeys(test.SIMPLE_QUERY);
+        var q:Query = new Query(test.t,null,-1);
+        q.parseFilter();
+        var o:OptionNode = new OptionNode(test.t,null,-1,null);
+        o.parse();
+        var optionObj = o.evaluate();
+        //console.log(optionObj);
+        return (optionObj.keys[0] === "courses_avg");
+    });
+
+    it("Option object receiving correct order - COMPLEX", function () {
+        test.t.addKeys(test.COMPLEX_QUERY);
+        var q:Query = new Query(test.t,null,-1);
+        q.parseFilter();
+        var o:OptionNode =  new OptionNode(test.t,null,-1,null);
+        o.parse();
+        var optionObj = o.evaluate();
+        //console.log(optionObj);
+        return (optionObj.keys[0] === "courses_avg");
+    });
+
+    it("Option object receiving correct columns - COMPLEX", function () {
+        test.t.addKeys(test.COMPLEX_QUERY);
+        var q:Query = new Query(test.t,null,-1);
+        q.parseFilter();
+        var o:OptionNode =  new OptionNode(test.t,null,-1,null);
+        o.parse();
+        var optionObj = o.evaluate();
+        //console.log(optionObj);
+        return (optionObj.columns.options[0] === "course_dept") && (optionObj.columns.options[1] === "courses_id") && (optionObj.columns.options[2] === "courses_avg");
+    });
+
+    it("Reject bad Order", function () {
+        try {
+            test. t.addKeys((JSON.parse(test.testJSONComplex)));
+            var q: Query = new Query(test.t, null, -1);
+            q.parseFilter();
+            var o: OptionNode =  new OptionNode(test.t,null,-1,null);
+            o.parse();
+            var optionObj = o.evaluate();
+            //console.log(optionObj);
+            return false;
+        }
+        catch(e){
+            return true;
+        }
+    });
 
     it("REMOVEDATASET 404 - remove empty dataset", function () {
         return test.insightFace.removeDataset("courses").then(function (value: InsightResponse) {
@@ -385,11 +389,11 @@ describe("EchoSpec", function () {
             return test.insightFace.performQuery(query)
                 .then(function (response: InsightResponse) {
                     expect(response.code).to.equal(200);
-                    console.log(response.body);
-                    expect(response.body).to.deep.equal({"result": []});
-                    console.log(response.code);
-                    console.log("expect to return 57366 objects");
                     //console.log(response.body);
+                    expect(response.body).to.deep.equal({"result": []});
+                    //console.log(response.code);
+                    //console.log("expect to return 57366 objects");
+                    ////console.log(response.body);
                     //check if the response.body has 359 results.
                 }).catch(function (response: InsightResponse) {
                     expect.fail();
@@ -593,10 +597,10 @@ describe("EchoSpec", function () {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
                 /*for(var i = 0; i < val.body.result.length; i++) {
-                    console.log("ours:");
-                    console.log(val.body.result[i]);
-                    console.log("theirs:");
-                    console.log(test.METRO_RESPONSE.result[i])
+                    //console.log("ours:");
+                    //console.log(val.body.result[i]);
+                    //console.log("theirs:");
+                    //console.log(test.METRO_RESPONSE.result[i])
                 }*/
                 expect(val.body).to.deep.equal(test.METRO_RESPONSE);
             }).catch(function (err) {
@@ -724,10 +728,10 @@ describe("EchoSpec", function () {
             return test.insightFace.performQuery(test.GALLIUM).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
               /*  for(var i = 0; i < val.body.result.length; i++) {
-                    console.log("ours:");
-                    console.log(val.body.result[i]);
-                    console.log("theirs:");
-                    console.log(test.GALLIUM_RESPONSE.result[i])
+                    //console.log("ours:");
+                    //console.log(val.body.result[i]);
+                    //console.log("theirs:");
+                    //console.log(test.GALLIUM_RESPONSE.result[i])
                 }*/
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(test.GALLIUM_RESPONSE);
@@ -747,10 +751,10 @@ describe("EchoSpec", function () {
             return test.insightFace.performQuery(test.FLUORINE).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
                 /*  for(var i = 0; i < val.body.result.length; i++) {
-                      console.log("ours:");
-                      console.log(val.body.result[i]);
-                      console.log("theirs:");
-                      console.log(test.GALLIUM_RESPONSE.result[i])
+                      //console.log("ours:");
+                      //console.log(val.body.result[i]);
+                      //console.log("theirs:");
+                      //console.log(test.GALLIUM_RESPONSE.result[i])
                   }*/
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(test.FLUORINE_RESPONSE);
@@ -892,8 +896,9 @@ describe("EchoSpec", function () {
         return chai.request(URL)
             .post('/query')
             .send(test.SIMPLE_ROOM_QUERY)
-            .then(function (res: Response) {
+            .then(function (res: any) {
                 Log.trace('then:');
+                expect(res.code).to.deep.equal(204);
                 // some assertions
             })
             .catch(function (err) {
@@ -970,7 +975,7 @@ describe("EchoSpec", function () {
             Log.test('Value: ' + value.code);
             return test.insightFace.performQuery(test.BIGGEST_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
-                console.log(val.body);
+                //console.log(val.body);
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(test.BIGGEST_RESPONSE);
             }).catch(function (err) {
