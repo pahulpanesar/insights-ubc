@@ -1024,7 +1024,6 @@ describe("EchoSpec", function () {
             Log.test('Value: ' + value.code);
             return test.insightFace.performQuery(test.SIMPLE_TRANSFORM_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
-                console.log(val.body.result);
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(test.SIMPLE_TRANSFORM_RESPONSE);
             }).catch(function (err) {
@@ -1043,7 +1042,6 @@ describe("EchoSpec", function () {
             Log.test('Value: ' + value.code);
             return test.insightFace.performQuery(test.SIMPLE_TRANSFORM_QUERY_2).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
-                console.log(val.body.result);
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(test.SIMPLE_TRANSFORM_RESPONSE_2);
             }).catch(function (err) {
@@ -1063,7 +1061,6 @@ describe("EchoSpec", function () {
             Log.test('Value: ' + value.code);
             return test.insightFace.performQuery(test.VAN).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
-                console.log(val.body.result);
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(test.VAN_RESPONSE);
             }).catch(function (err) {
