@@ -365,12 +365,12 @@ export default class InsightFacade implements IInsightFacade {
                     groupArray = this.createNoTransform(filteredArray, optionObj);
                 }
                 else {
-                    this.createMap(map, transformationObj, filteredArray);
+                    let mapArr: Array<any> = this.createMap(map, transformationObj, filteredArray);
                     if (transformationObj.apply.length == 0) {
-                        this.tranAction(null, groupArray, map, optionObj);
+                        this.tranAction(null, groupArray, mapArr, optionObj);
                     }
                     else {
-                        this.tranAction(transformationObj.apply, groupArray, map, optionObj);
+                        this.tranAction(transformationObj.apply, groupArray, mapArr, optionObj);
                     }
                     this.dirSort(groupArray, optionObj);
                     groupArray = this.createTransform(groupArray, optionObj, transformationObj);
@@ -470,8 +470,10 @@ export default class InsightFacade implements IInsightFacade {
         });
     }
 
-    createMap(map: any, transformationObj: any, filteredArray: Array<any>): void {
+    createMap(map: any, transformationObj: any, filteredArray: Array<any>): Array<any> {
         var keyName = "";
+        var mapArr = new Array<any>();
+        var mapArrObj = new Array<any>();
         for(var i = 0; i < filteredArray.length-1; i++){
             var add = true;
             for(var j = 0; j < transformationObj.group.length; j++){
@@ -484,8 +486,10 @@ export default class InsightFacade implements IInsightFacade {
                 keyName += curr;
             }
             if(!map[keyName]){
+                if(mapArrObj.length > 0) mapArr.push(mapArrObj);
                 map[keyName] = new Array<any>();
                 map[keyName].push(filteredArray[i]);
+                mapArrObj = map[keyName];
             }
             if(add) {
                 map[keyName].push(filteredArray[i+1]);
@@ -493,14 +497,20 @@ export default class InsightFacade implements IInsightFacade {
             keyName = "";
             // add = true;
             if(i + 2 === filteredArray.length && !add){
+                mapArr.push(mapArrObj);
                 for(var j = 0; j < transformationObj.group.length; j++){
                     let groupObj = transformationObj.group[j];
                     keyName += filteredArray[i+1][groupObj];
                 }
                 map[keyName] = new Array<any>();
                 map[keyName].push(filteredArray[i+1]);
+                mapArr.push(map[keyName]);
+            }
+            else if(i+2 === filteredArray.length){
+                mapArr.push(mapArrObj);
             }
         }
+        return mapArr;
     }
 
     dirSort(filteredArray: Array<any>, optionObj: any){
@@ -521,15 +531,15 @@ export default class InsightFacade implements IInsightFacade {
 
     tranAction(applyArr: Array<any>, groupArray: Array<any>, map: any, optionObj: any): void {
         if(applyArr === null){
-            for(var i = 0;i < Object.keys(map).length; i++){
-                let currGroup: Array<any> = map[Object.keys(map)[i]];
+            for(var i = 0;i < map.length; i++){
+                let currGroup: Array<any> = map[i];
                 groupArray.push(currGroup[0]);
             }
             return;
         }
 
-        for(var i = 0; i < Object.keys(map).length; i++) {
-            let currGroup: Array<any> = map[Object.keys(map)[i]];
+        for(var i = 0; i < map.length; i++) {
+            let currGroup: Array<any> = map[i];
             let n: any = currGroup[0];
             for (var ind = 0; ind < applyArr.length; ind++) {
                 let apply: any = applyArr[ind];

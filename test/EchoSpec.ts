@@ -1088,7 +1088,7 @@ describe("EchoSpec", function () {
                 // let x: any = test.VAN_RESPONSE;
                 // console.log("responselength");
                 // console.log(x.result.length);
-                expect(val.body.result.length).to.deep.equal(test.VAN_RESPONSE.result.length);
+                expect(val.body).to.deep.equal(test.VAN_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();
