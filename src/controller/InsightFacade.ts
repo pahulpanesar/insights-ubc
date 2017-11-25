@@ -378,23 +378,94 @@ export default class InsightFacade implements IInsightFacade {
         return roomFlag === 1;
     }
 
+    isDatasetPresent(query: any): boolean {
+        if (Object.keys(this.dataSets).length < 1 || (!fs.existsSync('./disk/rooms.json') && !fs.existsSync('./disk/courses.json'))) {
+            return false;
+        }
+        if (this.isRoomQuery(query)) {
+            if (this.dataSets["rooms"] == null || this.dataSets["rooms"].length == 0 || (!fs.existsSync('./disk/rooms.json'))) {
+                return false;
+            }
+        }
+        else {
+            if (this.dataSets["courses"] == null || this.dataSets["courses"].length == 0 || !fs.existsSync('./disk/courses.json')) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    fillFilter(t: Tokenizer, filteredArray: Array<any>, query:any, dataSet:Array<any>): Array<any>{
+        if(!query["WHERE"]) throw new Error;
+        if(Object.keys(query["WHERE"]).length == 0){
+            filteredArray = dataSet.slice(0);
+            t.index = 1;
+        }
+        else{
+            for (var i = 0; i < dataSet.length; i++) {
+                t.index = 0;
+                let c: any = dataSet[i];
+                let q: Query = new Query(t, c, -1);
+                q.parseFilter();
+                if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
+                    filteredArray.push(c)
+                }
+            }
+        }
+        return filteredArray;
+    }
+
+    createTransform(groupArray: Array<any>, optionObj: any, transformationObj: any): Array<any>{
+        return groupArray.map((struct) => {
+            let contain: any = {};
+            let tKey: boolean = false;
+            optionObj["columns"].options.forEach((column: any) => {
+                if (transformationObj !== {}) {
+                    transformationObj.apply.forEach((x: any) => {
+                        if (column === x.name) {
+                            contain[column] = struct[x.key];
+                            tKey = true;
+                        }
+                    })
+                }
+                if (!tKey) {
+                    contain[column] = struct[column];
+                }
+            });
+            return contain;
+        });
+    }
+
+    createNoTransform(filteredArray: Array<any>, optionObj: any): Array<any>{
+        return filteredArray.map((struct) => {
+            let contain: any = {};
+            let tKey: boolean = false;
+            optionObj["columns"].options.forEach((column: any) => {
+                if (!tKey) {
+                    contain[column] = struct[column];
+                }
+            });
+            return contain;
+        });
+    }
+
+    createMap(map: any, transformationObj: any, filteredArray: Array<any>): void {
+        for (let groupNode in transformationObj.group) {
+            let g: any = transformationObj["group"][groupNode];
+            for (let resNode in filteredArray) {
+                if (map[filteredArray[resNode][g]] == null) {
+                    map[filteredArray[resNode][g]] = [];
+                }
+                map[filteredArray[resNode][g]].push(filteredArray[resNode]);
+            }
+        }
+    }
+
     performQuery(query: any): Promise <InsightResponse> {
         return new Promise((fulfill, reject) => {
             try {
-
-                if (Object.keys(this.dataSets).length < 1 || (!fs.existsSync('./disk/rooms.json') && !fs.existsSync('./disk/courses.json'))) {
+                if(!this.isDatasetPresent(query)){
                     reject({code: 424, body: {"error": "No dataset"}});
-                }
-                if (this.isRoomQuery(query)) {
-                    if (this.dataSets["rooms"] == null || this.dataSets["rooms"].length == 0 || (!fs.existsSync('./disk/rooms.json'))) {
-                        reject({code: 424, body: {"error": "No dataset"}});
-                    }
-                }
-                else {
-                    if (this.dataSets["courses"] == null || this.dataSets["courses"].length == 0 || !fs.existsSync('./disk/courses.json')) {
-                        reject({code: 424, body: {"error": "No dataset"}});
-
-                    }
                 }
                 var filteredArray: Array<any> = [];
                 var optionObj: any = {};
@@ -402,90 +473,30 @@ export default class InsightFacade implements IInsightFacade {
                 var transformationObj: any = {};
                 var t: Tokenizer = new Tokenizer();
                 t.addKeys(query);
-                let dataSet = this.isRoomQuery(query) ? this.dataSets["rooms"] : this.dataSets["courses"];
-                for (var i = 0; i < dataSet.length; i++) {
-                    t.index = 0;
-                    let c: any = dataSet[i];
-                    let q: Query = new Query(t, c, -1);
-                    let where: any = query["WHERE"];
-                    if (Object.keys(where).length !== 0) {
-                        q.parseFilter();
-                    }
-                    else {
-                        t.index++;
-                    }
-                    let o: OptionNode = new OptionNode(t, c, -1, transform);
-                    o.parse();
-                    optionObj = o.evaluate();
-                    //flag = true;
-                    // }
-                    if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
-                        filteredArray.push(c)
-                    }
-                }
-
+                let dataSet: Array<any> = this.isRoomQuery(query) ? this.dataSets["rooms"] : this.dataSets["courses"];
+                filteredArray = this.fillFilter(t, filteredArray, query, dataSet);
+                let o: OptionNode = new OptionNode(t, dataSet[0], -1, transform);
+                o.parse();
+                optionObj = o.evaluate();
                 let trans = new TransformationNode(t, {"errorCatch": optionObj.errorCatch}, -1);
                 trans.parse();
                 transformationObj = trans.evaluate();
                 //error check keys
                 this.errorCheckApplyTokens(optionObj, transformationObj);
+                let map: any = {};
                 let groupArray: Array<any> = [];
                 if (!transform) {
-                    groupArray = filteredArray.map((struct) => {
-                        let contain: any = {};
-                        let tKey: boolean = false;
-                        optionObj["columns"].options.forEach((column: any) => {
-                            if (transformationObj !== {}) {
-                                transformationObj.apply.forEach((x: any) => {
-                                    if (column === x.name) {
-                                        contain[column] = struct[x.key];
-                                        tKey = true;
-                                    }
-                                })
-                            }
-                            if (!tKey) {
-                                contain[column] = struct[column];
-                            }
-                        });
-                        return contain;
-                    });
+                    groupArray = this.createNoTransform(filteredArray, optionObj);
                 }
                 else {
-                    let map: any = {};
-                    for (let group in transformationObj.group) {
-                        let g: any = transformationObj["group"][group];
-                        for (let resNode in filteredArray) {
-                            if (map[filteredArray[resNode][g]] == null) {
-                                map[filteredArray[resNode][g]] = [];
-                            }
-                            map[filteredArray[resNode][g]].push(filteredArray[resNode]);
-                        }
-                    }
+                    this.createMap(map, transformationObj, filteredArray);
                     if (transformationObj.apply.length == 0) {
                         this.tranAction(null, groupArray, map);
                     }
                     transformationObj.apply.forEach((apply: any) => {
                         this.tranAction(apply, groupArray, map);
                     });
-
-                    groupArray = groupArray.map((struct) => {
-                        let contain: any = {};
-                        let tKey: boolean = false;
-                        optionObj["columns"].options.forEach((column: any) => {
-                            if (transformationObj !== {}) {
-                                transformationObj.apply.forEach((x: any) => {
-                                    if (column === x.name) {
-                                        contain[column] = struct[x.key];
-                                        tKey = true;
-                                    }
-                                })
-                            }
-                            if (!tKey) {
-                                contain[column] = struct[column];
-                            }
-                        });
-                        return contain;
-                    });
+                    groupArray = this.createTransform(groupArray, optionObj, transformationObj);
                 }
                 if(optionObj.keys) {
                     groupArray.sort(function(a, b) {
@@ -498,9 +509,9 @@ export default class InsightFacade implements IInsightFacade {
                             }
                         }
                         return 0;
-                        //return a[optionObj.order] - b[optionObj.order];
                     });
                 }
+                fulfill({code: 200, body: {"result": groupArray}});
             }
             catch (err){
                 reject({code: 400, body: {"error": "invalid query"}});
@@ -508,7 +519,7 @@ export default class InsightFacade implements IInsightFacade {
         });
     }
 
-    private errorCheckApplyTokens(optionObj: any, transformationObj: any) {
+    errorCheckApplyTokens(optionObj: any, transformationObj: any) {
         for (var i = 0; i < optionObj.errorCatch.length; i++) {
             let err = optionObj.errorCatch[i];
             for (var j = 0; j < transformationObj.apply.length; j++) {

@@ -50,10 +50,8 @@ describe("EchoSpec", function () {
     afterEach(function () {
         Log.test('AfterTest: ' + (<any>this).currentTest.title);
         test.insightFace.removeDataset("courses").catch((err) => {
-            console.log(err);
         });
         test.insightFace.removeDataset("rooms").catch((err) => {
-            console.log(err);
         });
     });
 
@@ -1082,12 +1080,13 @@ describe("EchoSpec", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
-            return test.insightFace.performQuery(test.VAN).then(function (val: InsightResponse) {
+            return test.insightFace.performQuery(test.VAN).then(function (val: any) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
+                console.log(val.body.result.length);
                 expect(val.body).to.deep.equal(test.VAN_RESPONSE);
             }).catch(function (err) {
-                Log.test('Error: ' + err.body.error);
+                Log.test('Error: ' + err);
                 expect.fail();
             })
         }).catch(function (err) {
@@ -1100,4 +1099,3 @@ describe("EchoSpec", function () {
 
 });
 
-//double adddataset
