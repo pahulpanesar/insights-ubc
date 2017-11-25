@@ -192,12 +192,6 @@ export default class InsightFacade implements IInsightFacade {
                 let preBody = childs0[childs0.length - 1];
                 let preBodyChildren = preBody.childNodes;
                 let body = preBodyChildren[preBodyChildren.length - 1];
-                // let ubcFooter: any = this.findAttrs(body, "ubc7-footer");
-                // let unitFooter: any = this.findAttrs(ubcFooter, "ubc7-unit");
-                // let footerContainer: any = this.findAttrs(unitFooter, "container");
-                // let span10: any = this.findAttrs(footerContainer, "span10");
-                // let addressLocation: any = this.findAttrs(span10, "ubc7-address-location");
-                // let postal: any = this.findAttrs(addressLocation, "postal").childNodes[0].value.trim();
                 let container: any = this.findAttrs(body, "full-width-container");
                 let main: any = this.findAttrs(container, "main");
                 let content: any = this.findAttrs(main, "content");
@@ -327,15 +321,6 @@ export default class InsightFacade implements IInsightFacade {
         courses.push(course);
     }
 
-    // filterCourses(id: string): Array<any> {
-    //     let filteredCourses: Array<any> = [];
-    //     let dataStruct: Course;
-    //     let courses: Array<Course> = this.dataSets[id];
-    //     filteredCourses = courses.filter(
-    //        dataStruct => dataStruct.courses_avg >= 97);
-    //     return filteredCourses.map(dataStruct => dataStruct.courses_dept + " " + dataStruct.courses_avg)
-    // }
-
     removeDataset(id: string): Promise<InsightResponse> {
         return new Promise((fulfill, reject) => {
             if(fs.existsSync('./disk/' + id + '.json')) {
@@ -351,6 +336,52 @@ export default class InsightFacade implements IInsightFacade {
         })
     }
 
+    performQuery(query: any): Promise <InsightResponse> {
+        return new Promise((fulfill, reject) => {
+            try {
+                if(!this.isDatasetPresent(query)){
+                    reject({code: 424, body: {"error": "No dataset"}});
+                }
+                var filteredArray: Array<any> = [];
+                var optionObj: any = {};
+                let transform: any = query["TRANSFORMATIONS"];
+                var transformationObj: any = {};
+                var t: Tokenizer = new Tokenizer();
+                t.addKeys(query);
+                let dataSet: Array<any> = this.isRoomQuery(query) ? this.dataSets["rooms"] : this.dataSets["courses"];
+                filteredArray = this.fillFilter(t, filteredArray, query, dataSet);
+                let o: OptionNode = new OptionNode(t, dataSet[0], -1, transform);
+                o.parse();
+                optionObj = o.evaluate();
+                let trans = new TransformationNode(t, {"errorCatch": optionObj.errorCatch}, -1);
+                trans.parse();
+                transformationObj = trans.evaluate();
+                //error check keys
+                this.errorCheckApplyTokens(optionObj, transformationObj);
+                let map: any = {};
+                let groupArray: Array<any> = [];
+                this.dirSort(filteredArray, optionObj);
+                if (!transform) {
+                    groupArray = this.createNoTransform(filteredArray, optionObj);
+                }
+                else {
+                    this.createMap(map, transformationObj, filteredArray);
+                    if (transformationObj.apply.length == 0) {
+                        this.tranAction(null, groupArray, map, optionObj);
+                    }
+                    else {
+                        this.tranAction(transformationObj.apply, groupArray, map, optionObj);
+                    }
+                    this.dirSort(groupArray, optionObj);
+                    groupArray = this.createTransform(groupArray, optionObj, transformationObj);
+                }
+                fulfill({code: 200, body: {"result": groupArray}});
+            }
+            catch (err){
+                reject({code: 400, body: {"error": "invalid query"}});
+            }
+        });
+    }
 
     isRoomQuery(query: any): boolean{
         var t = new Tokenizer();
@@ -420,17 +451,7 @@ export default class InsightFacade implements IInsightFacade {
             let contain: any = {};
             let tKey: boolean = false;
             optionObj["columns"].options.forEach((column: any) => {
-                if (transformationObj !== {}) {
-                    transformationObj.apply.forEach((x: any) => {
-                        if (column === x.name) {
-                            contain[column] = struct[x.key];
-                            tKey = true;
-                        }
-                    })
-                }
-                if (!tKey) {
-                    contain[column] = struct[column];
-                }
+                contain[column] = struct[column];
             });
             return contain;
         });
@@ -450,73 +471,118 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     createMap(map: any, transformationObj: any, filteredArray: Array<any>): void {
-        for (let groupNode in transformationObj.group) {
-            let g: any = transformationObj["group"][groupNode];
-            for (let resNode in filteredArray) {
-                if (map[filteredArray[resNode][g]] == null) {
-                    map[filteredArray[resNode][g]] = [];
+        var keyName = "";
+        for(var i = 0; i < filteredArray.length-1; i++){
+            var add = true;
+            for(var j = 0; j < transformationObj.group.length; j++){
+                let groupObj = transformationObj.group[j];
+                let curr = filteredArray[i][groupObj];
+                let next = filteredArray[i+1][groupObj];
+                if(curr !== next){
+                    add = false;
                 }
-                map[filteredArray[resNode][g]].push(filteredArray[resNode]);
+                keyName += curr;
+            }
+            if(!map[keyName]){
+                map[keyName] = new Array<any>();
+                map[keyName].push(filteredArray[i]);
+            }
+            if(add) {
+                map[keyName].push(filteredArray[i+1]);
+            }
+            keyName = "";
+            // add = true;
+            if(i + 2 === filteredArray.length && !add){
+                for(var j = 0; j < transformationObj.group.length; j++){
+                    let groupObj = transformationObj.group[j];
+                    keyName += filteredArray[i+1][groupObj];
+                }
+                map[keyName] = new Array<any>();
+                map[keyName].push(filteredArray[i+1]);
             }
         }
     }
 
-    performQuery(query: any): Promise <InsightResponse> {
-        return new Promise((fulfill, reject) => {
-            try {
-                if(!this.isDatasetPresent(query)){
-                    reject({code: 424, body: {"error": "No dataset"}});
-                }
-                var filteredArray: Array<any> = [];
-                var optionObj: any = {};
-                let transform: any = query["TRANSFORMATIONS"];
-                var transformationObj: any = {};
-                var t: Tokenizer = new Tokenizer();
-                t.addKeys(query);
-                let dataSet: Array<any> = this.isRoomQuery(query) ? this.dataSets["rooms"] : this.dataSets["courses"];
-                filteredArray = this.fillFilter(t, filteredArray, query, dataSet);
-                let o: OptionNode = new OptionNode(t, dataSet[0], -1, transform);
-                o.parse();
-                optionObj = o.evaluate();
-                let trans = new TransformationNode(t, {"errorCatch": optionObj.errorCatch}, -1);
-                trans.parse();
-                transformationObj = trans.evaluate();
-                //error check keys
-                this.errorCheckApplyTokens(optionObj, transformationObj);
-                let map: any = {};
-                let groupArray: Array<any> = [];
-                if (!transform) {
-                    groupArray = this.createNoTransform(filteredArray, optionObj);
-                }
-                else {
-                    this.createMap(map, transformationObj, filteredArray);
-                    if (transformationObj.apply.length == 0) {
-                        this.tranAction(null, groupArray, map);
+    dirSort(filteredArray: Array<any>, optionObj: any){
+        if(optionObj.keys) {
+            filteredArray.sort(function(a, b) {
+                for(var i =0;i<optionObj.keys.length;i++) { //sort by first key, tie break with the second etc...
+                    if (a[optionObj.keys[i]] < b[optionObj.keys[i]]){
+                        return optionObj.dir === "DOWN"? 1 : -1;
                     }
-                    transformationObj.apply.forEach((apply: any) => {
-                        this.tranAction(apply, groupArray, map);
-                    });
-                    groupArray = this.createTransform(groupArray, optionObj, transformationObj);
+                    else if (a[optionObj.keys[i]] > b[optionObj.keys[i]]){
+                        return optionObj.dir === "DOWN"? -1 : 1;
+                    }
                 }
-                if(optionObj.keys) {
-                    groupArray.sort(function(a, b) {
-                        for(var i =0;i<optionObj.keys.length;i++) { //sort by first key, tie break with the second etc...
-                            if (a[optionObj.keys[i]] < b[optionObj.keys[i]]){
-                                return optionObj.dir === "DOWN"? 1 : -1;
-                            }
-                            else if (a[optionObj.keys[i]] > b[optionObj.keys[i]]){
-                                return optionObj.dir === "DOWN"? -1 : 1;
-                            }
-                        }
-                        return 0;
-                    });
+                return 0;
+            });
+        }
+    }
+
+    tranAction(applyArr: Array<any>, groupArray: Array<any>, map: any, optionObj: any): void {
+        if(applyArr === null){
+            for(var i = 0;i < Object.keys(map).length; i++){
+                let currGroup: Array<any> = map[Object.keys(map)[i]];
+                groupArray.push(currGroup[0]);
+            }
+            return;
+        }
+
+        for(var i = 0; i < Object.keys(map).length; i++) {
+            let currGroup: Array<any> = map[Object.keys(map)[i]];
+            let n: any = currGroup[0];
+            for (var ind = 0; ind < applyArr.length; ind++) {
+                let apply: any = applyArr[ind];
+                let res: number = -1;
+                if (apply.action === "MAX") {
+                    if(currGroup.length == 1){
+                        res = currGroup[0][apply.key];
+                    }
+                    else{
+                        res = currGroup.map((val: any) => (val[apply.key])).reduce((a, b) => Math.max(a, b));
+                    }
                 }
-                fulfill({code: 200, body: {"result": groupArray}});
+                if (apply.action === "MIN") {
+                    if(currGroup.length == 1){
+                        res = currGroup[0][apply.key];
+                    }
+                    else{
+                        res = currGroup.map((val: any) => (val[apply.key])).reduce((a, b) => Math.min(a, b));
+                    }                }
+                if (apply.action === "AVG") {
+                    if(currGroup.length == 1){
+                        res = currGroup[0][apply.key];
+                    }
+                    else{
+                        res = Number((currGroup.map((val: any) => <any>new Decimal(val[apply.key])).reduce((a, b) => a.plus(b)).toNumber() / currGroup.length).toFixed(2));
+                    }
+                }
+                if (apply.action === "COUNT") {
+                    if(currGroup.length === 1){
+                        res = 1;
+                    }
+                    else {
+                        res = currGroup.map((val: any) => (val[apply.key])).reduce((a, b) => {
+                            if (a !== b) return 1;
+                            else return 0;
+                        });
+                    }
+                }
+                if (apply.action === "SUM") {
+                    if(currGroup.length == 1){
+                        res = currGroup[0][apply.key];
+                    }
+                    else{
+                        res = Number(currGroup.map((val: any) => new Decimal(val[apply.key])).reduce((a, b) => a.plus(b)).toNumber().toFixed(2));
+                    }
+                }
+                if (res === -1) {
+                    res = currGroup[0][apply.key];
+                }
+                n[apply.name] = res;
             }
-            catch (err){
-                reject({code: 400, body: {"error": "invalid query"}});
-            }
-        });
+            groupArray.push(n);
+        }
     }
 
     errorCheckApplyTokens(optionObj: any, transformationObj: any) {
@@ -541,60 +607,5 @@ export default class InsightFacade implements IInsightFacade {
         if (unique.size < uniqueTemp.length) {
             throw new Error("Duplicate Apply Tokens - Trans")
         }
-    }
-
-    tranAction(apply: any, groupArray: Array<any>, map: any): void {
-        for(var i = 0; i < Object.keys(map).length; i++){
-            if(map[Object.keys(map)[i]].length < 2 || apply == null) groupArray.push(map[Object.keys(map)[i]][0]);
-            else{
-                let n: any = map[Object.keys(map)[i]][0];
-                let res: number;
-                if(apply.action === "MAX") {
-                    res = this.maxArr(map[Object.keys(map)[i]], apply.key);
-                }
-                if(apply.action === "MIN") {
-                    res = this.minArr(map[Object.keys(map)[i]], apply.key);
-                }
-                if(apply.action === "AVG") {
-                    res = this.avgArr(map[Object.keys(map)[i]], apply.key);
-                }
-                if(apply.action === "COUNT") {
-                    res = this.countArr(map[Object.keys(map)[i]], apply.key);
-                }
-                if(apply.action === "SUM") {
-                    res = this.sumArr(map[Object.keys(map)[i]], apply.key);
-                }
-                n[apply.key] = res;
-                groupArray.push(n);
-            }
-        }
-    }
-
-    maxArr(groupArr: Array<any>, key:any) : number {
-        let max:number = groupArr.map((val:any) => (val[key])).reduce((a, b) => Math.max(a, b));
-        return max;
-    }
-
-    minArr(groupArr: Array<any>, key:any) : number {
-        let min:number = groupArr.map((val:any) => (val[key])).reduce((a, b) => Math.min(a, b));
-        return min;
-    }
-
-    avgArr(groupArr: Array<any>, key:any) : number {
-        let avg:number = Number((groupArr.map((val:any) => <any>new Decimal(val[key])).reduce((a,b) => a.plus(b)).toNumber() / groupArr.length).toFixed(2));
-        return avg;
-    }
-
-    countArr(groupArr: Array<any>, key:any) : number {
-        let count:number = groupArr.map((val:any) => (val[key])).reduce((a, b) => {
-            if(a[key] !== b[key]) return 1;
-            else return 0;
-        });
-        return count;
-    }
-
-    sumArr(groupArr: Array<any>, key:any) : number {
-        let sum = Number(groupArr.map((val:any) => new Decimal(val[key])).reduce((a,b) => a.plus(b)).toNumber().toFixed(2));
-        return sum;
     }
 }
