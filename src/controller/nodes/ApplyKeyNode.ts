@@ -15,7 +15,7 @@ export default class ApplyKeyNode extends _Node{
     parse(){
         this.s = this.getAndCheckToken("^[^_]+$",true); //any string of length > 1 not containing underscore
         this.applyToken.parse();
-        this.key.parse([],null); //applykeytoken has to be original key
+        this.key.parse([], null); //applykeytoken has to be original key
     }
 
     evaluate(){

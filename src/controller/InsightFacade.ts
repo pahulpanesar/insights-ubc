@@ -417,7 +417,7 @@ export default class InsightFacade implements IInsightFacade {
                     let o: OptionNode = new OptionNode(t, c, -1, transform);
                     o.parse();
                     optionObj = o.evaluate();
-                    //   flag = true;
+                    //flag = true;
                     // }
                     if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
                         filteredArray.push(c)
