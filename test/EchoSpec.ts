@@ -666,6 +666,25 @@ describe("EchoSpec", function () {
         })
     });
 
+
+    it("QUERY A D3", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.QUERY_A_D3).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.QUERY_A_D3_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.toString());
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err.toString());
+            expect.fail();
+        })
+    });
+    
     it("NITRO", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
@@ -1059,25 +1078,25 @@ describe("EchoSpec", function () {
         })
     });
 
-    // it("PERFORMQUERY 200 - van", function () {
-    //     this.timeout(15000);
-    //     return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
-    //         Log.test('Value: ' + value.code);
-    //         return test.insightFace.performQuery(test.VAN).then(function (val: InsightResponse) {
-    //             Log.test('Value' + val.code);
-    //             expect(val.code).to.deep.equal(200);
-    //             expect(val.body).to.deep.equal(test.VAN_RESPONSE);
-    //         }).catch(function (err) {
-    //             Log.test('Error: ' + err.body.error);
-    //             expect.fail();
-    //         })
-    //     }).catch(function (err) {
-    //         Log.test('Error: ' + err);
-    //
-    //         expect.fail();
-    //     })
-    // });
-    //
+    it("PERFORMQUERY 200 - van", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.VAN).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.VAN_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
 
 });
 

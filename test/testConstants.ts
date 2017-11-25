@@ -1012,6 +1012,7 @@ export default class TestConstants {
         }
     };
 
+
     ELIXIR_RESPONSE = {"result":[{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"crisfield, erin","courses_dept":"adhe"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"},{"courses_instructor":"baniassad, elisa","courses_dept":"cpsc"}]};
 
     BIGGEST_QUERY = {
@@ -1061,23 +1062,6 @@ export default class TestConstants {
 
     BIGGEST_RESPONSE = {"result":[{"courses_dept":"cpsc","courses_id":"416","courses_avg":72.36},{"courses_dept":"cpsc","courses_id":"416","courses_avg":72.36},{"courses_dept":"cpsc","courses_id":"445","courses_avg":73.88},{"courses_dept":"cpsc","courses_id":"445","courses_avg":73.88},{"courses_dept":"cpsc","courses_id":"210","courses_avg":74.57},{"courses_dept":"cpsc","courses_id":"589","courses_avg":75},{"courses_dept":"cpsc","courses_id":"121","courses_avg":77.21},{"courses_dept":"cpsc","courses_id":"121","courses_avg":77.5},{"courses_dept":"cpsc","courses_id":"416","courses_avg":79.31},{"courses_dept":"cpsc","courses_id":"416","courses_avg":79.31},{"courses_dept":"cpsc","courses_id":"121","courses_avg":79.83},{"courses_dept":"cpsc","courses_id":"421","courses_avg":79.88},{"courses_dept":"cpsc","courses_id":"515","courses_avg":79.88},{"courses_dept":"cpsc","courses_id":"421","courses_avg":79.88},{"courses_dept":"cpsc","courses_id":"515","courses_avg":79.88},{"courses_dept":"cpsc","courses_id":"589","courses_avg":80},{"courses_dept":"cpsc","courses_id":"589","courses_avg":80},{"courses_dept":"cpsc","courses_id":"121","courses_avg":80.2},{"courses_dept":"cpsc","courses_id":"444","courses_avg":80.62},{"courses_dept":"cpsc","courses_id":"444","courses_avg":80.62},{"courses_dept":"cpsc","courses_id":"502","courses_avg":81.06},{"courses_dept":"cpsc","courses_id":"502","courses_avg":81.06},{"courses_dept":"cpsc","courses_id":"502","courses_avg":81.57},{"courses_dept":"cpsc","courses_id":"502","courses_avg":81.57},{"courses_dept":"cpsc","courses_id":"543","courses_avg":82.07},{"courses_dept":"cpsc","courses_id":"543","courses_avg":82.07},{"courses_dept":"cpsc","courses_id":"515","courses_avg":82.15},{"courses_dept":"cpsc","courses_id":"515","courses_avg":82.15},{"courses_dept":"cpsc","courses_id":"544","courses_avg":82.28},{"courses_dept":"cpsc","courses_id":"544","courses_avg":82.28},{"courses_dept":"cpsc","courses_id":"502","courses_avg":82.31},{"courses_dept":"cpsc","courses_id":"502","courses_avg":82.31},{"courses_dept":"cpsc","courses_id":"507","courses_avg":82.5},{"courses_dept":"cpsc","courses_id":"507","courses_avg":82.5},{"courses_dept":"cpsc","courses_id":"522","courses_avg":82.55},{"courses_dept":"cpsc","courses_id":"522","courses_avg":82.55},{"courses_dept":"cpsc","courses_id":"544","courses_avg":82.65},{"courses_dept":"cpsc","courses_id":"544","courses_avg":82.65},{"courses_dept":"cpsc","courses_id":"540","courses_avg":83},{"courses_dept":"cpsc","courses_id":"540","courses_avg":83},{"courses_dept":"cpsc","courses_id":"445","courses_avg":83.32},{"courses_dept":"cpsc","courses_id":"445","courses_avg":83.32},{"courses_dept":"cpsc","courses_id":"543","courses_avg":83.36},{"courses_dept":"cpsc","courses_id":"515","courses_avg":83.36},{"courses_dept":"cpsc","courses_id":"515","courses_avg":83.36},{"courses_dept":"cpsc","courses_id":"543","courses_avg":83.36},{"courses_dept":"cpsc","courses_id":"522","courses_avg":83.39},{"courses_dept":"cpsc","courses_id":"522","courses_avg":83.39},{"courses_dept":"cpsc","courses_id":"544","courses_avg":83.41},{"courses_dept":"cpsc","courses_id":"121","courses_avg":83.41},{"courses_dept":"cpsc","courses_id":"544","courses_avg":83.41},{"courses_dept":"cpsc","courses_id":"502","courses_avg":83.43},{"courses_dept":"cpsc","courses_id":"502","courses_avg":83.43},{"courses_dept":"cpsc","courses_id":"544","courses_avg":83.67},{"courses_dept":"cpsc","courses_id":"544","courses_avg":83.67},{"courses_dept":"cpsc","courses_id":"501","courses_avg":83.8},{"courses_dept":"cpsc","courses_id":"501","courses_avg":83.8},{"courses_dept":"cpsc","courses_id":"411","courses_avg":83.94},{"courses_dept":"cpsc","courses_id":"411","courses_avg":83.94},{"courses_dept":"cpsc","courses_id":"522","courses_avg":84},{"courses_dept":"cpsc","courses_id":"522","courses_avg":84},{"courses_dept":"cpsc","courses_id":"513","courses_avg":84.33},{"courses_dept":"cpsc","courses_id":"513","courses_avg":84.33},{"courses_dept":"cpsc","courses_id":"490","courses_avg":84.5},{"courses_dept":"cpsc","courses_id":"490","courses_avg":84.5},{"courses_dept":"cpsc","courses_id":"589","courses_avg":84.67},{"courses_dept":"cpsc","courses_id":"501","courses_avg":84.67},{"courses_dept":"cpsc","courses_id":"501","courses_avg":84.67},{"courses_dept":"cpsc","courses_id":"509","courses_avg":84.75},{"courses_dept":"cpsc","courses_id":"507","courses_avg":84.75},{"courses_dept":"cpsc","courses_id":"507","courses_avg":84.75},{"courses_dept":"cpsc","courses_id":"509","courses_avg":84.75},{"courses_dept":"cpsc","courses_id":"527","courses_avg":84.83},{"courses_dept":"cpsc","courses_id":"527","courses_avg":84.83},{"courses_dept":"cpsc","courses_id":"500","courses_avg":84.85},{"courses_dept":"cpsc","courses_id":"500","courses_avg":84.85},{"courses_dept":"cpsc","courses_id":"411","courses_avg":84.86},{"courses_dept":"cpsc","courses_id":"411","courses_avg":84.86},{"courses_dept":"cpsc","courses_id":"589","courses_avg":85},{"courses_dept":"cpsc","courses_id":"411","courses_avg":85},{"courses_dept":"cpsc","courses_id":"521","courses_avg":85},{"courses_dept":"cpsc","courses_id":"521","courses_avg":85},{"courses_dept":"cpsc","courses_id":"411","courses_avg":85},{"courses_dept":"cpsc","courses_id":"589","courses_avg":85},{"courses_dept":"cpsc","courses_id":"544","courses_avg":85.17},{"courses_dept":"cpsc","courses_id":"544","courses_avg":85.17},{"courses_dept":"cpsc","courses_id":"589","courses_avg":85.25},{"courses_dept":"cpsc","courses_id":"544","courses_avg":85.27},{"courses_dept":"cpsc","courses_id":"544","courses_avg":85.27},{"courses_dept":"cpsc","courses_id":"589","courses_avg":85.6},{"courses_dept":"cpsc","courses_id":"589","courses_avg":85.75},{"courses_dept":"cpsc","courses_id":"509","courses_avg":85.9},{"courses_dept":"cpsc","courses_id":"509","courses_avg":85.9},{"courses_dept":"cpsc","courses_id":"589","courses_avg":86},{"courses_dept":"cpsc","courses_id":"589","courses_avg":86},{"courses_dept":"cpsc","courses_id":"502","courses_avg":86.2},{"courses_dept":"cpsc","courses_id":"502","courses_avg":86.2},{"courses_dept":"cpsc","courses_id":"500","courses_avg":86.33},{"courses_dept":"cpsc","courses_id":"500","courses_avg":86.33},{"courses_dept":"cpsc","courses_id":"543","courses_avg":86.5},{"courses_dept":"cpsc","courses_id":"543","courses_avg":86.5},{"courses_dept":"cpsc","courses_id":"589","courses_avg":86.5},{"courses_dept":"cpsc","courses_id":"544","courses_avg":86.71},{"courses_dept":"cpsc","courses_id":"513","courses_avg":86.71},{"courses_dept":"cpsc","courses_id":"513","courses_avg":86.71},{"courses_dept":"cpsc","courses_id":"544","courses_avg":86.71},{"courses_dept":"cpsc","courses_id":"521","courses_avg":87},{"courses_dept":"cpsc","courses_id":"589","courses_avg":87},{"courses_dept":"cpsc","courses_id":"521","courses_avg":87},{"courses_dept":"cpsc","courses_id":"589","courses_avg":87},{"courses_dept":"cpsc","courses_id":"509","courses_avg":87.2},{"courses_dept":"cpsc","courses_id":"509","courses_avg":87.2},{"courses_dept":"cpsc","courses_id":"503","courses_avg":87.36},{"courses_dept":"cpsc","courses_id":"503","courses_avg":87.36},{"courses_dept":"cpsc","courses_id":"513","courses_avg":87.58},{"courses_dept":"cpsc","courses_id":"513","courses_avg":87.58},{"courses_dept":"cpsc","courses_id":"513","courses_avg":87.64},{"courses_dept":"cpsc","courses_id":"513","courses_avg":87.64},{"courses_dept":"cpsc","courses_id":"543","courses_avg":87.67},{"courses_dept":"cpsc","courses_id":"543","courses_avg":87.67},{"courses_dept":"cpsc","courses_id":"521","courses_avg":87.78},{"courses_dept":"cpsc","courses_id":"521","courses_avg":87.78},{"courses_dept":"cpsc","courses_id":"449","courses_avg":87.83},{"courses_dept":"cpsc","courses_id":"449","courses_avg":87.83},{"courses_dept":"cpsc","courses_id":"544","courses_avg":88},{"courses_dept":"cpsc","courses_id":"509","courses_avg":88},{"courses_dept":"cpsc","courses_id":"509","courses_avg":88},{"courses_dept":"cpsc","courses_id":"544","courses_avg":88},{"courses_dept":"cpsc","courses_id":"513","courses_avg":88.22},{"courses_dept":"cpsc","courses_id":"513","courses_avg":88.22},{"courses_dept":"cpsc","courses_id":"547","courses_avg":88.47},{"courses_dept":"cpsc","courses_id":"547","courses_avg":88.47},{"courses_dept":"cpsc","courses_id":"449","courses_avg":88.5},{"courses_dept":"cpsc","courses_id":"449","courses_avg":88.5},{"courses_dept":"cpsc","courses_id":"503","courses_avg":88.82},{"courses_dept":"cpsc","courses_id":"503","courses_avg":88.82},{"courses_dept":"cpsc","courses_id":"490","courses_avg":89},{"courses_dept":"cpsc","courses_id":"507","courses_avg":89},{"courses_dept":"cpsc","courses_id":"589","courses_avg":89},{"courses_dept":"cpsc","courses_id":"490","courses_avg":89},{"courses_dept":"cpsc","courses_id":"507","courses_avg":89},{"courses_dept":"cpsc","courses_id":"513","courses_avg":89.09},{"courses_dept":"cpsc","courses_id":"513","courses_avg":89.09},{"courses_dept":"cpsc","courses_id":"503","courses_avg":89.1},{"courses_dept":"cpsc","courses_id":"503","courses_avg":89.1},{"courses_dept":"cpsc","courses_id":"507","courses_avg":89.17},{"courses_dept":"cpsc","courses_id":"507","courses_avg":89.17},{"courses_dept":"cpsc","courses_id":"503","courses_avg":89.47},{"courses_dept":"cpsc","courses_id":"503","courses_avg":89.47},{"courses_dept":"cpsc","courses_id":"490","courses_avg":89.64},{"courses_dept":"cpsc","courses_id":"490","courses_avg":89.64},{"courses_dept":"cpsc","courses_id":"543","courses_avg":89.75},{"courses_dept":"cpsc","courses_id":"543","courses_avg":89.75},{"courses_dept":"cpsc","courses_id":"490","courses_avg":89.86},{"courses_dept":"cpsc","courses_id":"527","courses_avg":90.11},{"courses_dept":"cpsc","courses_id":"527","courses_avg":90.11},{"courses_dept":"cpsc","courses_id":"449","courses_avg":90.25},{"courses_dept":"cpsc","courses_id":"449","courses_avg":90.25},{"courses_dept":"cpsc","courses_id":"490","courses_avg":90.27},{"courses_dept":"cpsc","courses_id":"490","courses_avg":90.6},{"courses_dept":"cpsc","courses_id":"490","courses_avg":90.6},{"courses_dept":"cpsc","courses_id":"522","courses_avg":90.71},{"courses_dept":"cpsc","courses_id":"522","courses_avg":90.71},{"courses_dept":"cpsc","courses_id":"501","courses_avg":91},{"courses_dept":"cpsc","courses_id":"501","courses_avg":91},{"courses_dept":"cpsc","courses_id":"527","courses_avg":91.22},{"courses_dept":"cpsc","courses_id":"527","courses_avg":91.22},{"courses_dept":"cpsc","courses_id":"445","courses_avg":91.25},{"courses_dept":"cpsc","courses_id":"445","courses_avg":91.25},{"courses_dept":"cpsc","courses_id":"507","courses_avg":91.79},{"courses_dept":"cpsc","courses_id":"507","courses_avg":91.79},{"courses_dept":"cpsc","courses_id":"490","courses_avg":92},{"courses_dept":"cpsc","courses_id":"490","courses_avg":92},{"courses_dept":"cpsc","courses_id":"490","courses_avg":92.4},{"courses_dept":"cpsc","courses_id":"490","courses_avg":92.4},{"courses_dept":"cpsc","courses_id":"501","courses_avg":92.43},{"courses_dept":"cpsc","courses_id":"501","courses_avg":92.43},{"courses_dept":"cpsc","courses_id":"449","courses_avg":92.5},{"courses_dept":"cpsc","courses_id":"449","courses_avg":92.5},{"courses_dept":"cpsc","courses_id":"449","courses_avg":92.63},{"courses_dept":"cpsc","courses_id":"449","courses_avg":92.63},{"courses_dept":"cpsc","courses_id":"501","courses_avg":92.75},{"courses_dept":"cpsc","courses_id":"501","courses_avg":92.75},{"courses_dept":"cpsc","courses_id":"449","courses_avg":93.38},{"courses_dept":"cpsc","courses_id":"449","courses_avg":93.38},{"courses_dept":"cpsc","courses_id":"449","courses_avg":93.5},{"courses_dept":"cpsc","courses_id":"449","courses_avg":93.5},{"courses_dept":"cpsc","courses_id":"501","courses_avg":94},{"courses_dept":"cpsc","courses_id":"501","courses_avg":94},{"courses_dept":"cpsc","courses_id":"503","courses_avg":94.5},{"courses_dept":"cpsc","courses_id":"503","courses_avg":94.5},{"courses_dept":"cpsc","courses_id":"589","courses_avg":95},{"courses_dept":"cpsc","courses_id":"589","courses_avg":95},{"courses_dept":"epse","courses_id":"421","courses_avg":98.08},{"courses_dept":"nurs","courses_id":"509","courses_avg":98.21},{"courses_dept":"nurs","courses_id":"509","courses_avg":98.21},{"courses_dept":"epse","courses_id":"421","courses_avg":98.36},{"courses_dept":"epse","courses_id":"519","courses_avg":98.45},{"courses_dept":"epse","courses_id":"519","courses_avg":98.45},{"courses_dept":"nurs","courses_id":"578","courses_avg":98.5},{"courses_dept":"nurs","courses_id":"578","courses_avg":98.5},{"courses_dept":"nurs","courses_id":"578","courses_avg":98.58},{"courses_dept":"nurs","courses_id":"578","courses_avg":98.58},{"courses_dept":"epse","courses_id":"449","courses_avg":98.58},{"courses_dept":"epse","courses_id":"449","courses_avg":98.58},{"courses_dept":"epse","courses_id":"421","courses_avg":98.7},{"courses_dept":"nurs","courses_id":"509","courses_avg":98.71},{"courses_dept":"nurs","courses_id":"509","courses_avg":98.71},{"courses_dept":"eece","courses_id":"541","courses_avg":98.75},{"courses_dept":"eece","courses_id":"541","courses_avg":98.75},{"courses_dept":"epse","courses_id":"449","courses_avg":98.76},{"courses_dept":"epse","courses_id":"449","courses_avg":98.76},{"courses_dept":"epse","courses_id":"449","courses_avg":98.8},{"courses_dept":"spph","courses_id":"300","courses_avg":98.98},{"courses_dept":"spph","courses_id":"300","courses_avg":98.98},{"courses_dept":"cnps","courses_id":"574","courses_avg":99.19},{"courses_dept":"math","courses_id":"527","courses_avg":99.78},{"courses_dept":"math","courses_id":"527","courses_avg":99.78}]};
 
-
-    EQUAL_SEATS ={
-        "WHERE":{
-            "EQ":{
-                "rooms_seats":50
-            }
-        },
-        "OPTIONS":{
-            "COLUMNS": [
-                "rooms_fullname", "rooms_shortname", "rooms_number", "rooms_name", "rooms_address", "rooms_lat", "rooms_lon", "rooms_seats", "rooms_furniture", "rooms_type", "rooms_href"
-            ],
-            "ORDER":"rooms_name"
-        }
-    };
-    EQUAL_SEATS_RESPONSE = {"result":[{"rooms_fullname":"Allard Hall (LAW)","rooms_shortname":"ALRD","rooms_number":"121","rooms_name":"ALRD_121","rooms_address":"1822 East Mall","rooms_lat":49.2699,"rooms_lon":-123.25318,"rooms_seats":50,"rooms_furniture":"Classroom-Fixed Tables/Movable Chairs","rooms_type":"Case Style","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/ALRD-121"},{"rooms_fullname":"Buchanan","rooms_shortname":"BUCH","rooms_number":"D316","rooms_name":"BUCH_D316","rooms_address":"1866 Main Mall","rooms_lat":49.26826,"rooms_lon":-123.25468,"rooms_seats":50,"rooms_furniture":"Classroom-Movable Tablets","rooms_type":"Open Design General Purpose","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/BUCH-D316"},{"rooms_fullname":"Buchanan","rooms_shortname":"BUCH","rooms_number":"D317","rooms_name":"BUCH_D317","rooms_address":"1866 Main Mall","rooms_lat":49.26826,"rooms_lon":-123.25468,"rooms_seats":50,"rooms_furniture":"Classroom-Movable Tablets","rooms_type":"Open Design General Purpose","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/BUCH-D317"},{"rooms_fullname":"Buchanan","rooms_shortname":"BUCH","rooms_number":"D322","rooms_name":"BUCH_D322","rooms_address":"1866 Main Mall","rooms_lat":49.26826,"rooms_lon":-123.25468,"rooms_seats":50,"rooms_furniture":"Classroom-Movable Tablets","rooms_type":"Open Design General Purpose","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/BUCH-D322"},{"rooms_fullname":"Earth and Ocean Sciences - Main","rooms_shortname":"EOSM","rooms_number":"135","rooms_name":"EOSM_135","rooms_address":"6339 Stores Road","rooms_lat":49.26228,"rooms_lon":-123.25198,"rooms_seats":50,"rooms_furniture":"Classroom-Movable Tables & Chairs","rooms_type":"Open Design General Purpose","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/EOSM-135"},{"rooms_fullname":"Irving K Barber Learning Centre","rooms_shortname":"IBLC","rooms_number":"155","rooms_name":"IBLC_155","rooms_address":"1961 East Mall V6T 1Z1","rooms_lat":49.26766,"rooms_lon":-123.2521,"rooms_seats":50,"rooms_furniture":"Classroom-Fixed Tables/Movable Chairs","rooms_type":"Case Style","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-155"},{"rooms_fullname":"Iona Building","rooms_shortname":"IONA","rooms_number":"633","rooms_name":"IONA_633","rooms_address":"6000 Iona Drive","rooms_lat":49.27106,"rooms_lon":-123.25042,"rooms_seats":50,"rooms_furniture":"Classroom-Movable Tables & Chairs","rooms_type":"Open Design General Purpose","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IONA-633"}]
-    };
-
     SIMPLE_TRANSFORM_QUERY = {
         "WHERE": {
             "AND": [{
@@ -1104,6 +1088,140 @@ export default class TestConstants {
             "GROUP": ["rooms_shortname"],
             "APPLY": [{
                 "maxSeats": {
+                    "MAX": "rooms_seats"
+                }
+            }]
+        }
+    };
+    EQUAL_SEATS ={
+        "WHERE":{
+            "EQ":{
+                "rooms_seats":50
+            }
+        },
+        "OPTIONS":{
+            "COLUMNS": [
+                "rooms_fullname", "rooms_shortname", "rooms_number", "rooms_name", "rooms_address", "rooms_lat", "rooms_lon", "rooms_seats", "rooms_furniture", "rooms_type", "rooms_href"
+            ],
+            "ORDER":"rooms_name"
+        }
+    };
+
+
+        EQUAL_SEATS_RESPONSE = {
+            "result": [{
+                "rooms_fullname": "Allard Hall (LAW)",
+                "rooms_shortname": "ALRD",
+                "rooms_number": "121",
+                "rooms_name": "ALRD_121",
+                "rooms_address": "1822 East Mall",
+                "rooms_lat": 49.2699,
+                "rooms_lon": -123.25318,
+                "rooms_seats": 50,
+                "rooms_furniture": "Classroom-Fixed Tables/Movable Chairs",
+                "rooms_type": "Case Style",
+                "rooms_href": "http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/ALRD-121"
+            }, {
+                "rooms_fullname": "Buchanan",
+                "rooms_shortname": "BUCH",
+                "rooms_number": "D316",
+                "rooms_name": "BUCH_D316",
+                "rooms_address": "1866 Main Mall",
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468,
+                "rooms_seats": 50,
+                "rooms_furniture": "Classroom-Movable Tablets",
+                "rooms_type": "Open Design General Purpose",
+                "rooms_href": "http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/BUCH-D316"
+            }, {
+                "rooms_fullname": "Buchanan",
+                "rooms_shortname": "BUCH",
+                "rooms_number": "D317",
+                "rooms_name": "BUCH_D317",
+                "rooms_address": "1866 Main Mall",
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468,
+                "rooms_seats": 50,
+                "rooms_furniture": "Classroom-Movable Tablets",
+                "rooms_type": "Open Design General Purpose",
+                "rooms_href": "http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/BUCH-D317"
+            }, {
+                "rooms_fullname": "Buchanan",
+                "rooms_shortname": "BUCH",
+                "rooms_number": "D322",
+                "rooms_name": "BUCH_D322",
+                "rooms_address": "1866 Main Mall",
+                "rooms_lat": 49.26826,
+                "rooms_lon": -123.25468,
+                "rooms_seats": 50,
+                "rooms_furniture": "Classroom-Movable Tablets",
+                "rooms_type": "Open Design General Purpose",
+                "rooms_href": "http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/BUCH-D322"
+            }, {
+                "rooms_fullname": "Earth and Ocean Sciences - Main",
+                "rooms_shortname": "EOSM",
+                "rooms_number": "135",
+                "rooms_name": "EOSM_135",
+                "rooms_address": "6339 Stores Road",
+                "rooms_lat": 49.26228,
+                "rooms_lon": -123.25198,
+                "rooms_seats": 50,
+                "rooms_furniture": "Classroom-Movable Tables & Chairs",
+                "rooms_type": "Open Design General Purpose",
+                "rooms_href": "http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/EOSM-135"
+            }, {
+                "rooms_fullname": "Irving K Barber Learning Centre",
+                "rooms_shortname": "IBLC",
+                "rooms_number": "155",
+                "rooms_name": "IBLC_155",
+                "rooms_address": "1961 East Mall V6T 1Z1",
+                "rooms_lat": 49.26766,
+                "rooms_lon": -123.2521,
+                "rooms_seats": 50,
+                "rooms_furniture": "Classroom-Fixed Tables/Movable Chairs",
+                "rooms_type": "Case Style",
+                "rooms_href": "http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-155"
+            }, {
+                "rooms_fullname": "Iona Building",
+                "rooms_shortname": "IONA",
+                "rooms_number": "633",
+                "rooms_name": "IONA_633",
+                "rooms_address": "6000 Iona Drive",
+                "rooms_lat": 49.27106,
+                "rooms_lon": -123.25042,
+                "rooms_seats": 50,
+                "rooms_furniture": "Classroom-Movable Tables & Chairs",
+                "rooms_type": "Open Design General Purpose",
+                "rooms_href": "http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IONA-633"
+            }]
+        };
+
+    APPLY_KEY_ERROR = {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 300
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "maxSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["maxSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "max": {
                     "MAX": "rooms_seats"
                 }
             }]
@@ -1161,43 +1279,42 @@ export default class TestConstants {
         }]
     };
 
-VAN = {
-    "WHERE": {
-    },
-    "OPTIONS": {
-        "COLUMNS": [
-            "courses_dept",
-            "courses_id",
-            "countProfs",
-            "sumAudits",
-            "minAvg",
-            "sumFail"
-            ],
-        "ORDER": {
-            "dir": "DOWN",
-            "keys":[
+    VAN = {
+        "WHERE": {},
+        "OPTIONS": {
+            "COLUMNS": [
                 "courses_dept",
                 "courses_id",
                 "countProfs",
                 "sumAudits",
                 "minAvg",
                 "sumFail"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "courses_dept",
+                    "courses_id",
+                    "countProfs",
+                    "sumAudits",
+                    "minAvg",
+                    "sumFail"
                 ]
-        }
-    },
-    "TRANSFORMATIONS": {
-        "GROUP": ["courses_dept", "courses_id", "courses_instructor"],
-        "APPLY": [
-            {"maxPass": { "MAX": "courses_pass"}},
-            {"minAvg":{"MIN":"courses_avg"}},
-            {"sumAudits": {"SUM": "courses_audit"}},
-            {"countProfs": {"COUNT": "courses_instructor"}},
-            {"sumFail": {"SUM": "courses_fail"}}
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_dept", "courses_id", "courses_instructor"],
+            "APPLY": [
+                {"maxPass": {"MAX": "courses_pass"}},
+                {"minAvg": {"MIN": "courses_avg"}},
+                {"sumAudits": {"SUM": "courses_audit"}},
+                {"countProfs": {"COUNT": "courses_instructor"}},
+                {"sumFail": {"SUM": "courses_fail"}}
             ]
-    }
-};
+        }
+    };
+    VAN_RESPONSE = {};
 
-VAN_RESPONSE = {};
 }
 
 

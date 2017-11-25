@@ -428,10 +428,7 @@ export default class InsightFacade implements IInsightFacade {
                 trans.parse();
                 transformationObj = trans.evaluate();
                 //error check keys
-                // for(var i = 0;i<optionObj.errorCatch.length;i++){
-                //
-                // }
-
+                this.errorCheckApplyTokens(optionObj, transformationObj);
                 let groupArray: Array<any> = [];
                 if (!transform) {
                     groupArray = filteredArray.map((struct) => {
@@ -504,12 +501,35 @@ export default class InsightFacade implements IInsightFacade {
                         //return a[optionObj.order] - b[optionObj.order];
                     });
                 }
-                fulfill({code: 200, body: {"result": groupArray}});
             }
             catch (err){
                 reject({code: 400, body: {"error": "invalid query"}});
             }
         });
+    }
+
+    private errorCheckApplyTokens(optionObj: any, transformationObj: any) {
+        for (var i = 0; i < optionObj.errorCatch.length; i++) {
+            let err = optionObj.errorCatch[i];
+            for (var j = 0; j < transformationObj.apply.length; j++) {
+                if (transformationObj.apply.name === err) {
+                    break;
+                }
+            }
+            throw new Error("No Apply Key match for Error Catch element");
+        }
+        let unique = new Set(optionObj.errorCatch);
+        if (unique.size < optionObj.length) {
+            throw new Error("Duplicate Apply Tokens - Col");
+        }
+        let uniqueTemp = [];
+        for (var i = 0; i < transformationObj.apply.length; i++) {
+            uniqueTemp.push(transformationObj.apply[i]);
+        }
+        unique = new Set(uniqueTemp);
+        if (unique.size < uniqueTemp.length) {
+            throw new Error("Duplicate Apply Tokens - Trans")
+        }
     }
 
     tranAction(apply: any, groupArray: Array<any>, map: any): void {
