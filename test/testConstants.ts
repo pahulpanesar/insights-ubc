@@ -846,7 +846,53 @@ export default class TestConstants {
         }]
     };
 
+    NO_TRANSFORM_QUERY = {
+        "WHERE": {
+            "IS": {
+                "rooms_address": "*Agrono*"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_address",
+                "rooms_seats","rooms_shortname"
 
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "rooms_address",
+                    "rooms_seats","rooms_shortname"
+
+                ]
+            }
+        }
+    };
+    NO_TRANSFORM_RESPONSE = {"result":[{"rooms_address":"6363 Agronomy Road","rooms_seats":72,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":72,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":72,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":48,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":48,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":20,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":16,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":16,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":16,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":16,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":16,"rooms_shortname":"ORCH"},{"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_seats":160,"rooms_shortname":"DMP"},{"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_seats":120,"rooms_shortname":"DMP"},{"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_seats":80,"rooms_shortname":"DMP"},{"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_seats":40,"rooms_shortname":"DMP"},{"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_seats":40,"rooms_shortname":"DMP"}]};
+    NO_TRANSFORM_ERROR = {
+        "WHERE": {},
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "countProfs",
+                "sumAudits",
+                "minAvg",
+                "sumFail"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "courses_dept",
+                    "courses_id",
+                    "countProfs",
+                    "sumAudits",
+                    "minAvg",
+                    "sumFail"
+                ]
+            }
+        }
+    };
     BIG_AND = {
         "result": [{"courses_dept": "epse", "courses_id": "421", "courses_avg": 98.36}, {
             "courses_dept": "epse",
