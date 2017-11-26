@@ -353,18 +353,19 @@ export default class InsightFacade implements IInsightFacade {
                 let o: OptionNode = new OptionNode(t, dataSet[0], -1, transform);
                 o.parse();
                 optionObj = o.evaluate();
-                let trans = new TransformationNode(t, {"errorCatch": optionObj.errorCatch}, -1);
-                trans.parse();
-                transformationObj = trans.evaluate();
-                //error check keys
-                this.errorCheckApplyTokens(optionObj, transformationObj);
                 let map: any = {};
                 let groupArray: Array<any> = [];
-                this.dirSort(filteredArray, optionObj);
                 if (!transform) {
+                    this.noTransformSort(filteredArray, optionObj);
                     groupArray = this.createNoTransform(filteredArray, optionObj);
                 }
                 else {
+                    let trans = new TransformationNode(t, {"errorCatch": optionObj.errorCatch}, -1);
+                    trans.parse();
+                    transformationObj = trans.evaluate();
+                    //error check keys
+                    this.errorCheckApplyTokens(optionObj, transformationObj);
+                    this.initSort(filteredArray, transformationObj);
                     let mapArr: Array<any> = this.createMap(map, transformationObj, filteredArray);
                     if (transformationObj.apply.length == 0) {
                         this.tranAction(null, groupArray, mapArr, optionObj);
@@ -372,8 +373,8 @@ export default class InsightFacade implements IInsightFacade {
                     else {
                         this.tranAction(transformationObj.apply, groupArray, mapArr, optionObj);
                     }
-                    this.dirSort(groupArray, optionObj);
                     groupArray = this.createTransform(groupArray, optionObj, transformationObj);
+                    this.dirSort(groupArray, optionObj);
                 }
                 fulfill({code: 200, body: {"result": groupArray}});
             }
@@ -475,6 +476,9 @@ export default class InsightFacade implements IInsightFacade {
         var mapArr = new Array<any>();
         var mapArrObj = new Array<any>();
         for(var i = 0; i < filteredArray.length-1; i++){
+            if(filteredArray[i].courses_instructor === "lyon, katherine"){
+                add = true;
+            }
             var add = true;
             for(var j = 0; j < transformationObj.group.length; j++){
                 let groupObj = transformationObj.group[j];
@@ -513,16 +517,50 @@ export default class InsightFacade implements IInsightFacade {
         return mapArr;
     }
 
+    initSort(filteredArray: Array<any>, transformationObj: any){
+        if(transformationObj.group) {
+            filteredArray.sort(function(a, b) {
+                for(var i =0;i<transformationObj.group.length;i++) {
+                    let one: any = a[transformationObj.group[i]];
+                    let two: any = b[transformationObj.group[i]];
+                    if (one < two){
+                        return -1;
+                    }
+                    if (one > two){
+                        return 1;
+                    }
+                }
+                return 0;
+            });
+        }
+    }
+
     dirSort(filteredArray: Array<any>, optionObj: any){
         if(optionObj.keys) {
             filteredArray.sort(function(a, b) {
                 for(var i =0;i<optionObj.keys.length;i++) { //sort by first key, tie break with the second etc...
-                    if (a[optionObj.keys[i]] < b[optionObj.keys[i]]){
-                        return optionObj.dir === "DOWN"? 1 : -1;
+                    let one: any = a[optionObj.keys[i]];
+                    let two: any = b[optionObj.keys[i]];
+                    if (one < two){
+                        return optionObj.dir === "DOWN" ? 1 : -1;
                     }
-                    else if (a[optionObj.keys[i]] > b[optionObj.keys[i]]){
-                        return optionObj.dir === "DOWN"? -1 : 1;
+                    if (one > two){
+                        return optionObj.dir === "DOWN" ? -1 : 1;
                     }
+                }
+                return 0;
+            });
+        }
+    }
+
+    noTransformSort(filteredArray: Array<any>, optionObj: any){
+        if(optionObj.keys) {
+            filteredArray.sort(function(a, b) {
+                if (a[optionObj.keys[0]] < b[optionObj.keys[0]]){
+                    return -1;
+                }
+                if (a[optionObj.keys[0]] > b[optionObj.keys[0]]){
+                    return 1;
                 }
                 return 0;
             });
@@ -568,14 +606,15 @@ export default class InsightFacade implements IInsightFacade {
                     }
                 }
                 if (apply.action === "COUNT") {
-                    if(currGroup.length === 1){
-                        res = 1;
-                    }
-                    else {
-                        res = currGroup.map((val: any) => (val[apply.key])).reduce((a, b) => {
-                            if (a !== b) return 1;
-                            else return 0;
-                        });
+                    res = 1;
+                    let count: number = 0;
+                    if(currGroup.length > 1){
+                        let tempGroup: Array<any> = currGroup.map((val: any) => (val[apply.key]));
+                        tempGroup.sort();
+                        for(var i = 0; i < tempGroup.length-1; i++){
+                            if(tempGroup[i] !== tempGroup[i+1]) count++;
+                        }
+                        res += count;
                     }
                 }
                 if (apply.action === "SUM") {

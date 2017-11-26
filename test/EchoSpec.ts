@@ -220,7 +220,7 @@ describe("EchoSpec", function () {
     });
 
     it("ADDDATASET 201 - old proper dataset", function () {
-        this.timeout(5000);
+        this.timeout(10000);
         return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
             return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
                 Log.test('Value: ' + value.code);
@@ -380,7 +380,6 @@ describe("EchoSpec", function () {
                         "courses_dept"
                     ],
                     "ORDER": "courses_avg",
-//                    "FORM": "TABLE"
                 }
             };
             return test.insightFace.performQuery(query)
@@ -1083,11 +1082,6 @@ describe("EchoSpec", function () {
             return test.insightFace.performQuery(test.VAN).then(function (val: any) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
-                // console.log("bodylength");
-                // console.log(val.body.result.length);
-                // let x: any = test.VAN_RESPONSE;
-                // console.log("responselength");
-                // console.log(x.result.length);
                 expect(val.body).to.deep.equal(test.VAN_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
