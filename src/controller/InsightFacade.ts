@@ -583,6 +583,9 @@ export default class InsightFacade implements IInsightFacade {
                 let apply: any = applyArr[ind];
                 let res: number = -1;
                 if (apply.action === "MAX") {
+                    if(!typeof(currGroup[0][apply.key] === "number")){
+                        throw new Error("Transfrom Type Error");
+                    }
                     if(currGroup.length == 1){
                         res = currGroup[0][apply.key];
                     }
@@ -591,6 +594,9 @@ export default class InsightFacade implements IInsightFacade {
                     }
                 }
                 if (apply.action === "MIN") {
+                    if(!typeof(currGroup[0][apply.key] === "number")){
+                        throw new Error("Transfrom Type Error");
+                    }
                     if(currGroup.length == 1){
                         res = currGroup[0][apply.key];
                     }
@@ -598,6 +604,9 @@ export default class InsightFacade implements IInsightFacade {
                         res = currGroup.map((val: any) => (val[apply.key])).reduce((a, b) => Math.min(a, b));
                     }                }
                 if (apply.action === "AVG") {
+                    if(!typeof(currGroup[0][apply.key] === "number")){
+                        throw new Error("Transfrom Type Error");
+                    }
                     if(currGroup.length == 1){
                         res = currGroup[0][apply.key];
                     }
@@ -618,6 +627,9 @@ export default class InsightFacade implements IInsightFacade {
                     }
                 }
                 if (apply.action === "SUM") {
+                    if(!typeof(currGroup[0][apply.key] === "number")){
+                        throw new Error("Transfrom Type Error");
+                    }
                     if(currGroup.length == 1){
                         res = currGroup[0][apply.key];
                     }
