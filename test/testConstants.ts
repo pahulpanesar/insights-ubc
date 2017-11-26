@@ -42,6 +42,166 @@ export default class TestConstants {
         "OPTIONS": {"COLUMNS": ["courses_dept", "courses_avg"], "ORDER": "courses_avg"}
     };
 
+    AVG_RESPONSE = {"result":[{"rooms_shortname":"OSBO","avgSeats":442},{"rooms_shortname":"HEBB","avgSeats":375},{"rooms_shortname":"LSC","avgSeats":350}]};
+    AVG_QUERY = {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 300
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "avgSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["avgSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "avgSeats": {
+                    "AVG": "rooms_seats"
+                }
+            }]
+        }
+    };
+
+    D3_TYPE_ERROR = {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 300
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "avgSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["avgSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "avgSeats": {
+                    "AVG": "rooms_name"
+                }
+            }]
+        }
+    };
+
+    SIMPLE_COUNT_QUERY = {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 300
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "countSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["countSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "countSeats": {
+                    "COUNT": "rooms_name"
+                }
+            }]
+        }
+    };
+
+    SIMPLE_COUNT_RESPONSE = {"result":[{"rooms_shortname":"LSC","countSeats":2},{"rooms_shortname":"HEBB","countSeats":1},{"rooms_shortname":"OSBO","countSeats":1}]};
+
+    LARGE_COUNT_QUERY = {
+        "WHERE": {
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "countSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["countSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "countSeats": {
+                    "COUNT": "rooms_seats"
+                }
+            }]
+        }
+    };
+
+    SMALL_COUNT_QUERY = {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 300
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "countSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["countSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "countSeats": {
+                    "COUNT": "rooms_seats"
+                }
+            }]
+        }
+    };
+
+    SMALL_COUNT_RESPONSE= {"result":[{"rooms_shortname":"HEBB","countSeats":1},{"rooms_shortname":"LSC","countSeats":1},{"rooms_shortname":"OSBO","countSeats":1}]};
+
+
+    LARGE_COUNT_RESPONSE = {"result":[{"rooms_shortname":"BUCH","countSeats":19},{"rooms_shortname":"ANGU","countSeats":15},{"rooms_shortname":"IBLC","countSeats":10},{"rooms_shortname":"WOOD","countSeats":10},{"rooms_shortname":"MCML","countSeats":8},{"rooms_shortname":"FSC","countSeats":7},{"rooms_shortname":"SCRF","countSeats":7},{"rooms_shortname":"GEOG","countSeats":7},{"rooms_shortname":"SPPH","countSeats":6},{"rooms_shortname":"FNH","countSeats":6},{"rooms_shortname":"CEME","countSeats":6},{"rooms_shortname":"SWNG","countSeats":5},{"rooms_shortname":"MATH","countSeats":5},{"rooms_shortname":"SOWK","countSeats":5},{"rooms_shortname":"HENN","countSeats":5},{"rooms_shortname":"ORCH","countSeats":5},{"rooms_shortname":"PHRM","countSeats":5},{"rooms_shortname":"LASR","countSeats":5},{"rooms_shortname":"MCLD","countSeats":5},{"rooms_shortname":"DMP","countSeats":4},{"rooms_shortname":"CHEM","countSeats":4},{"rooms_shortname":"ALRD","countSeats":4},{"rooms_shortname":"LSK","countSeats":4},{"rooms_shortname":"ANSO","countSeats":4},{"rooms_shortname":"OSBO","countSeats":3},{"rooms_shortname":"FORW","countSeats":3},{"rooms_shortname":"BIOL","countSeats":3},{"rooms_shortname":"ESB","countSeats":3},{"rooms_shortname":"CHBE","countSeats":3},{"rooms_shortname":"UCLL","countSeats":3},{"rooms_shortname":"IONA","countSeats":2},{"rooms_shortname":"PCOH","countSeats":2},{"rooms_shortname":"WESB","countSeats":2},{"rooms_shortname":"MGYM","countSeats":2},{"rooms_shortname":"AUDX","countSeats":2},{"rooms_shortname":"BRKX","countSeats":2},{"rooms_shortname":"HEBB","countSeats":2},{"rooms_shortname":"LSC","countSeats":2},{"rooms_shortname":"FRDM","countSeats":1},{"rooms_shortname":"MATX","countSeats":1},{"rooms_shortname":"SRC","countSeats":1},{"rooms_shortname":"EOSM","countSeats":1},{"rooms_shortname":"AERL","countSeats":1},{"rooms_shortname":"CIRS","countSeats":1}]};
+
+
     SIMPLE_ROOM_QUERY = { "WHERE": { "IS": { "rooms_name": "DMP_*" } }, "OPTIONS": { "COLUMNS": [ "rooms_name" ], "ORDER": "rooms_name" } };
     SIMPLE_ROOM_QUERY_RESPONSE = { "result": [{ "rooms_name": "DMP_101" }, { "rooms_name": "DMP_110" }, { "rooms_name": "DMP_201" }, { "rooms_name": "DMP_301" }, { "rooms_name": "DMP_310" }] };
     SIMPLE_ROOM_QUERY_2 = { "WHERE": { "IS": { "rooms_address": "*Agrono*" } }, "OPTIONS": { "COLUMNS": [ "rooms_address", "rooms_name" ] } };
@@ -1314,6 +1474,42 @@ export default class TestConstants {
         }
     };
     VAN_RESPONSE = {};
+
+    TRANSFORM_UP = {
+    "WHERE": {
+        "AND": [{
+            "IS": {
+                "rooms_furniture": "*Tables*"
+            }
+        }, {
+            "GT": {
+                "rooms_seats": 300
+            }
+        }]
+    },
+    "OPTIONS": {
+        "COLUMNS": [
+            "rooms_shortname",
+            "maxSeats"
+            ],
+        "ORDER": {
+            "dir": "DOWN",
+            "keys": ["maxSeats"]
+        }
+    },
+    "TRANSFORMATIONS": {
+        "GROUP": ["rooms_shortname"],
+        "APPLY": [{
+            "maxSeats": {
+                "MAX": "rooms_seats"
+            }
+        }]
+    }
+};
+
+    TRANSFORM_UP_RESPONSE = {"result":[{"rooms_shortname":"OSBO","maxSeats":442},{"rooms_shortname":"HEBB","maxSeats":375},{"rooms_shortname":"LSC","maxSeats":350}]};
+
+
 
 }
 

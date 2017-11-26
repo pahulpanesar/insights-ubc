@@ -1094,6 +1094,139 @@ describe("EchoSpec", function () {
         })
     });
 
+    it("PERFORMQUERY 200 - transform up", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.TRANSFORM_UP).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.TRANSFORM_UP_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - simple avg", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.AVG_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.AVG_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - simple avg", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.AVG_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.AVG_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
+
+    it("PERFORMQUERY 400 - avg type error", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.D3_TYPE_ERROR).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect(err.code).to.equal(400);
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - simple count", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.SIMPLE_COUNT_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.SIMPLE_COUNT_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - large count - number", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.LARGE_COUNT_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.LARGE_COUNT_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - small count - number", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.SMALL_COUNT_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.SMALL_COUNT_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
+
 
 });
 
