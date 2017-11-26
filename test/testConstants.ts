@@ -151,7 +151,7 @@ export default class TestConstants {
             ],
             "ORDER": {
                 "dir": "DOWN",
-                "keys": ["countSeats"]
+                "keys": ["countSeats","rooms_shortname"]
             }
         },
         "TRANSFORMATIONS": {
@@ -183,7 +183,7 @@ export default class TestConstants {
             ],
             "ORDER": {
                 "dir": "DOWN",
-                "keys": ["countSeats"]
+                "keys": ["countSeats","rooms_shortname"]
             }
         },
         "TRANSFORMATIONS": {
@@ -196,10 +196,9 @@ export default class TestConstants {
         }
     };
 
-    SMALL_COUNT_RESPONSE= {"result":[{"rooms_shortname":"HEBB","countSeats":1},{"rooms_shortname":"LSC","countSeats":1},{"rooms_shortname":"OSBO","countSeats":1}]};
+    SMALL_COUNT_RESPONSE = {"result":[{"rooms_shortname":"OSBO","countSeats":1},{"rooms_shortname":"LSC","countSeats":1},{"rooms_shortname":"HEBB","countSeats":1}]};
 
-
-    LARGE_COUNT_RESPONSE = {"result":[{"rooms_shortname":"BUCH","countSeats":19},{"rooms_shortname":"ANGU","countSeats":15},{"rooms_shortname":"IBLC","countSeats":10},{"rooms_shortname":"WOOD","countSeats":10},{"rooms_shortname":"MCML","countSeats":8},{"rooms_shortname":"FSC","countSeats":7},{"rooms_shortname":"SCRF","countSeats":7},{"rooms_shortname":"GEOG","countSeats":7},{"rooms_shortname":"SPPH","countSeats":6},{"rooms_shortname":"FNH","countSeats":6},{"rooms_shortname":"CEME","countSeats":6},{"rooms_shortname":"SWNG","countSeats":5},{"rooms_shortname":"MATH","countSeats":5},{"rooms_shortname":"SOWK","countSeats":5},{"rooms_shortname":"HENN","countSeats":5},{"rooms_shortname":"ORCH","countSeats":5},{"rooms_shortname":"PHRM","countSeats":5},{"rooms_shortname":"LASR","countSeats":5},{"rooms_shortname":"MCLD","countSeats":5},{"rooms_shortname":"DMP","countSeats":4},{"rooms_shortname":"CHEM","countSeats":4},{"rooms_shortname":"ALRD","countSeats":4},{"rooms_shortname":"LSK","countSeats":4},{"rooms_shortname":"ANSO","countSeats":4},{"rooms_shortname":"OSBO","countSeats":3},{"rooms_shortname":"FORW","countSeats":3},{"rooms_shortname":"BIOL","countSeats":3},{"rooms_shortname":"ESB","countSeats":3},{"rooms_shortname":"CHBE","countSeats":3},{"rooms_shortname":"UCLL","countSeats":3},{"rooms_shortname":"IONA","countSeats":2},{"rooms_shortname":"PCOH","countSeats":2},{"rooms_shortname":"WESB","countSeats":2},{"rooms_shortname":"MGYM","countSeats":2},{"rooms_shortname":"AUDX","countSeats":2},{"rooms_shortname":"BRKX","countSeats":2},{"rooms_shortname":"HEBB","countSeats":2},{"rooms_shortname":"LSC","countSeats":2},{"rooms_shortname":"FRDM","countSeats":1},{"rooms_shortname":"MATX","countSeats":1},{"rooms_shortname":"SRC","countSeats":1},{"rooms_shortname":"EOSM","countSeats":1},{"rooms_shortname":"AERL","countSeats":1},{"rooms_shortname":"CIRS","countSeats":1}]};
+    LARGE_COUNT_RESPONSE = {"result":[{"rooms_shortname":"BUCH","countSeats":19},{"rooms_shortname":"ANGU","countSeats":15},{"rooms_shortname":"WOOD","countSeats":10},{"rooms_shortname":"IBLC","countSeats":10},{"rooms_shortname":"MCML","countSeats":8},{"rooms_shortname":"SCRF","countSeats":7},{"rooms_shortname":"GEOG","countSeats":7},{"rooms_shortname":"FSC","countSeats":7},{"rooms_shortname":"SPPH","countSeats":6},{"rooms_shortname":"FNH","countSeats":6},{"rooms_shortname":"CEME","countSeats":6},{"rooms_shortname":"SWNG","countSeats":5},{"rooms_shortname":"SOWK","countSeats":5},{"rooms_shortname":"PHRM","countSeats":5},{"rooms_shortname":"ORCH","countSeats":5},{"rooms_shortname":"MCLD","countSeats":5},{"rooms_shortname":"MATH","countSeats":5},{"rooms_shortname":"LASR","countSeats":5},{"rooms_shortname":"HENN","countSeats":5},{"rooms_shortname":"LSK","countSeats":4},{"rooms_shortname":"DMP","countSeats":4},{"rooms_shortname":"CHEM","countSeats":4},{"rooms_shortname":"ANSO","countSeats":4},{"rooms_shortname":"ALRD","countSeats":4},{"rooms_shortname":"UCLL","countSeats":3},{"rooms_shortname":"OSBO","countSeats":3},{"rooms_shortname":"FORW","countSeats":3},{"rooms_shortname":"ESB","countSeats":3},{"rooms_shortname":"CHBE","countSeats":3},{"rooms_shortname":"BIOL","countSeats":3},{"rooms_shortname":"WESB","countSeats":2},{"rooms_shortname":"PCOH","countSeats":2},{"rooms_shortname":"MGYM","countSeats":2},{"rooms_shortname":"LSC","countSeats":2},{"rooms_shortname":"IONA","countSeats":2},{"rooms_shortname":"HEBB","countSeats":2},{"rooms_shortname":"BRKX","countSeats":2},{"rooms_shortname":"AUDX","countSeats":2},{"rooms_shortname":"SRC","countSeats":1},{"rooms_shortname":"MATX","countSeats":1},{"rooms_shortname":"FRDM","countSeats":1},{"rooms_shortname":"EOSM","countSeats":1},{"rooms_shortname":"CIRS","countSeats":1},{"rooms_shortname":"AERL","countSeats":1}]}
 
 
     SIMPLE_ROOM_QUERY = { "WHERE": { "IS": { "rooms_name": "DMP_*" } }, "OPTIONS": { "COLUMNS": [ "rooms_name" ], "ORDER": "rooms_name" } };
