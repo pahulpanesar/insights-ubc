@@ -360,20 +360,21 @@ export default class InsightFacade implements IInsightFacade {
                     groupArray = this.createNoTransform(filteredArray, optionObj);
                 }
                 else {
-                    let trans = new TransformationNode(t, {"errorCatch": optionObj.errorCatch}, -1);
-                    trans.parse();
-                    transformationObj = trans.evaluate();
-                    //error check keys
-                    this.errorCheckApplyTokens(optionObj, transformationObj);
-                    this.initSort(filteredArray, transformationObj);
-                    let mapArr: Array<any> = this.createMap(map, transformationObj, filteredArray);
-                    if (transformationObj.apply.length == 0) {
-                        this.tranAction(null, groupArray, mapArr, optionObj);
-                    }
-                    else {
-                        this.tranAction(transformationObj.apply, groupArray, mapArr, optionObj);
-                    }
-                    groupArray = this.createTransform(groupArray, optionObj, transformationObj);
+                    // let trans = new TransformationNode(t, {"errorCatch": optionObj.errorCatch}, -1);
+                    // trans.parse();
+                    // transformationObj = trans.evaluate();
+                    // //error check keys
+                    // this.errorCheckApplyTokens(optionObj, transformationObj);
+                    // this.initSort(filteredArray, transformationObj);
+                    // let mapArr: Array<any> = this.createMap(map, transformationObj, filteredArray);
+                    // if (transformationObj.apply.length == 0) {
+                    //     this.tranAction(null, groupArray, mapArr, optionObj);
+                    // }
+                    // else {
+                    //     this.tranAction(transformationObj.apply, groupArray, mapArr, optionObj);
+                    // }
+                    // groupArray = this.createTransform(groupArray, optionObj, transformationObj);
+                    reject({code: 400, body: {"error": "invalid query"}});
 
                 }
                 this.dirSort(groupArray, optionObj);
