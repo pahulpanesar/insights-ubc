@@ -9,9 +9,12 @@ import Tokenizer from "../dataStructs/Tokenizer";
 import Query from "../dataStructs/Query";
 import OptionNode from "./nodes/OptionNode";
 import Room from "../dataStructs/Room";
+import GroupNode from "./nodes/GroupNode";
+import TransformationNode from "./nodes/TransformationNode";
 let http = require("http");
 let fs = require('fs');
 let parse5 =  require('parse5');
+let Decimal = require("decimal.js");
 
 
 export default class InsightFacade implements IInsightFacade {
@@ -37,6 +40,7 @@ export default class InsightFacade implements IInsightFacade {
                     if(id === "rooms") {
                         this.dataSets[id] = new Array<Room>();
                     }
+
                     files = zip.files;
                     Object.keys(files).forEach((filename) => {
                         let file: JSZipObject = files[filename];
@@ -49,6 +53,7 @@ export default class InsightFacade implements IInsightFacade {
                                             dataOb.result.forEach((x: any) => {
                                                 if (x["Course"] != null) {
                                                     validCourse = true;
+
                                                 }
                                             })
                                         }
@@ -68,19 +73,22 @@ export default class InsightFacade implements IInsightFacade {
                                             rooms[file.name] = dataOb;
                                         }
                                     }
+
                                 }
                             }).catch((err) => {
                                 reject({code: 400, body: {"error": err.message}});
                             }));
                     });
                 }).catch((err:any) => {
+                    this.dataSets[id] = [];
                     reject({code: 400, body: {"error": err.message}});
                 })
                     .then(() => {
                         Promise.all(pArr).then(() => {
                             if(id === "courses"){
                                 if(!validCourse){
-                                    reject({code: 400, body: {"error": "No valid courses"}});
+                                    this.dataSets[id] = [];
+                                    reject({code: 400, body: {"error":"no valid course"}});
                                 }
                                 dataObjectArray.forEach((dataArray) => {
                                     dataArray.forEach((dataObject: any) => {
@@ -109,6 +117,7 @@ export default class InsightFacade implements IInsightFacade {
                                     pArr2.push(p);
                                 });
                                 Promise.all(pArr2).then(() => {
+
                                     if (fs.existsSync('./disk/' + id + '.json')) {
                                         this.saveToDisk(id).then(() => {
                                             fulfill({code: 201, body: {}});
@@ -131,6 +140,7 @@ export default class InsightFacade implements IInsightFacade {
                     })
             }
             catch (err) {
+                this.dataSets[id] = [];
                 reject({code: 400, body: {"error": err.message}});
             }
         });
@@ -182,12 +192,6 @@ export default class InsightFacade implements IInsightFacade {
                 let preBody = childs0[childs0.length - 1];
                 let preBodyChildren = preBody.childNodes;
                 let body = preBodyChildren[preBodyChildren.length - 1];
-                // let ubcFooter: any = this.findAttrs(body, "ubc7-footer");
-                // let unitFooter: any = this.findAttrs(ubcFooter, "ubc7-unit");
-                // let footerContainer: any = this.findAttrs(unitFooter, "container");
-                // let span10: any = this.findAttrs(footerContainer, "span10");
-                // let addressLocation: any = this.findAttrs(span10, "ubc7-address-location");
-                // let postal: any = this.findAttrs(addressLocation, "postal").childNodes[0].value.trim();
                 let container: any = this.findAttrs(body, "full-width-container");
                 let main: any = this.findAttrs(container, "main");
                 let content: any = this.findAttrs(main, "content");
@@ -317,15 +321,6 @@ export default class InsightFacade implements IInsightFacade {
         courses.push(course);
     }
 
-    // filterCourses(id: string): Array<any> {
-    //     let filteredCourses: Array<any> = [];
-    //     let dataStruct: Course;
-    //     let courses: Array<Course> = this.dataSets[id];
-    //     filteredCourses = courses.filter(
-    //        dataStruct => dataStruct.courses_avg >= 97);
-    //     return filteredCourses.map(dataStruct => dataStruct.courses_dept + " " + dataStruct.courses_avg)
-    // }
-
     removeDataset(id: string): Promise<InsightResponse> {
         return new Promise((fulfill, reject) => {
             if(fs.existsSync('./disk/' + id + '.json')) {
@@ -341,6 +336,54 @@ export default class InsightFacade implements IInsightFacade {
         })
     }
 
+    performQuery(query: any): Promise <InsightResponse> {
+        return new Promise((fulfill, reject) => {
+            try {
+                if(!this.isDatasetPresent(query)){
+                    reject({code: 424, body: {"error": "No dataset"}});
+                }
+                var filteredArray: Array<any> = [];
+                var optionObj: any = {};
+                let transform: any = query["TRANSFORMATIONS"];
+                var transformationObj: any = {};
+                var t: Tokenizer = new Tokenizer();
+                t.addKeys(query);
+                let dataSet: Array<any> = this.isRoomQuery(query) ? this.dataSets["rooms"] : this.dataSets["courses"];
+                filteredArray = this.fillFilter(t, filteredArray, query, dataSet);
+                let o: OptionNode = new OptionNode(t, dataSet[0], -1, transform);
+                o.parse();
+                optionObj = o.evaluate();
+                let map: any = {};
+                let groupArray: Array<any> = [];
+                if (!transform) {
+                    this.noTransformSort(filteredArray, optionObj);
+                    groupArray = this.createNoTransform(filteredArray, optionObj);
+                }
+                else {
+                    let trans = new TransformationNode(t, {"errorCatch": optionObj.errorCatch}, -1);
+                    trans.parse();
+                    transformationObj = trans.evaluate();
+                    //error check keys
+                    this.errorCheckApplyTokens(optionObj, transformationObj);
+                    this.initSort(filteredArray, transformationObj);
+                    let mapArr: Array<any> = this.createMap(map, transformationObj, filteredArray);
+                    if (transformationObj.apply.length == 0) {
+                        this.tranAction(null, groupArray, mapArr, optionObj);
+                    }
+                    else {
+                        this.tranAction(transformationObj.apply, groupArray, mapArr, optionObj);
+                    }
+                    groupArray = this.createTransform(groupArray, optionObj, transformationObj);
+
+                }
+                this.dirSort(groupArray, optionObj);
+                fulfill({code: 200, body: {"result": groupArray}});
+            }
+            catch (err){
+                reject({code: 400, body: {"error": "invalid query"}});
+            }
+        });
+    }
 
     isRoomQuery(query: any): boolean{
         var t = new Tokenizer();
@@ -368,66 +411,263 @@ export default class InsightFacade implements IInsightFacade {
         return roomFlag === 1;
     }
 
-    performQuery(query: any): Promise <InsightResponse> {
-        return new Promise((fulfill, reject) => {
-            try{
-                if(Object.keys(this.dataSets).length < 1 || (!fs.existsSync('./disk/rooms.json') && !fs.existsSync('./disk/courses.json'))) {
-                    reject({code: 424, body: {"error": "No dataset"}});
-                }
-                if(this.isRoomQuery(query)){
-                    if(this.dataSets["rooms"] == null || this.dataSets["rooms"].length == 0 || (!fs.existsSync('./disk/rooms.json'))){
-                        reject({code: 424, body: {"error": "No dataset"}});
-                    }
-                }
-                else {
-                    if(this.dataSets["courses"] == null || this.dataSets["courses"].length == 0 || !fs.existsSync('./disk/courses.json')){
-                        reject({code: 424, body: {"error": "No dataset"}});
-                    }
-                }
-                var filteredArray: Array<any> = [];
-                var optionObj:any = {};
-                var flag:boolean = false;
-                let resArray: Array<any> = [];
-                var t: Tokenizer = new Tokenizer();
-                t.addKeys(query);
-                let dataSet = this.isRoomQuery(query) ? this.dataSets["rooms"] : this.dataSets["courses"];
-                for (var i = 0; i < dataSet.length; i++) {
-                    t.index = 0;
-                    let c: any = dataSet[i];
-                    let q: Query = new Query(t, c, -1);
-                    q.parseFilter();
-                    if(!flag) {
-                        let o: OptionNode = new OptionNode(t, c, -1);
-                        o.parse();
-                        optionObj = o.evaluate();
-                        flag = true;
-                    }
-                    if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
-                        filteredArray.push(c)
-                    }
-                }
-
-                if(optionObj.order) {
-                    filteredArray.sort(function(a, b) {
-                        if(a[optionObj.order] < b[optionObj.order]) return -1;
-                        if(a[optionObj.order] > b[optionObj.order]) return 1;
-                        return 0;
-                        //return a[optionObj.order] - b[optionObj.order];
-                    });
-                }
-                resArray = filteredArray.map((struct) => {
-                    let contain: any = {};
-                    optionObj["columns"].forEach((column:any) => {
-                        contain[column] = struct[column];
-                    });
-
-                    return contain;
-                });
-                fulfill({code: 200, body: {"result": resArray}});
+    isDatasetPresent(query: any): boolean {
+        if (Object.keys(this.dataSets).length < 1 || (!fs.existsSync('./disk/rooms.json') && !fs.existsSync('./disk/courses.json'))) {
+            return false;
+        }
+        if (this.isRoomQuery(query)) {
+            if (this.dataSets["rooms"] == null || this.dataSets["rooms"].length == 0 || (!fs.existsSync('./disk/rooms.json'))) {
+                return false;
             }
-            catch (err){
-                reject({code: 400, body: {"error": "invalid query"}});
+        }
+        else {
+            if (this.dataSets["courses"] == null || this.dataSets["courses"].length == 0 || !fs.existsSync('./disk/courses.json')) {
+                return false;
             }
+        }
+        return true;
+    }
+
+    fillFilter(t: Tokenizer, filteredArray: Array<any>, query:any, dataSet:Array<any>): Array<any>{
+        if(!query["WHERE"]) throw new Error;
+        if(Object.keys(query["WHERE"]).length == 0){
+            filteredArray = dataSet.slice(0);
+            t.index = 1;
+        }
+        else{
+            for (var i = 0; i < dataSet.length; i++) {
+                t.index = 0;
+                let c: any = dataSet[i];
+                let q: Query = new Query(t, c, -1);
+                q.parseFilter();
+                if (q.evaluate()) { //If AST (Query Object) returns true add it to the filtered Array
+                    filteredArray.push(c)
+                }
+            }
+        }
+        return filteredArray;
+    }
+
+    createTransform(groupArray: Array<any>, optionObj: any, transformationObj: any): Array<any>{
+        return groupArray.map((struct) => {
+            let contain: any = {};
+            let tKey: boolean = false;
+            optionObj["columns"].options.forEach((column: any) => {
+                contain[column] = struct[column];
+            });
+            return contain;
         });
+    }
+
+    createNoTransform(filteredArray: Array<any>, optionObj: any): Array<any>{
+        return filteredArray.map((struct) => {
+            let contain: any = {};
+            let tKey: boolean = false;
+            optionObj["columns"].options.forEach((column: any) => {
+                if (!tKey) {
+                    contain[column] = struct[column];
+                }
+            });
+            return contain;
+        });
+    }
+
+    createMap(map: any, transformationObj: any, filteredArray: Array<any>): Array<any> {
+        var keyName = "";
+        var mapArr = new Array<any>();
+        var mapArrObj = new Array<any>();
+        for(var i = 0; i < filteredArray.length-1; i++){
+            if(filteredArray[i].courses_instructor === "lyon, katherine"){
+                add = true;
+            }
+            var add = true;
+            for(var j = 0; j < transformationObj.group.length; j++){
+                let groupObj = transformationObj.group[j];
+                let curr = filteredArray[i][groupObj];
+                let next = filteredArray[i+1][groupObj];
+                if(curr !== next){
+                    add = false;
+                }
+                keyName += curr;
+            }
+            if(!map[keyName]){
+                if(mapArrObj.length > 0) mapArr.push(mapArrObj);
+                map[keyName] = new Array<any>();
+                map[keyName].push(filteredArray[i]);
+                mapArrObj = map[keyName];
+            }
+            if(add) {
+                map[keyName].push(filteredArray[i+1]);
+            }
+            keyName = "";
+            // add = true;
+            if(i + 2 === filteredArray.length && !add){
+                mapArr.push(mapArrObj);
+                for(var j = 0; j < transformationObj.group.length; j++){
+                    let groupObj = transformationObj.group[j];
+                    keyName += filteredArray[i+1][groupObj];
+                }
+                map[keyName] = new Array<any>();
+                map[keyName].push(filteredArray[i+1]);
+                mapArr.push(map[keyName]);
+            }
+            else if(i+2 === filteredArray.length){
+                mapArr.push(mapArrObj);
+            }
+        }
+        return mapArr;
+    }
+
+    initSort(filteredArray: Array<any>, transformationObj: any){
+        if(transformationObj.group) {
+            filteredArray.sort(function(a, b) {
+                for(var i =0;i<transformationObj.group.length;i++) {
+                    let one: any = a[transformationObj.group[i]];
+                    let two: any = b[transformationObj.group[i]];
+                    if (one < two){
+                        return -1;
+                    }
+                    if (one > two){
+                        return 1;
+                    }
+                }
+                return 0;
+            });
+        }
+    }
+
+    dirSort(filteredArray: Array<any>, optionObj: any){
+        if(optionObj.keys) {
+            filteredArray.sort(function(a, b) {
+                for(var i =0;i<optionObj.keys.length;i++) { //sort by first key, tie break with the second etc...
+                    let one: any = a[optionObj.keys[i]];
+                    let two: any = b[optionObj.keys[i]];
+                    if (one < two){
+                        return optionObj.dir === "DOWN" ? 1 : -1;
+                    }
+                    if (one > two){
+                        return optionObj.dir === "DOWN" ? -1 : 1;
+                    }
+                }
+                return 0;
+            });
+        }
+    }
+
+    noTransformSort(filteredArray: Array<any>, optionObj: any){
+        if(optionObj.keys) {
+            filteredArray.sort(function(a, b) {
+                if (a[optionObj.keys[0]] < b[optionObj.keys[0]]){
+                    return -1;
+                }
+                if (a[optionObj.keys[0]] > b[optionObj.keys[0]]){
+                    return 1;
+                }
+                return 0;
+            });
+        }
+    }
+
+    tranAction(applyArr: Array<any>, groupArray: Array<any>, map: any, optionObj: any): void {
+        if(applyArr === null){
+            for(var i = 0;i < map.length; i++){
+                let currGroup: Array<any> = map[i];
+                groupArray.push(currGroup[0]);
+            }
+            return;
+        }
+
+        for(var i = 0; i < map.length; i++) {
+            let currGroup: Array<any> = map[i];
+            let n: any = currGroup[0];
+            for (var ind = 0; ind < applyArr.length; ind++) {
+                let apply: any = applyArr[ind];
+                let res: number = -1;
+                if (apply.action === "MAX") {
+                    if(!typeof(currGroup[0][apply.key] === "number")){
+                        throw new Error("Transfrom Type Error");
+                    }
+                    if(currGroup.length == 1){
+                        res = currGroup[0][apply.key];
+                    }
+                    else{
+                        res = currGroup.map((val: any) => (val[apply.key])).reduce((a, b) => Math.max(a, b));
+                    }
+                }
+                if (apply.action === "MIN") {
+                    if(!typeof(currGroup[0][apply.key] === "number")){
+                        throw new Error("Transfrom Type Error");
+                    }
+                    if(currGroup.length == 1){
+                        res = currGroup[0][apply.key];
+                    }
+                    else{
+                        res = currGroup.map((val: any) => (val[apply.key])).reduce((a, b) => Math.min(a, b));
+                    }                }
+                if (apply.action === "AVG") {
+                    if(!typeof(currGroup[0][apply.key] === "number")){
+                        throw new Error("Transfrom Type Error");
+                    }
+                    if(currGroup.length == 1){
+                        res = currGroup[0][apply.key];
+                    }
+                    else{
+                        res = Number((currGroup.map((val: any) => <any>new Decimal(val[apply.key])).reduce((a, b) => a.plus(b)).toNumber() / currGroup.length).toFixed(2));
+                    }
+                }
+                if (apply.action === "COUNT") {
+                    res = 1;
+                    let count: number = 0;
+                    if(currGroup.length > 1){
+                        let tempGroup: Array<any> = currGroup.map((val: any) => (val[apply.key]));
+                        tempGroup.sort();
+                        for(var i = 0; i < tempGroup.length-1; i++){
+                            if(tempGroup[i] !== tempGroup[i+1]) count++;
+                        }
+                        res += count;
+                    }
+                }
+                if (apply.action === "SUM") {
+                    if(!typeof(currGroup[0][apply.key] === "number")){
+                        throw new Error("Transfrom Type Error");
+                    }
+                    if(currGroup.length == 1){
+                        res = currGroup[0][apply.key];
+                    }
+                    else{
+                        res = Number(currGroup.map((val: any) => new Decimal(val[apply.key])).reduce((a, b) => a.plus(b)).toNumber().toFixed(2));
+                    }
+                }
+                if (res === -1) {
+                    res = currGroup[0][apply.key];
+                }
+                n[apply.name] = res;
+            }
+            groupArray.push(n);
+        }
+    }
+
+    errorCheckApplyTokens(optionObj: any, transformationObj: any) {
+        for (var i = 0; i < optionObj.errorCatch.length; i++) {
+            let err = optionObj.errorCatch[i];
+            for (var j = 0; j < transformationObj.apply.length; j++) {
+                if (transformationObj.apply.name === err) {
+                    break;
+                }
+            }
+            throw new Error("No Apply Key match for Error Catch element");
+        }
+        let unique = new Set(optionObj.errorCatch);
+        if (unique.size < optionObj.length) {
+            throw new Error("Duplicate Apply Tokens - Col");
+        }
+        let uniqueTemp = [];
+        for (var i = 0; i < transformationObj.apply.length; i++) {
+            uniqueTemp.push(transformationObj.apply[i]);
+        }
+        unique = new Set(uniqueTemp);
+        if (unique.size < uniqueTemp.length) {
+            throw new Error("Duplicate Apply Tokens - Trans")
+        }
     }
 }
