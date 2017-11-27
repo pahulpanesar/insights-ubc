@@ -351,7 +351,7 @@ export default class InsightFacade implements IInsightFacade {
                 t.addKeys(query);
                 let dataSet: Array<any> = this.isRoomQuery(query) ? this.dataSets["rooms"] : this.dataSets["courses"];
                 filteredArray = this.fillFilter(t, filteredArray, query, dataSet);
-                let o: OptionNode = new OptionNode(t, dataSet[0], -1, transform);
+                let o: OptionNode = new OptionNode(t, dataSet[0], -1, null);
                 o.parse();
                 optionObj = o.evaluate();
                 let map: any = {};
@@ -367,7 +367,7 @@ export default class InsightFacade implements IInsightFacade {
                     // //error check keys
                     // this.errorCheckApplyTokens(optionObj, transformationObj);
                     // this.initSort(filteredArray, transformationObj);
-                    this.initSort(filteredArray, transform);
+                    //this.initSort(filteredArray, transform);
                     // let mapArr: Array<any> = this.createMap(map, transformationObj, filteredArray);
                     // if (transformationObj.apply.length == 0) {
                     //     this.tranAction(null, groupArray, mapArr, optionObj);
