@@ -619,7 +619,7 @@ export default class TestConstants {
                 "courses_id",
                 "courses_avg"
             ],
-            "ORDER": "courses_avg"
+            "courses_href": "courses_avg"
         }
     };
 

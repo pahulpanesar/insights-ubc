@@ -296,6 +296,7 @@ export default class InsightFacade implements IInsightFacade {
         }
         catch (err){
             console.log(value);
+            throw new Error();
         }
 
     }
@@ -366,6 +367,7 @@ export default class InsightFacade implements IInsightFacade {
                     // //error check keys
                     // this.errorCheckApplyTokens(optionObj, transformationObj);
                     // this.initSort(filteredArray, transformationObj);
+                    this.initSort(filteredArray, transform);
                     // let mapArr: Array<any> = this.createMap(map, transformationObj, filteredArray);
                     // if (transformationObj.apply.length == 0) {
                     //     this.tranAction(null, groupArray, mapArr, optionObj);

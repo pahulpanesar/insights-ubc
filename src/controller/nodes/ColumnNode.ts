@@ -23,7 +23,7 @@ export default class ColumnNode extends _Node{
             catch(e){
                 this.errorCatch.push(temp);
                 //this.options.push(temp); added later in OrderNode
-                console.log("error caught");
+                throw new Error("error caught");
             }
 
             this.options.push(key.evaluate());
