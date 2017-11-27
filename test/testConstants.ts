@@ -1458,7 +1458,24 @@ export default class TestConstants {
             "GROUP": ["rooms_furniture"],
             "APPLY": []
         }
-    }
+    };
+
+    SIMPLE_TRANSFORM_ERROR_QUERY: any = {
+        "WHERE": {},
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_furniture"
+            ],
+            "ORDER": "rooms_furniture"
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_furniture"],
+            "APPLY": [{
+                "maxSeats": {
+                    "MX": "rooms_seats"
+                }}]
+        }
+    };
 
     SIMPLE_TRANSFORM_RESPONSE_2 = {
         "result": [{
@@ -1518,42 +1535,42 @@ export default class TestConstants {
             ]
         }
     };
-    VAN_RESPONSE = {};
 
     TRANSFORM_UP = {
-    "WHERE": {
-        "AND": [{
-            "IS": {
-                "rooms_furniture": "*Tables*"
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 300
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "maxSeats"
+                ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["maxSeats"]
             }
-        }, {
-            "GT": {
-                "rooms_seats": 300
-            }
-        }]
-    },
-    "OPTIONS": {
-        "COLUMNS": [
-            "rooms_shortname",
-            "maxSeats"
-            ],
-        "ORDER": {
-            "dir": "DOWN",
-            "keys": ["maxSeats"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "maxSeats": {
+                    "MAX": "rooms_seats"
+                }
+            }]
         }
-    },
-    "TRANSFORMATIONS": {
-        "GROUP": ["rooms_shortname"],
-        "APPLY": [{
-            "maxSeats": {
-                "MAX": "rooms_seats"
-            }
-        }]
-    }
-};
+    };
 
     TRANSFORM_UP_RESPONSE = {"result":[{"rooms_shortname":"OSBO","maxSeats":442},{"rooms_shortname":"HEBB","maxSeats":375},{"rooms_shortname":"LSC","maxSeats":350}]};
 
+    VAN_RESPONSE = {};
 
 
 }

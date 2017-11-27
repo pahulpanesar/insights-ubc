@@ -61,23 +61,14 @@ export default class Server {
 
                 that.rest.use(restify.CORS());
 
-                // that.rest.get('/', function (req: restify.Request, res: restify.Response, next: restify.Next) {
-                //     res.send(200);
-                //     return next();
-                // });
+                that.rest.get('/', function (req: restify.Request, res: restify.Response, next: restify.Next) {
+                    res.send(200);
+                    return next();
+                });
                 // provides the echo service
                 // curl -is  http://localhost:4321/echo/myMessage
-                // that.rest.get('/echo/:msg', Server.echo);
+                that.rest.get('/echo/:msg', Server.echo);
                 // Other endpoints will go here
-                that.rest.get("/public/.*", restify.serveStatic({
-                    'directory': __dirname
-                }));
-
-                that.rest.get('/.*/', restify.serveStatic({
-                    'directory': __dirname + '/views/',
-                    'default': 'index.html'
-                }));
-
                 that.rest.put('/dataset/:id', Server.putDataset);
                 that.rest.del('/dataset/:id', Server.delDataset);
                 that.rest.post('/query', Server.postQuery);

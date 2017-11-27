@@ -47,12 +47,14 @@ describe("EchoSpec", function () {
         Log.test('After: ' + (<any>this).test.parent.title);
     });
 
-    afterEach(function () {
+    afterEach(function (){
         Log.test('AfterTest: ' + (<any>this).currentTest.title);
-        test.insightFace.removeDataset("courses").catch((err) => {
+
+        var p1 = test.insightFace.removeDataset("courses").catch((err) => {
         });
-        test.insightFace.removeDataset("rooms").catch((err) => {
+        var p2 = test.insightFace.removeDataset("rooms").catch((err) => {
         });
+        return Promise.all([p1, p2]);
     });
 
     it("Should be able to echo", function () {
@@ -300,15 +302,17 @@ describe("EchoSpec", function () {
     });
 
     it("PERFORMQUERY 200 - new proper dataset simple GT query", function () {
+        //tie breaker
         this.timeout(15000);
         return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
-            return test.insightFace.performQuery(test.SIMPLE_QUERY).then(function (val: InsightResponse) {
+            return test.insightFace.performQuery(test.SIMPLE_QUERY).then(function (val: any) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
-                expect(val.body).to.deep.equal(test.SIMPLE_QUERY_RESPONSE);
+                console.log(val.body.result);
+                expect(val.body.result.length).to.deep.equal(test.SIMPLE_QUERY_RESPONSE.result.length);
             }).catch(function (err) {
-                Log.test('Error: ' + err.body.error);
+                Log.test('Error: ' + err);
                 expect.fail();
             })
         }).catch(function (err) {
@@ -422,10 +426,10 @@ describe("EchoSpec", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
-            return test.insightFace.performQuery(test.BIG_QUERY).then(function (val: InsightResponse) {
+            return test.insightFace.performQuery(test.BIG_QUERY).then(function (val: any) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
-                expect(val.body).to.deep.equal(test.BIG_RESPONSE);
+                expect(val.body.result.length).to.deep.equal(test.BIG_RESPONSE.result.length);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();
@@ -476,10 +480,10 @@ describe("EchoSpec", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
-            return test.insightFace.performQuery(test.EXCALIBUR).then(function (val: InsightResponse) {
+            return test.insightFace.performQuery(test.EXCALIBUR).then(function (val: any) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
-                expect(val.body).to.deep.equal(test.EXCALIBUR_RESPONSE);
+                expect(val.body.result.length).to.deep.equal(test.EXCALIBUR_RESPONSE.result.length);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();
@@ -571,10 +575,10 @@ describe("EchoSpec", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
-            return test.insightFace.performQuery(test.SIMPLE_ROOM_QUERY_2).then(function (val: InsightResponse) {
+            return test.insightFace.performQuery(test.SIMPLE_ROOM_QUERY_2).then(function (val: any) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
-                expect(val.body).to.deep.equal(test.SIMPLE_ROOM_QUERY_2_RESPONSE);
+                expect(val.body.result.length).to.deep.equal(test.SIMPLE_ROOM_QUERY_2_RESPONSE.result.length);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();
@@ -722,10 +726,10 @@ describe("EchoSpec", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
-            return test.insightFace.performQuery(test.PLENTY_OF_SEATS).then(function (val: InsightResponse) {
+            return test.insightFace.performQuery(test.PLENTY_OF_SEATS).then(function (val: any) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
-                expect(val.body).to.deep.equal(test.PLENTY_OF_SEATS_RESPONSE);
+                expect(val.body.result.length).to.deep.equal(test.PLENTY_OF_SEATS_RESPONSE.result.length);
             }).catch(function (err) {
                 Log.test('Error: ' + err.toString());
                 expect.fail();
@@ -867,7 +871,7 @@ describe("EchoSpec", function () {
     });
 
 
-    it("PUT description", function () {
+    it("PUT+DEL description", function () {
         this.timeout(10000);
         chai.use(chaiHttp);
         let URL = "http://localhost:4321";
@@ -876,7 +880,19 @@ describe("EchoSpec", function () {
             .attach("body", fs.readFileSync(test.ROOMS_PATH), test.ROOMS_PATH)
             .then(function (res: any) {
                 Log.trace('then:');
-                expect(res.code).to.deep.equal(204);
+                expect(res.status).to.deep.equal(204);
+                return chai.request(URL)
+                    .del('/dataset/rooms')
+                    .attach("body", fs.readFileSync(test.ROOMS_PATH), test.ROOMS_PATH)
+                    .then(function (res: any) {
+                        Log.trace('then:');
+                        expect(res.status).to.deep.equal(204);
+                    })
+                    .catch(function (err) {
+                        Log.trace('catch:');
+                        // some assertions
+                        expect.fail();
+                    });
             })
             .catch(function (err) {
                 Log.trace('catch:');
@@ -885,39 +901,36 @@ describe("EchoSpec", function () {
             });
     });
 
-    it("DEL description", function () {
+    it("PUT+POST description", function () {
         this.timeout(10000);
         chai.use(chaiHttp);
         let URL = "http://localhost:4321";
         return chai.request(URL)
-            .del('/dataset/rooms')
+            .put('/dataset/rooms')
             .attach("body", fs.readFileSync(test.ROOMS_PATH), test.ROOMS_PATH)
             .then(function (res: any) {
                 Log.trace('then:');
-                expect(res.code).to.deep.equal(204);
+                Log.test(res.status);
+                expect(res.status).to.deep.equal(204);
+                return chai.request(URL)
+                    .post('/query')
+                    .send(test.SIMPLE_ROOM_QUERY)
+                    .then(function (res: any) {
+                        Log.trace('then:');
+                        Log.test(res.status)
+                        expect(res.status).to.deep.equal(200);
+                        // some assertions
+                    })
+                    .catch(function (err) {
+                        Log.trace('catch:');
+                        // some assertions
+                        Log.test(err)
+                        expect.fail();
+                    });
             })
             .catch(function (err) {
                 Log.trace('catch:');
-                // some assertions
-                expect.fail();
-            });
-    });
-
-
-    it("POST description", function () {
-        this.timeout(10000);
-        chai.use(chaiHttp);
-        let URL = "http://localhost:4321";
-        return chai.request(URL)
-            .post('/query')
-            .send(test.SIMPLE_ROOM_QUERY)
-            .then(function (res: any) {
-                Log.trace('then:');
-                expect(res.code).to.deep.equal(204);
-                // some assertions
-            })
-            .catch(function (err) {
-                Log.trace('catch:');
+                Log.test(err)
                 // some assertions
                 expect.fail();
             });
@@ -988,11 +1001,11 @@ describe("EchoSpec", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
             Log.test('Value: ' + value.code);
-            return test.insightFace.performQuery(test.BIGGEST_QUERY).then(function (val: InsightResponse) {
+            return test.insightFace.performQuery(test.BIGGEST_QUERY).then(function (val: any) {
                 Log.test('Value' + val.code);
                 //console.log(val.body);
                 expect(val.code).to.deep.equal(200);
-                expect(val.body).to.deep.equal(test.BIGGEST_RESPONSE);
+                expect(val.body.result.length).to.deep.equal(test.BIGGEST_RESPONSE.result.length);
             }).catch(function (err) {
                 Log.test('Error: ' + err.body.error);
                 expect.fail();
@@ -1245,6 +1258,22 @@ describe("EchoSpec", function () {
         })
     });
 
+    it("PERFORMQUERY 400 - bad apply", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.SIMPLE_TRANSFORM_ERROR_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect.fail();
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect(err.code).to.deep.equal(400);
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
 
 
 });
