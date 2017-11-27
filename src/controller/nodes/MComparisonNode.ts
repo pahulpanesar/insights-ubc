@@ -9,6 +9,7 @@ export default class MComparisonNode extends _Node{
     m_key: MKeyNode = new MKeyNode(this.tokenizer,this.dataStruct,this.count);
     comparator: string;
 
+
     constructor(t: Tokenizer,c: any,count:number){
         super(t,c,count);
     }
