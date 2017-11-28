@@ -1055,6 +1055,41 @@ describe("EchoSpec", function () {
         })
     });
 
+    it("PERFORMQUERY 400 - underscore ", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.UNDERSCORE_ERROR).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect.fail();
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect(err.code).to.deep.equal(400);
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 400 - empty group ", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.EMPTY_GROUP_ERROR).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect.fail();
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect(err.code).to.deep.equal(400);
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+            expect.fail();
+        })
+    });
+
+
     it("PERFORMQUERY 400 - duplicate key 2", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
