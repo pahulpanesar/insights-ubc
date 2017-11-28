@@ -357,7 +357,7 @@ export default class InsightFacade implements IInsightFacade {
                     this.dirSort(groupArray, optionObj);
                 }
                 else {
-                    // this.validateTransform(query);
+                    this.validateTransform(query);
                     let group: any = transform["GROUP"];
                     let apply: any = transform["APPLY"];
                     //error check keys
@@ -378,6 +378,39 @@ export default class InsightFacade implements IInsightFacade {
                 reject({code: 400, body: {"error": "invalid query"}});
             }
         });
+    }
+
+    validateTransform(query: any): void {
+        let transform: any = query["TRANSFORMATIONS"];
+        let group: any = transform["GROUP"];
+        let apply: any = transform["APPLY"];
+        let options: any = query["OPTIONS"];
+        let columns: Array<any> = options["COLUMNS"];
+        let order: any = options["ORDER"];
+        if(group ^ apply) throw new Error("group and apply w/o eacother");
+        if(this.underscores(apply)) throw new Error("apply contains underscore");
+        if(this.validTokens(apply)) throw new Error("apply contains underscore");
+        if(!(group.length === new Set(group).size)) throw new Error("group contains duplicates");
+        if(group.length === 0) throw new Error("group contains nothing");
+
+    }
+
+    validTokens(apply: any): boolean {
+        for(var i = 0; i < apply.length; i++){
+            let applyObject: any = apply[i];
+            var token = applyObject[Object.keys(applyObject)[0]][0];
+            if(!token.match("MAX|MIN|COUNT|SUM|AVG")) return true;
+            return false;
+        }
+    }
+
+    underscores(apply: any): boolean {
+        for(var i = 0; i < apply.length; i++){
+            let applyObject: any = apply[i];
+            var name = Object.keys(applyObject)[0];
+            if(name.indexOf("_") !== -1) return true;
+            return false;
+        }
     }
 
     isRoomQuery(query: any): boolean{
@@ -458,9 +491,6 @@ export default class InsightFacade implements IInsightFacade {
         var mapArr = new Array<any>();
         var mapArrObj = new Array<any>();
         for(var i = 0; i < filteredArray.length-1; i++){
-            if(filteredArray[i].courses_instructor === "lyon, katherine"){
-                add = true;
-            }
             var add = true;
             for(var j = 0; j < group.length; j++){
                 let groupObj = group[j];
