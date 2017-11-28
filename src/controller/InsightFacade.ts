@@ -364,7 +364,7 @@ export default class InsightFacade implements IInsightFacade {
                     trans.parse();
                     transformationObj = trans.evaluate();
                     //error check keys
-                   // this.errorCheckApplyTokens(optionObj, transformationObj);
+                    this.errorCheckApplyTokens(optionObj, transformationObj);
                     this.initSort(filteredArray, transformationObj);
                     let mapArr: Array<any> = this.createMap(map, transformationObj, filteredArray);
                     if (transformationObj.apply.length == 0) {
@@ -650,26 +650,15 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     errorCheckApplyTokens(optionObj: any, transformationObj: any) {
-        for (var i = 0; i < optionObj.errorCatch.length; i++) {
-            let err = optionObj.errorCatch[i];
-            for (var j = 0; j < transformationObj.apply.length; j++) {
-                if (transformationObj.apply.name === err) {
-                    break;
-                }
-            }
-            throw new Error("No Apply Key match for Error Catch element");
-        }
-        let unique = new Set(optionObj.errorCatch);
-        if (unique.size < optionObj.length) {
-            throw new Error("Duplicate Apply Tokens - Col");
-        }
-        let uniqueTemp = [];
-        for (var i = 0; i < transformationObj.apply.length; i++) {
-            uniqueTemp.push(transformationObj.apply[i]);
-        }
-        unique = new Set(uniqueTemp);
-        if (unique.size < uniqueTemp.length) {
-            throw new Error("Duplicate Apply Tokens - Trans")
-        }
+        var temp: string[] = [];
+       for(var i = 0;i<transformationObj.apply.length;i++){
+           var s = transformationObj.apply[i].name;
+           if(temp.includes(s)){
+               throw new Error("duplicate key");
+           }
+           else{
+               temp.push(transformationObj.apply.name);
+           }
+       }
     }
 }

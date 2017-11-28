@@ -1114,6 +1114,25 @@ describe("EchoSpec", function () {
         })
     });
 
+    it("PERFORMQUERY 200 - d3 lat lon", function () {
+        this.timeout(1500000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.D3_LAT_LON_QUERY).then(function (val: any) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.D3_LAT_LON_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
     it("PERFORMQUERY 200 - transform up", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
