@@ -355,16 +355,15 @@ export default class InsightFacade implements IInsightFacade {
                 optionObj = o.evaluate();
                 let map: any = {};
                 let groupArray: Array<any> = [];
-                if(query["TRANSFORMATIONS"]["GROUP"]){
-                    if(query["GROUP"].length < 1) {
-                        throw new Error("NO GROUP");
-                    }
-                }
                 if (!transform) {
                     this.noTransformSort(filteredArray, optionObj);
                     groupArray = this.createNoTransform(filteredArray, optionObj);
                 }
                 else {
+
+                    if(query["TRANSFORMATIONS"]["GROUP"].length < 1) {
+                        throw new Error("NO GROUP");
+                    }
                     let trans = new TransformationNode(t, {"errorCatch": optionObj.errorCatch}, -1);
                     trans.parse();
                     transformationObj = trans.evaluate();
