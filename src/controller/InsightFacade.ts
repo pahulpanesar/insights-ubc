@@ -657,7 +657,17 @@ export default class InsightFacade implements IInsightFacade {
                throw new Error("duplicate key");
            }
            else{
-               temp.push(transformationObj.apply.name);
+               temp.push(s);
+           }
+       }
+       temp = [];
+       for(var i = 0;i<optionObj.columns.options.length;i++){
+           var s = optionObj.columns.options[i];
+           if(temp.includes(s)){
+               throw new Error("duplicate key");
+           }
+           else{
+               temp.push(s);
            }
        }
     }
