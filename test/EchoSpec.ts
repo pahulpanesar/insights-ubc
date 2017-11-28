@@ -901,40 +901,40 @@ describe("EchoSpec", function () {
             });
     });
 
-    it("PUT+POST description", function () {
-        this.timeout(10000);
-        chai.use(chaiHttp);
-        let URL = "http://localhost:4321";
-        return chai.request(URL)
-            .put('/dataset/rooms')
-            .attach("body", fs.readFileSync(test.ROOMS_PATH), test.ROOMS_PATH)
-            .then(function (res: any) {
-                Log.trace('then:');
-                Log.test(res.status);
-                expect(res.status).to.deep.equal(204);
-                return chai.request(URL)
-                    .post('/query')
-                    .send(test.SIMPLE_ROOM_QUERY)
-                    .then(function (res: any) {
-                        Log.trace('then:');
-                        Log.test(res.status)
-                        expect(res.status).to.deep.equal(200);
-                        // some assertions
-                    })
-                    .catch(function (err) {
-                        Log.trace('catch:');
-                        // some assertions
-                        Log.test(err)
-                        expect.fail();
-                    });
-            })
-            .catch(function (err) {
-                Log.trace('catch:');
-                Log.test(err)
-                // some assertions
-                expect.fail();
-            });
-    });
+    // it("PUT+POST description", function () {
+    //     this.timeout(10000);
+    //     chai.use(chaiHttp);
+    //     let URL = "http://localhost:4321";
+    //     return chai.request(URL)
+    //         .put('/dataset/rooms')
+    //         .attach("body", fs.readFileSync(test.ROOMS_PATH), test.ROOMS_PATH)
+    //         .then(function (res: any) {
+    //             Log.trace('then:');
+    //             Log.test(res.status);
+    //             expect(res.status).to.deep.equal(204);
+    //             return chai.request(URL)
+    //                 .post('/query')
+    //                 .send(test.SIMPLE_ROOM_QUERY)
+    //                 .then(function (res: any) {
+    //                     Log.trace('then:');
+    //                     Log.test(res.status)
+    //                     expect(res.status).to.deep.equal(200);
+    //                     // some assertions
+    //                 })
+    //                 .catch(function (err) {
+    //                     Log.trace('catch:');
+    //                     // some assertions
+    //                     Log.test(err)
+    //                     expect.fail();
+    //                 });
+    //         })
+    //         .catch(function (err) {
+    //             Log.trace('catch:');
+    //             Log.test(err)
+    //             // some assertions
+    //             expect.fail();
+    //         });
+    // });
 
     it("ADDDATASET 400 - empty dataset overwrite", function () {
         this.timeout(5000);
