@@ -13,7 +13,7 @@ export default class GroupNode extends _Node{
     }
     parse(){
         this.getAndCheckToken("GROUP",true);
-        while(this.tokenizer.getNext(false) != "APPLY" && this.tokenizer.getNext(false) !== "NO_MORE_TOKENS"){
+        while(this.tokenizer.getNext(false) != "APPLY" && this.tokenizer.getNext(false) != "NO_MORE_TOKENS"){
             var key: KeyNode = new KeyNode(this.tokenizer,this.dataStruct,this.count);
             key.parse(this.dataStruct.errorCatch, null);
             this.keys.push(key.evaluate());

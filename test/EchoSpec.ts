@@ -1095,6 +1095,25 @@ describe("EchoSpec", function () {
         })
     });
 
+    it("PERFORMQUERY 200 - small van", function () {
+        this.timeout(1500000);
+        return test.insightFace.addDataset("courses", test.dataStringCourses).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.SMALL_VAN).then(function (val: any) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.SMALL_VAN_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
     it("PERFORMQUERY 200 - transform up", function () {
         this.timeout(15000);
         return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
@@ -1121,7 +1140,7 @@ describe("EchoSpec", function () {
             return test.insightFace.performQuery(test.NO_ORDER_QUERY).then(function (val: InsightResponse) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
-                expect(val.body).to.deep.equal(test.NO_ORDER_RESPONSE);
+               // expect(val.body).to.deep.equal(test.NO_ORDER_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err.body.error);
                 expect.fail();
@@ -1132,6 +1151,28 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+
+
+
+    it("PERFORMQUERY 200 - no apply ", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.NO_APPLY_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.NO_APPLY_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
 
 
 
@@ -1207,6 +1248,65 @@ describe("EchoSpec", function () {
             expect.fail();
         })
     });
+
+    it("PERFORMQUERY 400 - apply key mismatch error", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.APPLY_KEY_ERROR).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect(err.code).to.equal(400);
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
+
+
+
+    it("PERFORMQUERY 200 - MIN", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.MIN_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.MIN_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
+    it("PERFORMQUERY 200 - TIN", function () {
+        this.timeout(15000);
+        return test.insightFace.addDataset("rooms", test.dataStringRooms).then(function (value: InsightResponse) {
+            Log.test('Value: ' + value.code);
+            return test.insightFace.performQuery(test.TIN_QUERY).then(function (val: InsightResponse) {
+                Log.test('Value' + val.code);
+                expect(val.code).to.deep.equal(200);
+                expect(val.body).to.deep.equal(test.TIN_RESPONSE);
+            }).catch(function (err) {
+                Log.test('Error: ' + err.body.error);
+                expect.fail();
+            })
+        }).catch(function (err) {
+            Log.test('Error: ' + err);
+
+            expect.fail();
+        })
+    });
+
 
     it("PERFORMQUERY 200 - simple count", function () {
         this.timeout(15000);
