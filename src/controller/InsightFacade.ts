@@ -364,7 +364,7 @@ export default class InsightFacade implements IInsightFacade {
                     trans.parse();
                     transformationObj = trans.evaluate();
                     //error check keys
-                    this.errorCheckApplyTokens(optionObj, transformationObj);
+                   // this.errorCheckApplyTokens(optionObj, transformationObj);
                     this.initSort(filteredArray, transformationObj);
                     let mapArr: Array<any> = this.createMap(map, transformationObj, filteredArray);
                     if (transformationObj.apply.length == 0) {

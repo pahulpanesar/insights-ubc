@@ -18,14 +18,14 @@ export default class ColumnNode extends _Node{
         while(tok !== "ORDER" && tok !== "NO_MORE_TOKENS" && tok !== "TRANSFORMATIONS" ){
             var key: KeyNode = new KeyNode(this.tokenizer,this.dataStruct,this.count);
             var temp = this.tokenizer.getNext(false);
-            try{
+            //try{
                 key.parse([], t); //error catch is generated in Columns, therefore an empty array is passed
-            }
-            catch(e){
-                this.errorCatch.push(temp);
-                //this.options.push(temp); added later in OrderNode
-                console.log("error caught");
-            }
+            //}
+            // catch(e){
+            //     this.errorCatch.push(temp);
+            //     //this.options.push(temp); added later in OrderNode
+            //     console.log("error caught");
+            // }
 
             this.options.push(key.evaluate());
             tok = this.tokenizer.getNext(false);

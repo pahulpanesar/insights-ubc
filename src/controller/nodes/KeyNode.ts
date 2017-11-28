@@ -28,12 +28,12 @@ export default class KeyNode extends _Node{
             }
             this.regex += ")";
         }
-        if(err.length > 0) {
-            for (var i =0;i<err.length;i++) {
-                this.regex +=  "|" + err[i];
-            }
-
-        }
+        // if(err.length > 0) {
+        //     for (var i =0;i<err.length;i++) {
+        //         this.regex +=  "|" + err[i];
+        //     }
+        //
+        // }
         var s = this.getAndCheckToken(this.regex,true);
         this.key = s;
     }
