@@ -9,10 +9,6 @@ import {error} from "util";
 
 export default class FilterNode extends _Node{
     filter: any;
-
-    //count: number = -1;
-
-
     constructor(t: Tokenizer,c: any,count:number){
         super(t,c,count);
     }

@@ -7,7 +7,6 @@ export default class _Node{ //underscore is to distinguish from native TS class
     tokenizer : Tokenizer;
     dataStruct: any;
     count: number;
-
     //courseObj : Course = new Course();
 
     constructor (t: Tokenizer,c:any, count:number){

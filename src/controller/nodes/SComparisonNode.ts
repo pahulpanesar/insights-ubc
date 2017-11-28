@@ -9,7 +9,6 @@ export default class SComparisonNode extends _Node{
     s_key: SKeyNode = new SKeyNode(this.tokenizer,this.dataStruct,this.count);
 
 
-
     constructor(t: Tokenizer,c: any,count:number){
         super(t,c,count);
     }

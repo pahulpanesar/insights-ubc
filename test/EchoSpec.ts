@@ -150,57 +150,57 @@ describe("EchoSpec", function () {
         })
     });
 
-
-    it("Option object receiving correct columns - SIMPLE", function () {
-        test.t.addKeys((JSON.parse(test.testJSONSimple)));
-        var q:Query = new Query(test.t,null,-1);
-        q.parseFilter();
-        var o:OptionNode = new OptionNode(test.t,null,-1,null);
-        o.parse();
-        var optionObj = o.evaluate();
-        //console.log(optionObj);
-        return (optionObj.columns.options[0] === "course_dept") && (optionObj.columns.options[1] === "courses_avg");
-    });
-
-    it("Option object receiving correct order - SIMPLE", function () {
-        test.t.addKeys(test.SIMPLE_QUERY);
-        var q:Query = new Query(test.t,null,-1);
-        q.parseFilter();
-        var o:OptionNode = new OptionNode(test.t,null,-1,null);
-        o.parse();
-        var optionObj = o.evaluate();
-        //console.log(optionObj);
-        return (optionObj.keys[0] === "courses_avg");
-    });
-
-    it("Option object receiving correct order - COMPLEX", function () {
-        test.t.addKeys(test.COMPLEX_QUERY);
-        var q:Query = new Query(test.t,null,-1);
-        q.parseFilter();
-        var o:OptionNode =  new OptionNode(test.t,null,-1,null);
-        o.parse();
-        var optionObj = o.evaluate();
-        //console.log(optionObj);
-        return (optionObj.keys[0] === "courses_avg");
-    });
-
-    it("Option object receiving correct columns - COMPLEX", function () {
-        test.t.addKeys(test.COMPLEX_QUERY);
-        var q:Query = new Query(test.t,null,-1);
-        q.parseFilter();
-        var o:OptionNode =  new OptionNode(test.t,null,-1,null);
-        o.parse();
-        var optionObj = o.evaluate();
-        //console.log(optionObj);
-        return (optionObj.columns.options[0] === "course_dept") && (optionObj.columns.options[1] === "courses_id") && (optionObj.columns.options[2] === "courses_avg");
-    });
+    //
+    // it("Option object receiving correct columns - SIMPLE", function () {
+    //     test.t.addKeys((JSON.parse(test.testJSONSimple)));
+    //     var q:Query = new Query(test.t,null,-1);
+    //     q.parseFilter();
+    //     var o:OptionNode = new OptionNode(test.t,null,-1);
+    //     o.parse();
+    //     var optionObj = o.evaluate();
+    //     //console.log(optionObj);
+    //     return (optionObj.columns.options[0] === "course_dept") && (optionObj.columns.options[1] === "courses_avg");
+    // });
+    //
+    // it("Option object receiving correct order - SIMPLE", function () {
+    //     test.t.addKeys(test.SIMPLE_QUERY);
+    //     var q:Query = new Query(test.t,null,-1);
+    //     q.parseFilter();
+    //     var o:OptionNode = new OptionNode(test.t,null,-1);
+    //     o.parse();
+    //     var optionObj = o.evaluate();
+    //     //console.log(optionObj);
+    //     return (optionObj.keys[0] === "courses_avg");
+    // });
+    //
+    // it("Option object receiving correct order - COMPLEX", function () {
+    //     test.t.addKeys(test.COMPLEX_QUERY);
+    //     var q:Query = new Query(test.t,null,-1);
+    //     q.parseFilter();
+    //     var o:OptionNode =  new OptionNode(test.t,null,-1);
+    //     o.parse();
+    //     var optionObj = o.evaluate();
+    //     //console.log(optionObj);
+    //     return (optionObj.keys[0] === "courses_avg");
+    // });
+    //
+    // it("Option object receiving correct columns - COMPLEX", function () {
+    //     test.t.addKeys(test.COMPLEX_QUERY);
+    //     var q:Query = new Query(test.t,null,-1);
+    //     q.parseFilter();
+    //     var o:OptionNode =  new OptionNode(test.t,null,-1);
+    //     o.parse();
+    //     var optionObj = o.evaluate();
+    //     //console.log(optionObj);
+    //     return (optionObj.columns.options[0] === "course_dept") && (optionObj.columns.options[1] === "courses_id") && (optionObj.columns.options[2] === "courses_avg");
+    // });
 
     it("Reject bad Order", function () {
         try {
             test. t.addKeys((JSON.parse(test.testJSONComplex)));
             var q: Query = new Query(test.t, null, -1);
             q.parseFilter();
-            var o: OptionNode =  new OptionNode(test.t,null,-1,null);
+            var o: OptionNode =  new OptionNode(test.t,null,-1, null);
             o.parse();
             var optionObj = o.evaluate();
             //console.log(optionObj);
@@ -1096,7 +1096,7 @@ describe("EchoSpec", function () {
             return test.insightFace.performQuery(test.VAN).then(function (val: any) {
                 Log.test('Value' + val.code);
                 expect(val.code).to.deep.equal(200);
-                expect(val.body).to.deep.equal(test.VAN_RESPONSE);
+                expect(val.body.result.length).to.deep.equal(test.VAN_RESPONSE);
             }).catch(function (err) {
                 Log.test('Error: ' + err);
                 expect.fail();
@@ -1174,7 +1174,7 @@ describe("EchoSpec", function () {
                 expect(val.code).to.deep.equal(200);
                 expect(val.body).to.deep.equal(test.NO_TRANSFORM_RESPONSE);
             }).catch(function (err) {
-                Log.test('Error: ' + 'err.body.error');
+                Log.test('Error: ' + err);
                 expect.fail();
             })
         }).catch(function (err) {

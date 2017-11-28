@@ -5,12 +5,18 @@ export default class Tokenizer{
 
     tokens: any[] = [];
     index:number = 0;
+    i:number = 0;
     logicIndexArray: Array<number> = [];
     logicIndex = 0;
+    query: any;
     constructor() {
     }
 
     addKeys(json: any){
+        if(this.i == 0) {
+            this.query = json;
+        }
+        this.i++;
         Object.keys(json).forEach((elem) => {
             // console.log(elem);
             //console.log(Object.keys(elem));
@@ -61,7 +67,3 @@ export default class Tokenizer{
 
 
 }
-
-var testJSON = '{ "WHERE":{ "GT":{ "courses_avg":97 } }, "OPTIONS":{ "COLUMNS":[ "courses_dept", "courses_avg" ], "ORDER":"courses_avg" } }';
-var t = new Tokenizer();
-t.addKeys(testJSON);

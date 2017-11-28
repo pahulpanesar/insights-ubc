@@ -6,8 +6,6 @@ import Course from "../../dataStructs/Course";
 export class LogicNode extends _Node{
     filterNodes: Array<FilterNode> = [];
     logic: string = "";
-
-
     constructor(t: Tokenizer,c: any,count:number){
         super(t,c,count);
     }

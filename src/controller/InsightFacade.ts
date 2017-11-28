@@ -9,8 +9,6 @@ import Tokenizer from "../dataStructs/Tokenizer";
 import Query from "../dataStructs/Query";
 import OptionNode from "./nodes/OptionNode";
 import Room from "../dataStructs/Room";
-import GroupNode from "./nodes/GroupNode";
-import TransformationNode from "./nodes/TransformationNode";
 let http = require("http");
 let fs = require('fs');
 let parse5 =  require('parse5');
@@ -344,39 +342,36 @@ export default class InsightFacade implements IInsightFacade {
                 }
                 var filteredArray: Array<any> = [];
                 var optionObj: any = {};
-                let transform: any = query["TRANSFORMATIONS"];
-                var transformationObj: any = {};
                 var t: Tokenizer = new Tokenizer();
                 t.addKeys(query);
                 let dataSet: Array<any> = this.isRoomQuery(query) ? this.dataSets["rooms"] : this.dataSets["courses"];
                 filteredArray = this.fillFilter(t, filteredArray, query, dataSet);
+                let map: any = {};
+                let groupArray: Array<any> = [];
+                let transform: any = query["TRANSFORMATIONS"];
                 let o: OptionNode = new OptionNode(t, dataSet[0], -1, transform);
                 o.parse();
                 optionObj = o.evaluate();
-                let map: any = {};
-                let groupArray: Array<any> = [];
                 if (!transform) {
-                    this.noTransformSort(filteredArray, optionObj);
-                    groupArray = this.createNoTransform(filteredArray, optionObj);
+                    groupArray = this.createTransform(filteredArray, optionObj);
+                    this.dirSort(groupArray, optionObj);
                 }
                 else {
-                    let trans = new TransformationNode(t, {"errorCatch": optionObj.errorCatch}, -1);
-                    trans.parse();
-                    transformationObj = trans.evaluate();
+                    // this.validateTransform(query);
+                    let group: any = transform["GROUP"];
+                    let apply: any = transform["APPLY"];
                     //error check keys
-                    this.errorCheckApplyTokens(optionObj, transformationObj);
-                    this.initSort(filteredArray, transformationObj);
-                    let mapArr: Array<any> = this.createMap(map, transformationObj, filteredArray);
-                    if (transformationObj.apply.length == 0) {
-                        this.tranAction(null, groupArray, mapArr, optionObj);
+                    this.initSort(filteredArray, group);
+                    let mapArr: Array<any> = this.createMap(map, group, filteredArray);
+                    if (apply.length == 0) {
+                        this.tranAction(null, groupArray, mapArr);
                     }
                     else {
-                        this.tranAction(transformationObj.apply, groupArray, mapArr, optionObj);
+                        this.tranAction(apply, groupArray, mapArr);
                     }
-                    groupArray = this.createTransform(groupArray, optionObj, transformationObj);
-
+                    groupArray = this.createTransform(groupArray, optionObj);
+                    this.dirSort(groupArray, optionObj);
                 }
-                this.dirSort(groupArray, optionObj);
                 fulfill({code: 200, body: {"result": groupArray}});
             }
             catch (err){
@@ -448,31 +443,17 @@ export default class InsightFacade implements IInsightFacade {
         return filteredArray;
     }
 
-    createTransform(groupArray: Array<any>, optionObj: any, transformationObj: any): Array<any>{
+    createTransform(groupArray: Array<any>, optionObj: any): Array<any>{
         return groupArray.map((struct) => {
             let contain: any = {};
-            let tKey: boolean = false;
-            optionObj["columns"].options.forEach((column: any) => {
+            optionObj["columns"].forEach((column: any) => {
                 contain[column] = struct[column];
             });
             return contain;
         });
     }
 
-    createNoTransform(filteredArray: Array<any>, optionObj: any): Array<any>{
-        return filteredArray.map((struct) => {
-            let contain: any = {};
-            let tKey: boolean = false;
-            optionObj["columns"].options.forEach((column: any) => {
-                if (!tKey) {
-                    contain[column] = struct[column];
-                }
-            });
-            return contain;
-        });
-    }
-
-    createMap(map: any, transformationObj: any, filteredArray: Array<any>): Array<any> {
+    createMap(map: any, group: Array<any>, filteredArray: Array<any>): Array<any> {
         var keyName = "";
         var mapArr = new Array<any>();
         var mapArrObj = new Array<any>();
@@ -481,8 +462,8 @@ export default class InsightFacade implements IInsightFacade {
                 add = true;
             }
             var add = true;
-            for(var j = 0; j < transformationObj.group.length; j++){
-                let groupObj = transformationObj.group[j];
+            for(var j = 0; j < group.length; j++){
+                let groupObj = group[j];
                 let curr = filteredArray[i][groupObj];
                 let next = filteredArray[i+1][groupObj];
                 if(curr !== next){
@@ -503,8 +484,8 @@ export default class InsightFacade implements IInsightFacade {
             // add = true;
             if(i + 2 === filteredArray.length && !add){
                 mapArr.push(mapArrObj);
-                for(var j = 0; j < transformationObj.group.length; j++){
-                    let groupObj = transformationObj.group[j];
+                for(var j = 0; j < group.length; j++){
+                    let groupObj = group[j];
                     keyName += filteredArray[i+1][groupObj];
                 }
                 map[keyName] = new Array<any>();
@@ -518,49 +499,44 @@ export default class InsightFacade implements IInsightFacade {
         return mapArr;
     }
 
-    initSort(filteredArray: Array<any>, transformationObj: any){
-        if(transformationObj.group) {
-            filteredArray.sort(function(a, b) {
-                for(var i =0;i<transformationObj.group.length;i++) {
-                    let one: any = a[transformationObj.group[i]];
-                    let two: any = b[transformationObj.group[i]];
-                    if (one < two){
-                        return -1;
-                    }
-                    if (one > two){
-                        return 1;
-                    }
+    initSort(filteredArray: Array<any>, group: Array<any>){
+        filteredArray.sort(function(a, b) {
+            for(var i =0;i<group.length;i++) {
+                let one: any = a[group[i]];
+                let two: any = b[group[i]];
+                if (one < two){
+                    return -1;
                 }
-                return 0;
-            });
-        }
+                if (one > two){
+                    return 1;
+                }
+            }
+            return 0;
+        });
     }
 
     dirSort(filteredArray: Array<any>, optionObj: any){
-        if(optionObj.keys) {
+        if(optionObj.order && Array.isArray(optionObj.order)){
             filteredArray.sort(function(a, b) {
-                for(var i =0;i<optionObj.keys.length;i++) { //sort by first key, tie break with the second etc...
-                    let one: any = a[optionObj.keys[i]];
-                    let two: any = b[optionObj.keys[i]];
+                for(var i =0;i<optionObj.order.length-1;i++) { //sort by first key, tie break with the second etc...
+                    let one: any = a[optionObj.order[i]];
+                    let two: any = b[optionObj.order[i]];
                     if (one < two){
-                        return optionObj.dir === "DOWN" ? 1 : -1;
+                        return optionObj.order[optionObj.order.length-1] === "DOWN" ? 1 : -1;
                     }
                     if (one > two){
-                        return optionObj.dir === "DOWN" ? -1 : 1;
+                        return optionObj.order[optionObj.order.length-1] === "DOWN" ? -1 : 1;
                     }
                 }
                 return 0;
             });
         }
-    }
-
-    noTransformSort(filteredArray: Array<any>, optionObj: any){
-        if(optionObj.keys) {
+        else {
             filteredArray.sort(function(a, b) {
-                if (a[optionObj.keys[0]] < b[optionObj.keys[0]]){
+                if (a[optionObj.order] < b[optionObj.order]){
                     return -1;
                 }
-                if (a[optionObj.keys[0]] > b[optionObj.keys[0]]){
+                if (a[optionObj.order] > b[optionObj.order]){
                     return 1;
                 }
                 return 0;
@@ -568,7 +544,7 @@ export default class InsightFacade implements IInsightFacade {
         }
     }
 
-    tranAction(applyArr: Array<any>, groupArray: Array<any>, map: any, optionObj: any): void {
+    tranAction(applyArr: Array<any>, groupArray: Array<any>, map: any): void {
         if(applyArr === null){
             for(var i = 0;i < map.length; i++){
                 let currGroup: Array<any> = map[i];
@@ -582,44 +558,48 @@ export default class InsightFacade implements IInsightFacade {
             let n: any = currGroup[0];
             for (var ind = 0; ind < applyArr.length; ind++) {
                 let apply: any = applyArr[ind];
+                let applyName: any = Object.keys(apply)[0];
+                apply = apply[Object.keys(apply)[0]];
+                let applyToken: string = Object.keys(apply)[0];
+                let applyKey: string = apply[Object.keys(apply)[0]];
                 let res: number = -1;
-                if (apply.action === "MAX") {
-                    if(!typeof(currGroup[0][apply.key] === "number")){
+                if (applyToken === "MAX") {
+                    if(!typeof(currGroup[0][applyKey] === "number")){
                         throw new Error("Transfrom Type Error");
                     }
                     if(currGroup.length == 1){
-                        res = currGroup[0][apply.key];
+                        res = currGroup[0][applyKey];
                     }
                     else{
-                        res = currGroup.map((val: any) => (val[apply.key])).reduce((a, b) => Math.max(a, b));
+                        res = currGroup.map((val: any) => (val[applyKey])).reduce((a, b) => Math.max(a, b));
                     }
                 }
-                if (apply.action === "MIN") {
-                    if(!typeof(currGroup[0][apply.key] === "number")){
+                if (applyToken === "MIN") {
+                    if(!typeof(currGroup[0][applyKey] === "number")){
                         throw new Error("Transfrom Type Error");
                     }
                     if(currGroup.length == 1){
-                        res = currGroup[0][apply.key];
+                        res = currGroup[0][applyKey];
                     }
                     else{
-                        res = currGroup.map((val: any) => (val[apply.key])).reduce((a, b) => Math.min(a, b));
+                        res = currGroup.map((val: any) => (val[applyKey])).reduce((a, b) => Math.min(a, b));
                     }                }
-                if (apply.action === "AVG") {
-                    if(!typeof(currGroup[0][apply.key] === "number")){
+                if (applyToken === "AVG") {
+                    if(!typeof(currGroup[0][applyKey] === "number")){
                         throw new Error("Transfrom Type Error");
                     }
                     if(currGroup.length == 1){
-                        res = currGroup[0][apply.key];
+                        res = currGroup[0][applyKey];
                     }
                     else{
-                        res = Number((currGroup.map((val: any) => <any>new Decimal(val[apply.key])).reduce((a, b) => a.plus(b)).toNumber() / currGroup.length).toFixed(2));
+                        res = Number((currGroup.map((val: any) => <any>new Decimal(val[applyKey])).reduce((a, b) => a.plus(b)).toNumber() / currGroup.length).toFixed(2));
                     }
                 }
-                if (apply.action === "COUNT") {
+                if (applyToken === "COUNT") {
                     res = 1;
                     let count: number = 0;
                     if(currGroup.length > 1){
-                        let tempGroup: Array<any> = currGroup.map((val: any) => (val[apply.key]));
+                        let tempGroup: Array<any> = currGroup.map((val: any) => (val[applyKey]));
                         tempGroup.sort();
                         for(var i = 0; i < tempGroup.length-1; i++){
                             if(tempGroup[i] !== tempGroup[i+1]) count++;
@@ -627,47 +607,47 @@ export default class InsightFacade implements IInsightFacade {
                         res += count;
                     }
                 }
-                if (apply.action === "SUM") {
-                    if(!typeof(currGroup[0][apply.key] === "number")){
+                if (applyToken === "SUM") {
+                    if(!typeof(currGroup[0][applyKey] === "number")){
                         throw new Error("Transfrom Type Error");
                     }
                     if(currGroup.length == 1){
-                        res = currGroup[0][apply.key];
+                        res = currGroup[0][applyKey];
                     }
                     else{
-                        res = Number(currGroup.map((val: any) => new Decimal(val[apply.key])).reduce((a, b) => a.plus(b)).toNumber().toFixed(2));
+                        res = Number(currGroup.map((val: any) => new Decimal(val[applyKey])).reduce((a, b) => a.plus(b)).toNumber().toFixed(2));
                     }
                 }
                 if (res === -1) {
-                    res = currGroup[0][apply.key];
+                    res = currGroup[0][applyKey];
                 }
-                n[apply.name] = res;
+                n[applyName] = res;
             }
             groupArray.push(n);
         }
     }
-
-    errorCheckApplyTokens(optionObj: any, transformationObj: any) {
-        for (var i = 0; i < optionObj.errorCatch.length; i++) {
-            let err = optionObj.errorCatch[i];
-            for (var j = 0; j < transformationObj.apply.length; j++) {
-                if (transformationObj.apply.name === err) {
-                    break;
-                }
-            }
-            throw new Error("No Apply Key match for Error Catch element");
-        }
-        let unique = new Set(optionObj.errorCatch);
-        if (unique.size < optionObj.length) {
-            throw new Error("Duplicate Apply Tokens - Col");
-        }
-        let uniqueTemp = [];
-        for (var i = 0; i < transformationObj.apply.length; i++) {
-            uniqueTemp.push(transformationObj.apply[i]);
-        }
-        unique = new Set(uniqueTemp);
-        if (unique.size < uniqueTemp.length) {
-            throw new Error("Duplicate Apply Tokens - Trans")
-        }
-    }
+    //
+    // errorCheckApplyTokens(optionObj: any, transformationObj: any) {
+    //     for (var i = 0; i < optionObj.errorCatch.length; i++) {
+    //         let err = optionObj.errorCatch[i];
+    //         for (var j = 0; j < transformationObj.apply.length; j++) {
+    //             if (transformationObj.apply.name === err) {
+    //                 break;
+    //             }
+    //         }
+    //         throw new Error("No Apply Key match for Error Catch element");
+    //     }
+    //     let unique = new Set(optionObj.errorCatch);
+    //     if (unique.size < optionObj.length) {
+    //         throw new Error("Duplicate Apply Tokens - Col");
+    //     }
+    //     let uniqueTemp = [];
+    //     for (var i = 0; i < transformationObj.apply.length; i++) {
+    //         uniqueTemp.push(transformationObj.apply[i]);
+    //     }
+    //     unique = new Set(uniqueTemp);
+    //     if (unique.size < uniqueTemp.length) {
+    //         throw new Error("Duplicate Apply Tokens - Trans")
+    //     }
+    // }
 }
