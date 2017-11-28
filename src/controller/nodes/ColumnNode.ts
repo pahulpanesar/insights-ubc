@@ -14,7 +14,8 @@ export default class ColumnNode extends _Node{
 
     parse(t:any){
         var s = this.getAndCheckToken("COLUMNS", true);
-        while(this.tokenizer.getNext(false) !== "ORDER" && this.tokenizer.getNext(false) !== "NO_MORE_TOKENS"){
+        var tok = this.tokenizer.getNext(false);
+        while(tok !== "ORDER" && tok !== "NO_MORE_TOKENS" && tok !== "TRANSFORMATIONS" ){
             var key: KeyNode = new KeyNode(this.tokenizer,this.dataStruct,this.count);
             var temp = this.tokenizer.getNext(false);
             try{
@@ -27,6 +28,7 @@ export default class ColumnNode extends _Node{
             }
 
             this.options.push(key.evaluate());
+            tok = this.tokenizer.getNext(false);
         }
     }
     evaluate(){

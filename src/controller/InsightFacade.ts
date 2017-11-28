@@ -376,7 +376,9 @@ export default class InsightFacade implements IInsightFacade {
                     groupArray = this.createTransform(groupArray, optionObj, transformationObj);
 
                 }
-                this.dirSort(groupArray, optionObj);
+                if(optionObj.keys.length > 0 ) {
+                    this.dirSort(groupArray, optionObj);
+                }
                 fulfill({code: 200, body: {"result": groupArray}});
             }
             catch (err){

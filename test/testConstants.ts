@@ -868,6 +868,35 @@ export default class TestConstants {
             }
         }
     };
+
+    NO_ORDER_QUERY = {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 300
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "maxSeats"
+            ]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "maxSeats": {
+                    "MAX": "rooms_seats"
+                }
+            }]
+        }
+    };
+    NO_ORDER_RESPONSE = {"result":[{"rooms_shortname":"OSBO","maxSeats":442},{"rooms_shortname":"LSC","maxSeats":350},{"rooms_shortname":"HEBB","maxSeats":375}]};
     NO_TRANSFORM_RESPONSE = {"result":[{"rooms_address":"6363 Agronomy Road","rooms_seats":72,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":72,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":72,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":48,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":48,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":25,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":20,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":16,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":16,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":16,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":16,"rooms_shortname":"ORCH"},{"rooms_address":"6363 Agronomy Road","rooms_seats":16,"rooms_shortname":"ORCH"},{"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_seats":160,"rooms_shortname":"DMP"},{"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_seats":120,"rooms_shortname":"DMP"},{"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_seats":80,"rooms_shortname":"DMP"},{"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_seats":40,"rooms_shortname":"DMP"},{"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_seats":40,"rooms_shortname":"DMP"}]};
     NO_TRANSFORM_ERROR = {
         "WHERE": {},

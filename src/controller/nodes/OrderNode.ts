@@ -18,19 +18,21 @@ export default class OrderNode extends _Node {
     }
 
     parse(options: string[],err: string[], t:any){
-        var s = this.getAndCheckToken("ORDER", true);
-        if(this.tokenizer.getNext(false) == "dir"){
-            this.direction.parse();
-            this.directionFlag = true;
-            this.getAndCheckToken("keys",true);
-        }
+        if(this.tokenizer.getNext(false) === "ORDER") {
+            var s = this.getAndCheckToken("ORDER", true);
+            if (this.tokenizer.getNext(false) == "dir") {
+                this.direction.parse();
+                this.directionFlag = true;
+                this.getAndCheckToken("keys", true);
+            }
 
-        while(this.tokenizer.getNext(false) != "TRANSFORMATIONS" && this.tokenizer.getNext(false) != "NO_MORE_TOKENS"){
-            var temp = new KeyNode(this.tokenizer,this.dataStruct,this.count);
-            temp.parse(err, t);
-            this.keys.push(temp.evaluate());
+            while (this.tokenizer.getNext(false) != "TRANSFORMATIONS" && this.tokenizer.getNext(false) != "NO_MORE_TOKENS") {
+                var temp = new KeyNode(this.tokenizer, this.dataStruct, this.count);
+                temp.parse(err, t);
+                this.keys.push(temp.evaluate());
+            }
+            this.options = options.concat(err);
         }
-        this.options = options.concat(err);
     }
     evaluate(){
         var tempDir:string = "";
