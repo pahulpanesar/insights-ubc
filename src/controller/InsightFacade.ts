@@ -382,14 +382,15 @@ export default class InsightFacade implements IInsightFacade {
 
     validateTransform(query: any): void {
         let transform: any = query["TRANSFORMATIONS"];
-        let group: any = transform["GROUP"];
-        let apply: any = transform["APPLY"];
+        let group: Array<any> = transform["GROUP"];
+        let apply: Array<any> = transform["APPLY"];
         let options: any = query["OPTIONS"];
         let columns: Array<any> = options["COLUMNS"];
         let order: any = options["ORDER"];
-        if(group ^ apply) throw new Error("group and apply w/o eacother");
-        if(this.underscores(apply)) throw new Error("apply contains underscore");
-        if(this.validTokens(apply)) throw new Error("apply contains underscore");
+        if(group && !apply) throw new Error("group and apply w/o eacother");
+        if(!group && apply) throw new Error("group and apply w/o eacother");
+        if(apply.length > 0 && this.underscores(apply)) throw new Error("apply contains underscore");
+        if(apply.length > 0 && this.validTokens(apply)) throw new Error("apply contains underscore");
         if(!(group.length === new Set(group).size)) throw new Error("group contains duplicates");
         if(group.length === 0) throw new Error("group contains nothing");
 
@@ -398,8 +399,9 @@ export default class InsightFacade implements IInsightFacade {
     validTokens(apply: any): boolean {
         for(var i = 0; i < apply.length; i++){
             let applyObject: any = apply[i];
-            var token = applyObject[Object.keys(applyObject)[0]][0];
-            if(!token.match("MAX|MIN|COUNT|SUM|AVG")) return true;
+            var token = applyObject[Object.keys(applyObject)[0]];
+            var token2 = Object.keys(token)[0];
+            if(!token2.match("MAX|MIN|COUNT|SUM|AVG")) return true;
             return false;
         }
     }
